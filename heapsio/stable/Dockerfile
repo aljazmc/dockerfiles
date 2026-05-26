@@ -3,7 +3,7 @@ FROM debian:latest
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive \ 
-    PATH=/usr/src/hashlink:$PATH \
+    PATH="/usr/src/hashlink:$PATH" \
     USER=aljazmc
 
 RUN <<'EOT'
@@ -62,7 +62,12 @@ echo "$USER:$USER" | chpasswd
 echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-$USER
 EOT
 
+COPY --chmod="+x" docker-entrypoint.sh /usr/local/bin/
+
 USER $USER
 WORKDIR /home/$USER
 
-CMD [ "haxe" ]
+ENTRYPOINT ["bash", "-c"]
+
+CMD ["docker-entrypoint.sh"]
+
