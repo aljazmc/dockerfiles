@@ -10,27 +10,22 @@ RUN <<'EOT'
 runtimeDeps=(
     ca-certificates
     git 
+    haxe
+    libapache2-mod-neko
     libgc1
     libmariadb3
     libmbedcrypto16
     libmbedtls21
     libmbedx509-7
+    libneko2
     libpcre2-8-0
     libsqlite3-0
+    neko
+    neko-dev
     rsync
     sudo
     zlib1g
-    haxe
-    libapache2-mod-neko
-    libneko2
-    neko
-    neko-dev
 )
-apt-get update
-apt-get install ${runtimeDeps[@]} -y --no-install-recommends
-EOT
-
-RUN <<'EOT'
 buildDeps=(
     g++
     libglu1-mesa-dev
@@ -44,15 +39,15 @@ buildDeps=(
     libvorbis-dev
     make
 )
-    apt-get update
-    apt-get install ${buildDeps[@]} -y --no-install-recommends
-    mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
-    cd /usr/src/hashlink
-    git clone https://github.com/HaxeFoundation/hashlink .
-    git checkout latest
-    make
-    make install
-    # apt-get purge -y --auto-remove ${buildDeps[@]}
+apt-get update
+apt-get install ${runtimeDeps[@]} ${buildDeps[@]} -y --no-install-recommends
+mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
+cd /usr/src/hashlink
+git clone https://github.com/HaxeFoundation/hashlink .
+git checkout latest
+make
+make install
+# apt-get purge -y --auto-remove ${buildDeps[@]}
 EOT
 
 RUN <<EOT
