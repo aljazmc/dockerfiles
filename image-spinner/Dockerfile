@@ -1,8 +1,6 @@
 FROM alpine:latest
 
-ENV PROFILENAME=test \
-    PWD=/home/aljazmc \
-    USER=aljazmc
+ENV USER=aljazmc
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
@@ -10,14 +8,14 @@ RUN <<EOT
 runtimeDeps="
     abuild
     alpine-conf
+    ca-certificates
     doas
-    syslinux
-    xorriso
-    squashfs-tools
+    git
     grub
     mtools
-    git
-    ca-certificates
+    squashfs-tools
+    syslinux
+    xorriso
 "
 apk add --no-cache ${runtimeDeps}
 addgroup -g 1000 $USER
@@ -26,7 +24,11 @@ addgroup $USER abuild
 echo "permit nopass :$USER as root" > /etc/doas.d/doas.conf
 EOT
 
+COPY --chmod="+x" docker-entrypoint.sh /usr/local/bin/
+
 USER $USER
 WORKDIR /home/$USER
 
-CMD ["sh","-c", "printenv"]
+ENTRYPOINT ["sh","-c"]
+
+CMD ["docker-entrypoint.sh"]
