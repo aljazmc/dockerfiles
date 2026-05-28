@@ -4,11 +4,12 @@
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps)
 
-## Use cases:
+## use cases with docker:
 
-###### Run this command in Linux terminal to create a `home` dir and prepare a shared volume for development:
+###### create a `home` dir and prepare a shared volume for development:
 ```
 mkdir -p home;
+
 docker run
 --device /dev/dri:/dev/dri \
 --device /dev/snd:/dev/snd \
@@ -25,7 +26,7 @@ docker run
 aljazmc/heaps:latest
 ```
 
-###### Afterwards you could just append shell commands in the end like this:
+###### afterwards append shell commands in the end:
 ```
 docker run 
 --device /dev/dri:/dev/dri \
