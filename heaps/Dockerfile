@@ -47,7 +47,6 @@ git clone https://github.com/HaxeFoundation/hashlink .
 git checkout latest
 make
 make install
-# apt-get purge -y --auto-remove ${buildDeps[@]}
 EOT
 
 RUN <<EOT
