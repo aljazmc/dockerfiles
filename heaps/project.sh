@@ -10,8 +10,8 @@ DOCKER_ARGS=(
 -e DISPLAY="$DISPLAY"
 -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
 -v ./home:/home/aljazmc
--v /home/aljazmc/.Xauthority:/home/aljazmc/.Xauthority
--v /run/user/1000:/run/user/1000
+-v /home/"$USER"/.Xauthority:/home/aljazmc/.Xauthority
+-v /run/user/"$(id -u)":/run/user/1000
 -v /tmp/.X11-unix:/tmp.X11-unix
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
 -w /home/aljazmc
