@@ -14,6 +14,7 @@ image-spinner/*
 !heapsio/haxe5/Dockerfile
 !heapsio/haxe5/project.sh
 !heapsio/haxe5/README.md
+!image-spinner/docker-entrypoint.sh
 !image-spinner/Dockerfile
 !image-spinner/project.sh
 !LICENSE
