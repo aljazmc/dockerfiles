@@ -3,7 +3,7 @@ FROM debian:latest
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive \
-    NODE_VERSION="26.2.0" \
+    NODE_VERSION="26.4.0" \
     USER=node
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
