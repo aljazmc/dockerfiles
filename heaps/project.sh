@@ -38,7 +38,12 @@ clean() {
 docker system prune -af --volumes
 
 find . -mindepth 1 -maxdepth 1 \
-| sed "/Dockerfile/d;/README.md/d;/docker-entrypoint.sh/d;/project.sh/d" \
+| sed "
+    /Dockerfile/d;
+    /README.md/d;
+    /docker-entrypoint.sh/d;
+    /project.sh/d;
+" \
 | xargs -I {} rm -rf {}
 
 }
