@@ -2,7 +2,8 @@ FROM alpine:latest
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG NODE_VERSION="26.3.1" \
+ARG NODE_VERSION="26.4.0" \
+    SHA="e6c40e4f9828d387004a3ac82bc89bdef823ddcc462b540aaa1481f67e7ee6d0" \
     USER=node
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
@@ -16,9 +17,9 @@ addgroup -g 1000 $USER
 adduser -u 1000 -G $USER -s /bin/sh -D $USER
 echo "permit nopass :$USER as root" > /etc/doas.d/doas.conf
 
-if [ -n "3e113c229caf9ae5e1fa681e4e8dd0979d8c36eed743d6c5b607cc8a66a7f3ed" ]; then
+if [ -n "${SHA}" ]; then
     curl -fsSLO --compressed "https://unofficial-builds.nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64-musl.tar.xz"
-    echo "3e113c229caf9ae5e1fa681e4e8dd0979d8c36eed743d6c5b607cc8a66a7f3ed node-v${NODE_VERSION}-linux-x64-musl.tar.xz" | sha256sum -c -
+    echo "${SHA} node-v${NODE_VERSION}-linux-x64-musl.tar.xz" | sha256sum -c -
     tar -xJf "node-v${NODE_VERSION}-linux-x64-musl.tar.xz" -C /usr/local --strip-components=1 --no-same-owner
     ln -s /usr/local/bin/node /usr/local/bin/nodejs
     rm -f "node-v${NODE_VERSION}-linux-x64-musl.tar.xz"
