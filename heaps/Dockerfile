@@ -22,8 +22,12 @@ runtimeDeps=(
     libsqlite3-0
     neko
     neko-dev
+    pipewire
+    pipewire-audio-client-libraries 
+    pipewire-pulse
     rsync
     sudo
+    wireplumber
     zlib1g
 )
 buildDeps=(
@@ -32,7 +36,7 @@ buildDeps=(
     libmbedtls-dev
     libopenal-dev
     libpng-dev
-    libsdl2-dev
+    libsdl3-dev
     libsqlite3-dev
     libturbojpeg0-dev
     libuv1-dev
