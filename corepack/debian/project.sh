@@ -32,7 +32,7 @@ find . -mindepth 1 -maxdepth 1 \
 
 combo() {
 
-./project.sh clean && ./project.sh build
+./project.sh clean && ./project.sh update && ./project.sh build
 
 }
 
