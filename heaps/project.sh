@@ -56,7 +56,7 @@ combo() {
 
 publish() {
 
-ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "docker-entrypoint.sh > /dev/null 2>&1 && haxelib info heaps | grep Version |sed 's/Version\:\ //g'")
+ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "docker-entrypoint.sh > /dev/null 2>&1 && haxelib info heaps | grep Version | sed 's/Version\:\ //g'")
 
 [[ "${ACTUAL_HEAPS_VERSION}" == "${EXPECTED_HEAPS_VERSION}" ]] || \
     { echo "ERROR: Unexpected heapsio version"; exit; }
