@@ -18,7 +18,6 @@ if [ ! -d /home/"$USER"/haxelib ]; then
 fi
 
 if [ ! -f /home/"$USER"/compile.hxml ]; then
-    mkdir -p home
     cat <<-EOF > compile.hxml
 -cp src
 -lib format
