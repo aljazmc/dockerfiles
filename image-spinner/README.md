@@ -1,4 +1,4 @@
-[aljazmc/image-spinner](https://hub.docker.com/repository/docker/aljazmc/image-spinner) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/image-spinner) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/image-spinner) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/image-spinner)
+![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/image-spinner) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/image-spinner) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/image-spinner)
 
 # Docker image with everything necessary to create custom Alpine Linux distributions.
 
