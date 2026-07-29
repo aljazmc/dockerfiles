@@ -23,7 +23,7 @@ runtimeDeps=(
     xz-utils
 )
 apt-get update
-apt-get install ${runtimeDeps[@]} -y --no-install-recommends
+apt-get install --no-install-recommends ${runtimeDeps[@]} -y
 apt-get dist-clean
 
 groupadd --gid 1000 $USER

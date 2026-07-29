@@ -44,7 +44,7 @@ buildDeps=(
     make
 )
 apt-get update
-apt-get install ${runtimeDeps[@]} ${buildDeps[@]} -y --no-install-recommends
+apt-get install --no-install-recommends ${runtimeDeps[@]} ${buildDeps[@]} -y
 mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
 cd /usr/src/hashlink
 git clone https://github.com/HaxeFoundation/hashlink .
