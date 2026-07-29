@@ -16,3 +16,8 @@ Docker image with Heaps, Haxe, Neko and Hashlink. To be used in game development
 Docker image with everything necessary to create custom Alpine Linux distributions.
 
 [aljazmc/image-spinner](https://hub.docker.com/r/aljazmc/image-spinner) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/image-spinner) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/image-spinner) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/image-spinner)
+
+## > vesuvius
+Docker image with everything necessary to participate in the Vesuvius challenge.
+
+[aljazmc/vesuvius](https://hub.docker.com/r/aljazmc/vesuvius) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/vesuvius) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/vesuvius) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/vesuvius)
