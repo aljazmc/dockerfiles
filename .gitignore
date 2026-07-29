@@ -2,6 +2,7 @@ corepack/debian/*
 corepack/alpine/*
 heaps/*
 image-spinner/*
+vesuvius/*
 
 !LICENSE
 !README.md
@@ -21,3 +22,7 @@ image-spinner/*
 !image-spinner/README.md
 !image-spinner/docker-entrypoint.sh
 !image-spinner/project.sh
+!vesuvius/Dockerfile
+!vesuvius/README.md
+!vesuvius/docker-entrypoint.sh
+!vesuvius/project.sh
