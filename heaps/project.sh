@@ -20,6 +20,31 @@ DOCKER_ARGS=(
 build() {
 
 mkdir -p home
+
+if [ ! -f docker-compose.yml ]; then
+    cat <<-EOF > docker-compose.yml
+services:
+    heaps:
+        image: aljazmc/heaps
+        working_dir: /home/aljazmc
+        user: $USER
+        environment:
+            DISPLAY: $DISPLAY
+            XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR
+        volumes:
+            - ./home:/home/aljazmc
+            - /home/$USER/.Xauthority:/root/.Xauthority
+            - /run/user/$(id -u):/run/user/1000
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
+        devices:
+            - /dev/dri:/dev/dri
+            - /dev/snd:/dev/snd
+        network_mode: host
+EOF
+fi
+
+
 docker build . -t aljazmc/heaps
 
 ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "docker-entrypoint.sh > /dev/null 2>&1 && haxelib info heaps | grep Version | sed 's/Version\:\ //g'")
