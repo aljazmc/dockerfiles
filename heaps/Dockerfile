@@ -31,7 +31,8 @@ runtimeDeps=(
     zlib1g
 )
 buildDeps=(
-    g++
+    build-essential
+    clang
     libglu1-mesa-dev
     libmbedtls-dev
     libopenal-dev
@@ -42,9 +43,11 @@ buildDeps=(
     libuv1-dev
     libvorbis-dev
     make
+    mingw-w64
 )
 apt-get update
-apt-get install --no-install-recommends ${runtimeDeps[@]} ${buildDeps[@]} -y
+apt-get install --no-install-recommends ${runtimeDeps[@]} -y
+apt-get install --no-install-recommends ${buildDeps[@]} -y
 mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
 cd /usr/src/hashlink
 git clone https://github.com/HaxeFoundation/hashlink .
