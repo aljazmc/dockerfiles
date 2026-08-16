@@ -19,8 +19,6 @@ DOCKER_ARGS=(
 
 build() {
 
-# mkdir -p home
-
 if [ ! -f docker-compose.yml ]; then
     cat <<-EOF > docker-compose.yml
 services:
