@@ -44,7 +44,6 @@ services:
 EOF
 fi
 
-
 docker build . -t aljazmc/heaps
 
 ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "docker-entrypoint.sh > /dev/null 2>&1 && haxelib info heaps | grep Version | sed 's/Version\:\ //g'")
