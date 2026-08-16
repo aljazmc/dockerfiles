@@ -32,6 +32,7 @@ services:
             HOME: /home/aljazmc
         network_mode: host
 
+# command
 docker compose run --rm spinner
 ```
 ##### 2.) configure aports/scripts/mkimg.test.sh according to your preferences
