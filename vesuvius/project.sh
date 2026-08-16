@@ -7,13 +7,13 @@ build() {
 if [[ ! -f docker-compose.yml ]]; then
     cat << EOF > docker-compose.yml
 services:
-    node:
+    vesuvius:
         image: aljazmc/vesuvius
-        working_dir: $PWD
+        working_dir: /home/aljazmc
         volumes:
-            - .:$PWD
+            - .:/home/aljazmc
         environment:
-            HOME: $PWD
+            HOME: /home/aljazmc
         network_mode: host
 EOF
 fi
