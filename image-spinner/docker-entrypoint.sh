@@ -3,7 +3,9 @@ set -e
 
 PROFILENAME="test"
 
-abuild-keygen -a -n
+if [ ! -f ~/.abuild/*.rsa ]; then
+    abuild-keygen -a -n
+fi
 
 test -d aports || git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git
 
