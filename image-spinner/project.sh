@@ -7,7 +7,7 @@ build() {
 if [[ ! -f docker-compose.yml ]]; then
     cat << EOF > docker-compose.yml
 services:
-    node:
+    spinner:
         image: aljazmc/image-spinner
         working_dir: $PWD
         volumes:
