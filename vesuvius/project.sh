@@ -4,6 +4,20 @@ VESUVIUS_VERSION="0.0.0"
 
 build() {
 
+if [[ ! -f docker-compose.yml ]]; then
+    cat << EOF > docker-compose.yml
+services:
+    node:
+        image: aljazmc/vesuvius
+        working_dir: $PWD
+        volumes:
+            - .:$PWD
+        environment:
+            HOME: $PWD
+        network_mode: host
+EOF
+fi
+
 docker build . -t aljazmc/vesuvius
 
 ACTUAL_VESUVIUS_VERSION="${VESUVIUS_VERSION}"
