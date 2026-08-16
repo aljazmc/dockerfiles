@@ -34,6 +34,6 @@ chmod +x aports/scripts/mkimg.$PROFILENAME.sh
 echo ""
 echo "Configure aports/scripts/mkimg.$PROFILENAME.sh and run:"
 echo ""
-echo "docker run -it --rm --user aljazmc -v ./home:/home/aljazmc -w /home/aljazmc aljazmc/image-spinner:latest \"sh aports/scripts/mkimage.sh --tag edge --outdir iso --arch x86_64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --repository https://dl-cdn.alpinelinux.org/alpine/edge/community --profile $PROFILENAME\""
+echo "docker run -it --rm --user aljazmc -v .:/home/aljazmc -w /home/aljazmc aljazmc/image-spinner:latest \"sh aports/scripts/mkimage.sh --tag edge --outdir iso --arch x86_64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --repository https://dl-cdn.alpinelinux.org/alpine/edge/community --profile $PROFILENAME\""
 echo ""
 echo "to build your very own Alpine ISO"
