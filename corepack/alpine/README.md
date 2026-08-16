@@ -15,9 +15,9 @@ docker run --rm aljazmc/corepack-alpine corepack -v
 docker run --rm aljazmc/corepack-alpine yarn set version berry
 ```
 
-###### initialize a new project in folder "myproject"
+###### initialize a new project
 ```
-mkdir myproject && docker run --rm -v ./myproject:/home/node -w /home/node aljazmc/corepack-alpine yarn init
+docker run --rm -v .:/home/node -w /home/node aljazmc/corepack-alpine yarn init
 ```
 
 ###### use shell inside the container to print environment variables
@@ -34,7 +34,7 @@ services:
         image: aljazmc/corepack-alpine
         working_dir: /home/node
         volumes:
-            - ./myproject:/home/node
+            - .:/home/node
         environment:
             HOME: /home/node
             NODE_ENV: development
@@ -50,9 +50,9 @@ docker-compose run --rm node corepack -v
 docker-compose run --rm node yarn set version berry
 ```
 
-###### initialize a new project in folder "myproject"
+###### initialize a new project
 ```
-mkdir myproject && docker-compose run --rm node yarn init
+docker-compose run --rm node yarn init
 ```
 
 ###### use shell inside the container to print environment variables
