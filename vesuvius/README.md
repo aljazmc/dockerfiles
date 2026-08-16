@@ -5,9 +5,29 @@
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/vesuvius)
 
 ## use cases with docker:
-###### do something
+
+###### install aws cli and kickstart bash
 ```
-docker run --rm aljazmc/vesuvius
+docker run --rm -v .:/home/aljazmc -w /home/aljazmc aljazmc/vesuvius
+```
+
+## use cases with docker compose:
+
+###### install aws cli and kickstart bash
+```
+# docker-compose.yml
+services:
+    vesuvius:
+        image: aljazmc/vesuvius
+        working_dir: /home/aljazmc
+        volumes:
+            - .:/home/aljazmc
+        environment:
+            HOME: /home/aljazmc
+        network_mode: host
+
+# command
+docker compose run --rm vesuvius
 ```
 
 ##### notes
