@@ -9,7 +9,7 @@ DOCKER_ARGS=(
 --user "$USER"
 -e DISPLAY="$DISPLAY"
 -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
--v ./home:/home/aljazmc
+-v .:/home/aljazmc
 -v /home/"$USER"/.Xauthority:/home/aljazmc/.Xauthority
 -v /run/user/"$(id -u)":/run/user/1000
 -v /tmp/.X11-unix:/tmp.X11-unix
@@ -19,7 +19,7 @@ DOCKER_ARGS=(
 
 build() {
 
-mkdir -p home
+# mkdir -p home
 
 if [ ! -f docker-compose.yml ]; then
     cat <<-EOF > docker-compose.yml
@@ -32,7 +32,7 @@ services:
             DISPLAY: $DISPLAY
             XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR
         volumes:
-            - ./home:/home/aljazmc
+            - .:/home/aljazmc
             - /home/$USER/.Xauthority:/root/.Xauthority
             - /run/user/$(id -u):/run/user/1000
             - /tmp/.X11-unix:/tmp/.X11-unix
