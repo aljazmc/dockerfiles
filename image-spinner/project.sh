@@ -9,11 +9,11 @@ if [[ ! -f docker-compose.yml ]]; then
 services:
     spinner:
         image: aljazmc/image-spinner
-        working_dir: $PWD
+        working_dir: /home/aljazmc
         volumes:
-            - .:$PWD
+            - .:/home/aljazmc
         environment:
-            HOME: $PWD
+            HOME: /home/aljazmc
         network_mode: host
 EOF
 fi
