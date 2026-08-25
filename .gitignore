@@ -1,8 +1,12 @@
-corepack/debian/*
 corepack/alpine/*
+corepack/debian/*
 heaps/*
 image-spinner/*
+x11/alpine/*
+x11/debian/*
 vesuvius/*
+wine/alpine/*
+wine/debian/*
 
 !LICENSE
 !README.md
@@ -22,7 +26,23 @@ vesuvius/*
 !image-spinner/README.md
 !image-spinner/docker-entrypoint.sh
 !image-spinner/project.sh
+!x11/alpine/Dockerfile
+!x11/alpine/README.md
+!x11/alpine/docker-entrypoint.sh
+!x11/alpine/project.sh
+!x11/debian/Dockerfile
+!x11/debian/README.md
+!x11/debian/docker-entrypoint.sh
+!x11/debian/project.sh
 !vesuvius/Dockerfile
 !vesuvius/README.md
 !vesuvius/docker-entrypoint.sh
 !vesuvius/project.sh
+!wine/alpine/Dockerfile
+!wine/alpine/README.md
+!wine/alpine/docker-entrypoint.sh
+!wine/alpine/project.sh
+!wine/debian/Dockerfile
+!wine/debian/README.md
+!wine/debian/docker-entrypoint.sh
+!wine/debian/project.sh
