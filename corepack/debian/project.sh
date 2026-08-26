@@ -4,20 +4,6 @@ EXPECTED_COREPACK_VERSION="0.35.0"
 
 build() {
 
-if [[ ! -f docker-compose.yml ]]; then
-    cat << EOF > docker-compose.yml
-services:
-    node:
-        image: aljazmc/corepack-debian
-        working_dir: $PWD
-        volumes:
-            - .:$PWD
-        environment:
-            HOME: $PWD
-        network_mode: host
-EOF
-fi
-
 docker build . -t aljazmc/corepack-debian
 
 ACTUAL_COREPACK_VERSION=$(docker run aljazmc/corepack-debian sh -c "corepack -v")
@@ -49,6 +35,24 @@ combo() {
     ./project.sh clean && \
     ./project.sh update && \
     ./project.sh build
+
+}
+
+config() {
+
+if [[ ! -f docker-compose.yml ]]; then
+    cat << EOF > docker-compose.yml
+services:
+    node:
+        image: aljazmc/corepack-debian
+        working_dir: $PWD
+        volumes:
+            - .:$PWD
+        environment:
+            HOME: $PWD
+        network_mode: host
+EOF
+fi
 
 }
 
