@@ -3,7 +3,7 @@ FROM alpine:latest
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 ARG NODE_VERSION="26.7.0" \
-    SHA="0608f9dcffe4daeef082255f5cba6047c7b82eb57a7ab168a0e9bd459823f74b" \
+    SHA="b6acfd9133393956ef4dd977678a4a0863314d7cf2f925457069f9541dce8d40" \
     USER=node
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
