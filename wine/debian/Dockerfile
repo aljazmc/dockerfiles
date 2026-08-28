@@ -14,12 +14,16 @@ runtimeDeps=(
     gpg-agent
     libatomic1
     openbox
+    pipewire
+    pipewire-alsa
+    pipewire-pulse
     sudo
+    wget
+    wireplumber
     xauth
     xinit
     xorg
     xterm
-    wget
 )
 libraries=(
     libegl-dev
