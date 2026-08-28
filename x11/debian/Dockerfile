@@ -10,14 +10,21 @@ ENV PATH="$PATH:/home/$USER"
 RUN <<'EOF'
 runtimeDeps=(
     openbox
+    pipewire
+    pipewire-alsa
+    pipewire-pulse
     sudo
+    wireplumber
     xauth
     xinit
     xorg
     xterm
 )
 libraries=(
+    libegl-dev
+    libgl-dev
     libglu1-mesa-dev
+    libglx-dev
     libmbedtls-dev
     libopenal-dev
     libpng-dev
@@ -27,6 +34,7 @@ libraries=(
     libuv1-dev
     libvorbis-dev
     libvulkan-dev
+    mesa-common-dev
 )
 apt-get update
 apt-get install --no-install-recommends ${runtimeDeps[@]} ${libraries[@]} -y
