@@ -42,7 +42,6 @@ adduser -u 1000 -G $USER -s /bin/sh -D $USER
 echo "permit nopass :$USER as root" > /etc/doas.d/doas.conf
 
 rm -rf /tmp/*
-
 EOF
 
 USER $USER
