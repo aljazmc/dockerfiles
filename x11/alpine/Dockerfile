@@ -11,6 +11,10 @@ runtimeDeps="
     bash
     doas
     openbox
+    pipewire
+    pipewire-alsa
+    pipewire-pulse
+    wireplumber
     xauth
     xinit
     xorg-server
@@ -25,12 +29,10 @@ libraries="
     libuv-dev
     libvorbis-dev
     mbedtls-dev
+    mesa-dev
     openal-soft-dev
-    pipewire
-    pipewire-alsa
     sdl3-dev
     sqlite-dev
-    wireplumber
     vulkan-loader-dev
 "
 apk add --no-cache ${runtimeDeps} ${libraries}
