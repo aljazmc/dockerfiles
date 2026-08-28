@@ -22,6 +22,7 @@ runtimeDeps=(
     wget
 )
 libraries=(
+    libegl-dev
     libgl-dev
     libglx-dev
     libglu1-mesa-dev
