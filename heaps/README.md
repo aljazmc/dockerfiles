@@ -1,6 +1,6 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps)
 
-# Docker image with Heaps, Haxe, Neko and Hashlink.
+# Docker image with Heaps, Haxe, Neko and Hashlink
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps)
 

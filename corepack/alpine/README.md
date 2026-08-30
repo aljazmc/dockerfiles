@@ -1,6 +1,6 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/corepack-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/corepack-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/corepack-alpine)
 
-# Docker image with corepack, node and git.
+# Docker image with corepack, node and git
  
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/corepack/alpine)
 

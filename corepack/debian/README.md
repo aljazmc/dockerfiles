@@ -1,6 +1,6 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/corepack-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/corepack-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/corepack-debian)
 
-# Docker image with corepack, node and git.
+# Docker image with corepack, node and git
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/corepack/debian)
 
