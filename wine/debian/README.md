@@ -1,6 +1,6 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-debian)
 
-# Docker image with wine
+# Docker image with Wine
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/wine/debian)
 

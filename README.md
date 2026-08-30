@@ -22,7 +22,7 @@ Docker image with everything necessary to participate in the Vesuvius challenge.
 
 [aljazmc/vesuvius](https://hub.docker.com/r/aljazmc/vesuvius) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/vesuvius) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/vesuvius) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/vesuvius)
 
-## > wine
+## > Wine
 Docker image with Wine. For testing Windows applications.
 
 [aljazmc/wine-debian](https://hub.docker.com/r/aljazmc/wine-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-debian)
