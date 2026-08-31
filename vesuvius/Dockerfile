@@ -13,6 +13,8 @@ runtimeDeps=(
     curl
     gpg
     groff
+    python3
+    python3-pip
     sudo
     unzip
 )
