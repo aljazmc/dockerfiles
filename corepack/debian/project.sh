@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPECTED_COREPACK_VERSION="0.35.0"
+EXPECTED_COREPACK_VERSION="0.36.0"
 
 build() {
 
