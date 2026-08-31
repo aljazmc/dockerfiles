@@ -11,7 +11,7 @@ RUN <<'EOF'
 runtimeDeps=(
     openbox
     pipewire
-    pipewire-alsa
+    pipewire-audio-client-libraries
     pipewire-pulse
     sudo
     wireplumber
