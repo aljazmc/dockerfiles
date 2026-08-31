@@ -46,8 +46,7 @@ buildDeps=(
     mingw-w64
 )
 apt-get update
-apt-get install --no-install-recommends ${runtimeDeps[@]} -y
-apt-get install --no-install-recommends ${buildDeps[@]} -y
+apt-get install --no-install-recommends ${runtimeDeps[@]} ${buildDeps[@]} -y
 mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
 cd /usr/src/hashlink
 git clone https://github.com/HaxeFoundation/hashlink .
