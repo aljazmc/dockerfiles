@@ -17,14 +17,14 @@ clean() {
 docker system prune -af --volumes
 
 find . -mindepth 1 -maxdepth 1 \
-| sed "
-    /Dockerfile/d;
-    /README.md/d;
-    /docker-entrypoint.sh/d;
-    /project.sh/d;
-    /setup_defcon_1.6_(20793).exe/d;
-" \
-| xargs -I {} rm -rf {}
+    | sed "
+        /Dockerfile/d;
+        /README.md/d;
+        /docker-entrypoint.sh/d;
+        /project.sh/d;
+        /setup_defcon_1.6_(20793).exe/d;
+    " \
+    | xargs -I {} rm -rf {}
 
 }
 
