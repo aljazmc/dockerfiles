@@ -5,10 +5,14 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive \
     USER=x11
 
-ENV PATH="$PATH:/home/$USER"
+ENV LANG=C \
+    LC_ALL=C \
+    PATH="$PATH:/home/$USER"
 
 RUN <<'EOF'
 runtimeDeps=(
+    gtk2-engines-murrine
+    gtk2-engines-pixbuf
     openbox
     pipewire
     pipewire-audio-client-libraries
