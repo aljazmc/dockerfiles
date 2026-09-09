@@ -13,6 +13,7 @@ runtimeDeps="
     git
     grub
     mtools
+    rsync
     squashfs-tools
     syslinux
     xorriso

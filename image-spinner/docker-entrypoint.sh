@@ -2,13 +2,16 @@
 set -e
 
 PROFILENAME="test"
+TMP_DIR="$(mktemp -d /tmp/temp.XXXXXX)"
 
 if [ ! -f ~/.abuild/*.rsa ]; then
     abuild-keygen -a -n
 fi
 
-test -d aports || git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git
+test -f aports/README.md || (git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git /tmp/temp.XXXXXX \
+&& rsync -avuq /tmp/temp.XXXXXX/ aports/)
 
+if [ ! -f aports/scripts/mkimg.$PROFILENAME.sh ]; then
 cat <<-EOF > aports/scripts/mkimg.$PROFILENAME.sh
 profile_$PROFILENAME() {
         profile_virt
@@ -32,6 +35,7 @@ profile_$PROFILENAME() {
 EOF
 
 chmod +x aports/scripts/mkimg.$PROFILENAME.sh
+fi
 
 echo ""
 echo "Configure aports/scripts/mkimg.$PROFILENAME.sh and run:"
