@@ -41,3 +41,7 @@ docker compose run --rm spinner
 ```
 docker compose run --rm spinner "sh aports/scripts/mkimage.sh --tag edge --outdir iso --arch x86_64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --repository https://dl-cdn.alpinelinux.org/alpine/edge/community --profile test"
 ```
+
+## notes:
+
+- if file "aports/README.md" doesn't exist, aports github repository is cloned to temporary directory and rsynced into the "aports" folder
