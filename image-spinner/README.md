@@ -44,4 +44,4 @@ docker compose run --rm spinner "sh aports/scripts/mkimage.sh --tag edge --outdi
 
 ## notes:
 
-- if `aports/README.md` file doesn't exist, aports github repository is cloned into `aports` folder
+- if `aports/README.md` file doesn't exist, aports github repository is cloned into temporary folder and then moved into `aports` folder
