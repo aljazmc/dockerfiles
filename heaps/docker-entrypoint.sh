@@ -12,9 +12,10 @@ if [ ! -d /home/"$USER"/haxelib ]; then
     haxelib install format
     haxelib install hashlink
     haxelib install heaps
+    haxelib install hldx
     haxelib install hlopenal
     haxelib install hlsdl
-    haxelib install hldx
+    haxelib install utest
 fi
 
 if [ ! -f /home/"$USER"/compile.hxml ]; then
