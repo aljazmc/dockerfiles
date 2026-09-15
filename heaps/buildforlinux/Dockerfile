@@ -4,15 +4,14 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive \ 
     PATH="/usr/src/hashlink:$PATH" \
-    USER=aljazmc
+    USER=heaps
 
 RUN <<'EOT'
 runtimeDeps=(
-    ca-certificates
-    git 
     haxe
-    libapache2-mod-neko
+    libapr1t64
     libgc1
+    libgtk-3-0t64
     libmariadb3
     libmbedcrypto16
     libmbedtls21
@@ -21,7 +20,6 @@ runtimeDeps=(
     libpcre2-8-0
     libsqlite3-0
     neko
-    neko-dev
     pipewire
     pipewire-audio-client-libraries 
     pipewire-pulse
@@ -31,8 +29,9 @@ runtimeDeps=(
     zlib1g
 )
 buildDeps=(
-    build-essential
-    clang
+    ca-certificates
+    g++
+    git 
     libglu1-mesa-dev
     libmbedtls-dev
     libopenal-dev
@@ -43,7 +42,6 @@ buildDeps=(
     libuv1-dev
     libvorbis-dev
     make
-    mingw-w64
 )
 apt-get update
 apt-get install --no-install-recommends ${runtimeDeps[@]} ${buildDeps[@]} -y

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+USER=heaps
+
 sudo chown -R "$USER" .
 
 if [ ! -d /home/"$USER"/haxelib ]; then

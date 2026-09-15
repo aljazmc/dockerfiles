@@ -8,37 +8,37 @@
 
 ###### prepare a directory for development:
 ```
-docker run
+docker run \
 --device /dev/dri:/dev/dri \
 --device /dev/snd:/dev/snd \
 --network=host \
---user "$USER" \
+--user heaps \
 -e DISPLAY="$DISPLAY" \
 -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
--v .:/home/aljazmc \
--v /home/$USER/.Xauthority:/home/aljazmc/.Xauthority \
+-v .:/home/heaps \
+-v /home/$USER/.Xauthority:/home/heaps/.Xauthority \
 -v /run/user/$(id -u):/run/user/1000 \
 -v /tmp/.X11-unix:/tmp.X11-unix \
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
--w /home/aljazmc \
+-w /home/heaps \
 aljazmc/heaps:latest
 ```
 
 ###### afterwards append shell commands in the end:
 ```
-docker run 
+docker run \
 --device /dev/dri:/dev/dri \
 --device /dev/snd:/dev/snd \
 --network=host \
---user "$USER" \
+--user heaps \
 -e DISPLAY="$DISPLAY" \
 -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
--v ./home:/home/aljazmc \
--v /home/$USER/.Xauthority:/home/aljazmc/.Xauthority \
+-v .:/home/heaps \
+-v /home/$USER/.Xauthority:/home/heaps/.Xauthority \
 -v /run/user/$(id -u):/run/user/1000 \
 -v /tmp/.X11-unix:/tmp.X11-unix \
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
--w /home/aljazmc \
+-w /home/heaps \
 aljazmc/heaps:latest "haxe compile.hxml && hl hello.hl"
 ```
 
@@ -50,14 +50,14 @@ aljazmc/heaps:latest "haxe compile.hxml && hl hello.hl"
 services:
     heaps:
         image: aljazmc/heaps
-        working_dir: /home/aljazmc
-        user: $USER
+        working_dir: /home/heaps
+        user: heaps
         environment:
             DISPLAY: $DISPLAY
             XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR
         volumes:
-            - .:/home/aljazmc
-            - /home/$USER/.Xauthority:/root/.Xauthority
+            - .:/home/heaps
+            - /home/$USER/.Xauthority:/home/heaps/.Xauthority
             - /run/user/$(id -u):/run/user/1000
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id

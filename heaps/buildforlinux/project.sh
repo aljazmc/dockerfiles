@@ -1,20 +1,21 @@
 #!/bin/bash
 
 EXPECTED_HEAPS_VERSION="2.1.0"
+CONTAINER_USER=heaps
 
 DOCKER_ARGS=(
 --device /dev/dri:/dev/dri
 --device /dev/snd:/dev/snd
 --network=host
---user "$USER"
+--user "$CONTAINER_USER"
 -e DISPLAY="$DISPLAY"
 -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
--v .:/home/aljazmc
--v /home/"$USER"/.Xauthority:/home/aljazmc/.Xauthority
--v /run/user/"$(id -u)":/run/user/1000
+-v .:/home/$CONTAINER_USER
+-v /home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority
+-v /run/user/$(id -u):/run/user/1000
 -v /tmp/.X11-unix:/tmp.X11-unix
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
--w /home/aljazmc
+-w /home/$CONTAINER_USER
 )
 
 build() {
@@ -24,14 +25,14 @@ if [ ! -f docker-compose.yml ]; then
 services:
     heaps:
         image: aljazmc/heaps
-        working_dir: /home/aljazmc
-        user: $USER
+        working_dir: /home/$CONTAINER_USER
+        user: $CONTAINER_USER
         environment:
             DISPLAY: $DISPLAY
             XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR
         volumes:
-            - .:/home/aljazmc
-            - /home/$USER/.Xauthority:/root/.Xauthority
+            - .:/home/$CONTAINER_USER
+            - /home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority
             - /run/user/$(id -u):/run/user/1000
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
