@@ -2,7 +2,7 @@
 
 # Docker image with Heaps, Haxe, Neko and Hashlink
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps)
+[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforlinux)
 
 ## use cases with docker:
 
