@@ -12,6 +12,8 @@ Docker image with Heaps, Haxe, Neko and Hashlink. For game development.
 
 [aljazmc/heaps](https://hub.docker.com/r/aljazmc/heaps) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps)
 
+[aljazmc/heaps-buildforwindows](https://hub.docker.com/r/aljazmc/heaps-buildforwindows) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforwindows) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforwindows) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforwindows)
+
 ## > image-spinner
 Docker image with everything necessary to create custom Alpine Linux distributions.
 
