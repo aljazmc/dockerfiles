@@ -32,6 +32,4 @@ Docker image with Wine. For testing Windows applications.
 ## > x11
 Docker image with x11. For GUI testing.
 
-[aljazmc/x11-alpine](https://hub.docker.com/r/aljazmc/x11-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/x11-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/x11-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/x11-alpine)
-
 [aljazmc/x11-debian](https://hub.docker.com/r/aljazmc/x11-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/x11-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/x11-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/x11-debian)
