@@ -19,9 +19,9 @@ runtimeDeps="
     xorriso
 "
 apk add --no-cache ${runtimeDeps}
-addgroup -g 1000 $USER
-adduser -u 1000 -G $USER -s /bin/sh -D $USER
-addgroup $USER abuild
+addgroup -g 1000 "$USER"
+adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"
+addgroup "$USER" abuild
 echo "permit nopass :$USER as root" > /etc/doas.d/doas.conf
 EOT
 

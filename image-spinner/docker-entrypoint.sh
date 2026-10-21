@@ -2,14 +2,17 @@
 set -e
 
 PROFILENAME="test"
-TMP_DIR="$(mktemp -d /tmp/temp.XXXXXX)"
 
-if [ ! -f ~/.abuild/*.rsa ]; then
+if ! ls ~/.abuild/*.rsa > /dev/null 2>&1; then
     abuild-keygen -a -n
 fi
 
-test -f aports/README.md || (git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git /tmp/temp.XXXXXX \
-&& rsync -avuq /tmp/temp.XXXXXX/ aports/)
+if [ ! -f aports/README.md ]; then
+    TMP_DIR="$(mktemp -d /tmp/temp.XXXXXX)"
+    git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git "$TMP_DIR"
+    rsync -avuq "$TMP_DIR"/ aports/
+    rm -rf "$TMP_DIR"
+fi
 
 if [ ! -f aports/scripts/mkimg.$PROFILENAME.sh ]; then
 cat <<-EOF > aports/scripts/mkimg.$PROFILENAME.sh
@@ -44,4 +47,4 @@ echo "docker run -it --rm --user aljazmc -v .:/home/aljazmc -w /home/aljazmc alj
 echo ""
 echo "to build your very own Alpine ISO"
 
-exec $@
+exec "$@"
