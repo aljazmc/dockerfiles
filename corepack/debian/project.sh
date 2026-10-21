@@ -61,7 +61,7 @@ publish() {
 ACTUAL_COREPACK_VERSION=$(docker run aljazmc/corepack-debian sh -c "corepack -v")
 
 [[ "${ACTUAL_COREPACK_VERSION}" == "${EXPECTED_COREPACK_VERSION}" ]] || \
-    { echo "ERROR: Unexpected corepack version"; exit; }
+    { echo "ERROR: Unexpected corepack version"; exit 1; }
 
 docker push -a aljazmc/corepack-debian
 
