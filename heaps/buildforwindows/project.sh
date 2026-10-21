@@ -10,12 +10,12 @@ DOCKER_ARGS=(
 --user "$CONTAINER_USER"
 -e DISPLAY="$DISPLAY"
 -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
--v .:/home/$CONTAINER_USER
--v /home/"$USER"/.Xauthority:/home/$CONTAINER_USER/.Xauthority
--v /run/user/"$(id -u)":/run/user/1000
--v /tmp/.X11-unix:/tmp.X11-unix
+-v ".:/home/$CONTAINER_USER"
+-v "/home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority"
+-v "/run/user/$(id -u):/run/user/1000"
+-v /tmp/.X11-unix:/tmp/.X11-unix
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
--w /home/$CONTAINER_USER
+-w "/home/$CONTAINER_USER"
 )
 
 build() {
@@ -83,7 +83,7 @@ publish() {
 ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps-buildforwindows:latest "docker-entrypoint.sh > /dev/null 2>&1 && haxelib info heaps | grep Version | sed 's/Version\:\ //g'")
 
 [[ "${ACTUAL_HEAPS_VERSION}" == "${EXPECTED_HEAPS_VERSION}" ]] || \
-    { echo "ERROR: Unexpected heapsio version"; exit; }
+    { echo "ERROR: Unexpected heapsio version"; exit 1; }
 
 docker push -a aljazmc/heaps-buildforwindows
 
