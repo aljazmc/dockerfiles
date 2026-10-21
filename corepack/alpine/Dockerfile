@@ -13,8 +13,8 @@ RUN <<EOF
 apk add --no-cache ca-certificates doas git libstdc++
 apk add --no-cache --virtual .build-deps curl
 
-addgroup -g 1000 $USER
-adduser -u 1000 -G $USER -s /bin/sh -D $USER
+addgroup -g 1000 "$USER"
+adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"
 echo "permit nopass :$USER as root" > /etc/doas.d/doas.conf
 
 if [ -n "${SHA}" ]; then

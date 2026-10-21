@@ -61,7 +61,7 @@ publish() {
 ACTUAL_COREPACK_VERSION=$(docker run aljazmc/corepack-alpine sh -c "corepack -v")
 
 [[ "${ACTUAL_COREPACK_VERSION}" == "${EXPECTED_COREPACK_VERSION}" ]] || \
-    { echo "ERROR: Unexpected corepack version"; exit; }
+    { echo "ERROR: Unexpected corepack version"; exit 1; }
 
 docker push -a aljazmc/corepack-alpine
 
@@ -79,7 +79,7 @@ LATEST_NODE_VERSION=$(wget -q https://unofficial-builds.nodejs.org/download/rele
 
 sed -i "s/^ARG\ NODE_VERSION=.*/ARG NODE_VERSION=\"$LATEST_NODE_VERSION\" \\\/" Dockerfile
 
-LATEST_SHA_NUMBER=$(wget -q https://unofficial-builds.nodejs.org/download/release/v${LATEST_NODE_VERSION}/node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz && sha256sum node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz | awk '{print $1}' && rm node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz)
+LATEST_SHA_NUMBER=$(wget -q "https://unofficial-builds.nodejs.org/download/release/v${LATEST_NODE_VERSION}/node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz" && sha256sum "node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz" | awk '{print $1}' && rm "node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz")
 # echo $LATEST_SHA_NUMBER
 
 sed -i "s/^\ \ \ \ SHA=.*/    SHA=\"$LATEST_SHA_NUMBER\" \\\/" Dockerfile
