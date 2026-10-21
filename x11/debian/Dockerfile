@@ -41,13 +41,13 @@ libraries=(
     mesa-common-dev
 )
 apt-get update
-apt-get install --no-install-recommends ${runtimeDeps[@]} ${libraries[@]} -y
+apt-get install --no-install-recommends "${runtimeDeps[@]}" "${libraries[@]}" -y
 apt-get dist-clean
 
-groupadd --gid 1000 $USER
-useradd --uid 1000 --gid $USER --shell /bin/bash --create-home $USER
+groupadd --gid 1000 "$USER"
+useradd --uid 1000 --gid "$USER" --shell /bin/bash --create-home "$USER"
 echo "$USER:$USER" | chpasswd
-echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-$USER
+echo "${USER} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/90-$USER"
 EOF
 
 USER $USER

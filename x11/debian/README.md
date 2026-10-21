@@ -23,12 +23,12 @@ docker-compose.yml file
 services:
     x11:
         image: aljazmc/x11-debian
-        user: $(id -u):$(id -g)
+        user: ${UID:-1000}:${GID:-1000}
         working_dir: /home/x11
         volumes:
             - .:/home/x11
             - /home/$USER/.Xauthority:/home/x11/.Xauthority
-            - /run/user/$(id -u):/run/user/1000
+            - $XDG_RUNTIME_DIR:/run/user/1000
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
         devices:
@@ -37,7 +37,7 @@ services:
         environment:
             DISPLAY: $DISPLAY
             HOME: /home/x11
-            XDG_RUNTIME_DIR: /run/user/$(id -u)
+            XDG_RUNTIME_DIR: /run/user/1000
         network_mode: host
 ```
 
