@@ -32,7 +32,7 @@ EOF
 fi
 
 if [ ! -f /home/"$USER"/src/Main.hx ]; then
-    mkdir src
+    mkdir -p src
     cat <<-EOF > src/Main.hx
 class Main extends hxd.App {
     override function init() {

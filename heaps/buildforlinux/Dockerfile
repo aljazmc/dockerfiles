@@ -2,8 +2,9 @@ FROM debian:latest
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-ENV DEBIAN_FRONTEND=noninteractive \ 
-    PATH="/usr/src/hashlink:$PATH" \
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV PATH="/usr/src/hashlink:$PATH" \
     USER=heaps
 
 RUN <<'EOT'
@@ -21,7 +22,7 @@ runtimeDeps=(
     libsqlite3-0
     neko
     pipewire
-    pipewire-audio-client-libraries 
+    pipewire-audio-client-libraries
     pipewire-pulse
     rsync
     sudo
@@ -31,7 +32,7 @@ runtimeDeps=(
 buildDeps=(
     ca-certificates
     g++
-    git 
+    git
     libglu1-mesa-dev
     libmbedtls-dev
     libopenal-dev
@@ -44,7 +45,7 @@ buildDeps=(
     make
 )
 apt-get update
-apt-get install --no-install-recommends ${runtimeDeps[@]} ${buildDeps[@]} -y
+apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y
 mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
 cd /usr/src/hashlink
 git clone https://github.com/HaxeFoundation/hashlink .
@@ -54,10 +55,10 @@ make install
 EOT
 
 RUN <<EOT
-groupadd --gid 1000 $USER
-useradd --uid 1000 --gid $USER --shell /bin/bash --create-home $USER
+groupadd --gid 1000 "$USER"
+useradd --uid 1000 --gid "$USER" --shell /bin/bash --create-home "$USER"
 echo "$USER:$USER" | chpasswd
-echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-$USER
+echo "${USER} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/90-$USER"
 EOT
 
 COPY --chmod="+x" docker-entrypoint.sh /usr/local/bin/

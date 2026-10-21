@@ -18,7 +18,7 @@ docker run \
 -v .:/home/heaps \
 -v /home/$USER/.Xauthority:/home/heaps/.Xauthority \
 -v /run/user/$(id -u):/run/user/1000 \
--v /tmp/.X11-unix:/tmp.X11-unix \
+-v /tmp/.X11-unix:/tmp/.X11-unix \
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
 -w /home/heaps \
 aljazmc/heaps:latest
@@ -36,7 +36,7 @@ docker run \
 -v .:/home/heaps \
 -v /home/$USER/.Xauthority:/home/heaps/.Xauthority \
 -v /run/user/$(id -u):/run/user/1000 \
--v /tmp/.X11-unix:/tmp.X11-unix \
+-v /tmp/.X11-unix:/tmp/.X11-unix \
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
 -w /home/heaps \
 aljazmc/heaps:latest "haxe compile.hxml && hl hello.hl"
@@ -58,7 +58,7 @@ services:
         volumes:
             - .:/home/heaps
             - /home/$USER/.Xauthority:/home/heaps/.Xauthority
-            - /run/user/$(id -u):/run/user/1000
+            - $XDG_RUNTIME_DIR:/run/user/1000
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
         devices:
