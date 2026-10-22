@@ -74,8 +74,11 @@ LATEST_COREPACK_VERSION="$(docker run --rm aljazmc/corepack-alpine sh -c "NODE_O
 
 sed -i "s/^EXPECTED_COREPACK_VERSION=.*/EXPECTED_COREPACK_VERSION=\"$LATEST_COREPACK_VERSION\"/" project.sh
 
-LATEST_NODE_VERSION=$(wget -q https://nodejs.org/dist/ &>/dev/null && cat index.html | sed '/dist/d;/v[0-9]\./d;s/\/.*//;s/<a\ href="v//g;/^<$/d' | tail -n 1 && rm index.html)
+LATEST_NODE_VERSION=$(wget -qO- https://nodejs.org/dist/index.json | grep -m 1 '"linux-x64"' | sed 's/^{"version":"v\([^"]*\)".*/\1/')
 # echo $LATEST_NODE_VERSION
+
+[[ -n "${LATEST_NODE_VERSION}" ]] || \
+    { echo "ERROR: Unable to get latest node version"; exit 1; }
 
 sed -i "s/^\ \ \ \ NODE_VERSION=.*/    NODE_VERSION=\"$LATEST_NODE_VERSION\" \\\/" Dockerfile
 
