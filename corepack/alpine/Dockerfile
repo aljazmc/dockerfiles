@@ -2,8 +2,8 @@ FROM alpine:latest
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG NODE_VERSION="26.9.0" \
-    SHA="75482fd18104cd6e789a5653eb78b5d1a98cb49d8d9bf1d1b56bc4f30928886f" \
+ARG NODE_VERSION="26.12.1" \
+    SHA="5c3834652a0fb8f204e6df76be1469aa99a9d18011fb79cc85d97c822184d976" \
     USER=node
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
