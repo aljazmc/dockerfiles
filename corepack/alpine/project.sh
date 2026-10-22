@@ -74,14 +74,19 @@ LATEST_COREPACK_VERSION="$(docker run --rm aljazmc/corepack-alpine sh -c "NODE_O
 
 sed -i "s/^EXPECTED_COREPACK_VERSION=.*/EXPECTED_COREPACK_VERSION=\"$LATEST_COREPACK_VERSION\"/" project.sh
 
-LATEST_NODE_VERSION=$(wget -q https://unofficial-builds.nodejs.org/download/release 1>/dev/null && cat release | sed '/v[0-9]/!d;s/<a\ href="//g;s/\/.*//;/v8\./d;s/v//g' | tail -n 1 && rm release)
+LATEST_NODE_VERSION=$(wget -qO- https://unofficial-builds.nodejs.org/download/release/index.json | grep -m 1 '"linux-x64-musl"' | sed 's/^{"version":"v\([^"]*\)".*/\1/')
 # echo $LATEST_NODE_VERSION
 
-sed -i "s/^ARG\ NODE_VERSION=.*/ARG NODE_VERSION=\"$LATEST_NODE_VERSION\" \\\/" Dockerfile
+[[ -n "${LATEST_NODE_VERSION}" ]] || \
+    { echo "ERROR: Unable to get latest node version"; exit 1; }
 
-LATEST_SHA_NUMBER=$(wget -q "https://unofficial-builds.nodejs.org/download/release/v${LATEST_NODE_VERSION}/node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz" && sha256sum "node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz" | awk '{print $1}' && rm "node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz")
+LATEST_SHA_NUMBER=$(wget -qO- "https://unofficial-builds.nodejs.org/download/release/v${LATEST_NODE_VERSION}/SHASUMS256.txt" | grep " node-v${LATEST_NODE_VERSION}-linux-x64-musl.tar.xz\$" | awk '{print $1}')
 # echo $LATEST_SHA_NUMBER
 
+[[ -n "${LATEST_SHA_NUMBER}" ]] || \
+    { echo "ERROR: Unable to get SHA for node v${LATEST_NODE_VERSION}"; exit 1; }
+
+sed -i "s/^ARG\ NODE_VERSION=.*/ARG NODE_VERSION=\"$LATEST_NODE_VERSION\" \\\/" Dockerfile
 sed -i "s/^\ \ \ \ SHA=.*/    SHA=\"$LATEST_SHA_NUMBER\" \\\/" Dockerfile
 
 }
