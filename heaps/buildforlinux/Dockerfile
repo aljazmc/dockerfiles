@@ -4,8 +4,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV PATH="/usr/src/hashlink:$PATH" \
-    USER=heaps
+ENV USER=heaps
 
 RUN <<'EOT'
 runtimeDeps=(
@@ -19,14 +18,12 @@ runtimeDeps=(
     libmbedx509-7
     libneko2
     libpcre2-8-0
+    libpulse0
     libsqlite3-0
     neko
-    pipewire
-    pipewire-audio-client-libraries
-    pipewire-pulse
+    pipewire-bin
     rsync
     sudo
-    wireplumber
     zlib1g
 )
 buildDeps=(
@@ -46,12 +43,15 @@ buildDeps=(
 )
 apt-get update
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y
+rm -rf /var/lib/apt/lists/*
 mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
 cd /usr/src/hashlink
-git clone https://github.com/HaxeFoundation/hashlink .
-git checkout latest
+git clone --depth 1 --branch latest https://github.com/HaxeFoundation/hashlink .
 make
 make install
+ldconfig
+make clean
+rm -rf .git
 EOT
 
 RUN <<EOT
@@ -66,7 +66,4 @@ COPY --chmod="+x" docker-entrypoint.sh /usr/local/bin/
 USER $USER
 WORKDIR /home/$USER
 
-ENTRYPOINT ["bash", "-c"]
-
-CMD ["docker-entrypoint.sh"]
-
+ENTRYPOINT ["docker-entrypoint.sh"]

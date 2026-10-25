@@ -9,10 +9,10 @@ DOCKER_ARGS=(
 --network=host
 --user "$CONTAINER_USER"
 -e DISPLAY="$DISPLAY"
--e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
+-e XDG_RUNTIME_DIR=/run/user/1000
 -v ".:/home/$CONTAINER_USER"
 -v "/home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority"
--v "/run/user/$(id -u):/run/user/1000"
+-v "$XDG_RUNTIME_DIR:/run/user/1000"
 -v /tmp/.X11-unix:/tmp/.X11-unix
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
 -w "/home/$CONTAINER_USER"
@@ -29,11 +29,11 @@ services:
         user: $CONTAINER_USER
         environment:
             DISPLAY: $DISPLAY
-            XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR
+            XDG_RUNTIME_DIR: /run/user/1000
         volumes:
             - .:/home/$CONTAINER_USER
             - /home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority
-            - /run/user/$(id -u):/run/user/1000
+            - $XDG_RUNTIME_DIR:/run/user/1000
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
         devices:
@@ -45,20 +45,21 @@ fi
 
 docker build . -t aljazmc/heaps
 
-ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "docker-entrypoint.sh > /dev/null 2>&1 && haxelib info heaps | grep Version | sed 's/Version\:\ //g'")
+ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "haxelib list heaps" | sed 's/.*\[\(.*\)\]/\1/')
 docker tag aljazmc/heaps aljazmc/heaps:"${ACTUAL_HEAPS_VERSION}"
 docker tag aljazmc/heaps aljazmc/heaps:latest
 
 docker image ls
-docker run "${DOCKER_ARGS[@]}" aljazmc/heaps:latest
-docker run "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "printenv"
-docker run "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "haxe compile.hxml && hl hello.hl"
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "printenv"
+docker compose run --rm heaps "haxelib list"
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "haxe compile.hxml && hl hello.hl"
 
 }
 
 clean() {
 
-docker system prune -af --volumes
+docker image ls aljazmc/heaps -q | sort -u | xargs -r docker rmi -f
 
 find . -mindepth 1 -maxdepth 1 \
     | sed "
@@ -80,7 +81,7 @@ combo() {
 
 publish() {
 
-ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "docker-entrypoint.sh > /dev/null 2>&1 && haxelib info heaps | grep Version | sed 's/Version\:\ //g'")
+ACTUAL_HEAPS_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps:latest "haxelib list heaps" | sed 's/.*\[\(.*\)\]/\1/')
 
 [[ "${ACTUAL_HEAPS_VERSION}" == "${EXPECTED_HEAPS_VERSION}" ]] || \
     { echo "ERROR: Unexpected heapsio version"; exit 1; }
