@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV PATH="/usr/src/hashlink:$PATH" \
+ENV HASHLINK_WIN64=/usr/local/hashlink-win64 \
     USER=heaps
 
 RUN <<'EOT'
@@ -19,20 +19,20 @@ runtimeDeps=(
     libmbedx509-7
     libneko2
     libpcre2-8-0
+    libpulse0
     libsqlite3-0
     neko
-    pipewire
-    pipewire-audio-client-libraries
-    pipewire-pulse
+    pipewire-bin
     rsync
     sudo
-    wireplumber
+    zip
     zlib1g
 )
 buildDeps=(
-    build-essential
     ca-certificates
-    clang
+    curl
+    g++
+    gcc-mingw-w64-x86-64
     git
     libglu1-mesa-dev
     libmbedtls-dev
@@ -44,16 +44,25 @@ buildDeps=(
     libuv1-dev
     libvorbis-dev
     make
-    mingw-w64
+    unzip
 )
 apt-get update
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y
+rm -rf /var/lib/apt/lists/*
 mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
 cd /usr/src/hashlink
-git clone https://github.com/HaxeFoundation/hashlink .
-git checkout latest
+git clone --depth 1 --branch latest https://github.com/HaxeFoundation/hashlink .
+HASHLINK_COMMIT="$(git rev-parse --short=7 HEAD)"
 make
 make install
+ldconfig
+make clean
+rm -rf .git
+cd /tmp
+curl -fsSLO "https://github.com/HaxeFoundation/hashlink/releases/download/latest/hashlink-${HASHLINK_COMMIT}-win64.zip"
+unzip -q "hashlink-${HASHLINK_COMMIT}-win64.zip"
+mv "hashlink-${HASHLINK_COMMIT}-win64" /usr/local/hashlink-win64
+rm "hashlink-${HASHLINK_COMMIT}-win64.zip"
 EOT
 
 RUN <<EOT
@@ -68,7 +77,4 @@ COPY --chmod="+x" docker-entrypoint.sh /usr/local/bin/
 USER $USER
 WORKDIR /home/$USER
 
-ENTRYPOINT ["bash", "-c"]
-
-CMD ["docker-entrypoint.sh"]
-
+ENTRYPOINT ["docker-entrypoint.sh"]

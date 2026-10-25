@@ -3,6 +3,8 @@ set -e
 
 USER=heaps
 
+setup() {
+
 sudo chown -R "$USER" .
 
 if [ ! -d /home/"$USER"/haxelib ]; then
@@ -12,11 +14,11 @@ if [ ! -d /home/"$USER"/haxelib ]; then
     haxelib fixrepo
 
     haxelib install format
-    haxelib install hashlink
+    haxelib dev hashlink /usr/src/hashlink/other/haxelib
+    haxelib dev hldx /usr/src/hashlink/libs/directx
+    haxelib dev hlopenal /usr/src/hashlink/libs/openal
+    haxelib dev hlsdl /usr/src/hashlink/libs/sdl
     haxelib install heaps
-    haxelib install hldx
-    haxelib install hlopenal
-    haxelib install hlsdl
     haxelib install utest
 fi
 
@@ -44,4 +46,12 @@ class Main extends hxd.App {
     }
 }
 EOF
+fi
+
+}
+
+setup >&2
+
+if [ "$#" -gt 0 ]; then
+    exec bash -c "$*"
 fi
