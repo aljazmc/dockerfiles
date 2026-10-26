@@ -1,6 +1,6 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforwindows) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforwindows) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforwindows)
 
-# Docker image with Heaps, Haxe, Neko and Hashlink... and mingw-w64.
+# Docker image with Heaps, Haxe, Neko and the Windows build of Hashlink... and mingw-w64.
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforwindows)
 
@@ -9,17 +9,8 @@
 ###### prepare a directory for development:
 ```
 docker run \
---device /dev/dri:/dev/dri \
---device /dev/snd:/dev/snd \
---network=host \
 --user heaps \
--e DISPLAY="$DISPLAY" \
--e XDG_RUNTIME_DIR=/run/user/1000 \
 -v .:/home/heaps \
--v /home/"$USER"/.Xauthority:/home/heaps/.Xauthority \
--v "$XDG_RUNTIME_DIR":/run/user/1000 \
--v /tmp/.X11-unix:/tmp/.X11-unix \
--v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
 -w /home/heaps \
 aljazmc/heaps-buildforwindows:latest
 ```
@@ -27,44 +18,24 @@ aljazmc/heaps-buildforwindows:latest
 ###### afterwards append shell commands in the end:
 ```
 docker run \
---device /dev/dri:/dev/dri \
---device /dev/snd:/dev/snd \
---network=host \
 --user heaps \
--e DISPLAY="$DISPLAY" \
--e XDG_RUNTIME_DIR=/run/user/1000 \
 -v .:/home/heaps \
--v /home/"$USER"/.Xauthority:/home/heaps/.Xauthority \
--v "$XDG_RUNTIME_DIR":/run/user/1000 \
--v /tmp/.X11-unix:/tmp/.X11-unix \
--v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
 -w /home/heaps \
-aljazmc/heaps-buildforwindows:latest "haxe compile.hxml && hl hello.hl"
+aljazmc/heaps-buildforwindows:latest "haxe compile.hxml"
 ```
 
 ## use cases with docker compose
 
 ###### prepare a directory for development:
 ```
-# docker-compose.yml example for GNU/Linux host
+# docker-compose.yml example
 services:
     heaps:
         image: aljazmc/heaps-buildforwindows
         working_dir: /home/heaps
         user: heaps
-        environment:
-            DISPLAY: $DISPLAY
-            XDG_RUNTIME_DIR: /run/user/1000
         volumes:
             - .:/home/heaps
-            - /home/$USER/.Xauthority:/home/heaps/.Xauthority
-            - $XDG_RUNTIME_DIR:/run/user/1000
-            - /tmp/.X11-unix:/tmp/.X11-unix
-            - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
-        devices:
-            - /dev/dri:/dev/dri
-            - /dev/snd:/dev/snd
-        network_mode: host
 
 # command
 docker compose run --rm heaps
@@ -72,15 +43,14 @@ docker compose run --rm heaps
 
 ###### afterwards append shell commands in the end:
 ```
-docker compose run --rm heaps "haxe compile.hxml && hl hello.hl"
+docker compose run --rm heaps "haxe compile.hxml"
 ```
-
 
 ## How to bundle static libraries
 
-The image contains the Windows build of HashLink (`hl.exe`, `libhl.dll`, `*.hdll`, `SDL3.dll`, `OpenAL32.dll`, `vcruntime140.dll`, import libraries and headers) in `$HASHLINK_WIN64` (`/usr/local/hashlink-win64`). It is the same HashLink version as the Linux one, so a project compiled in the container runs on Windows when all of these files are copied next to it.
+The image contains the Windows build of HashLink (`hl.exe`, `libhl.dll`, `*.hdll`, `SDL3.dll`, `OpenAL32.dll`, `vcruntime140.dll`, import libraries and headers) in `$HASHLINK_WIN64` (`/usr/local/hashlink-win64`). It is the same HashLink version as the Haxe libraries (`hlsdl`, `hldx`, ...) installed in the container, so a project compiled in the container runs on Windows when all of these files are copied next to it.
 
-###### save this script as `bundle.sh` in the project directory and make it executable (`chmod +x bundle.sh`):
+###### the image contains this script as the `bundle` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforwindows/bundle)):
 ```
 #!/bin/bash
 set -e
@@ -122,7 +92,7 @@ fi
 
 ###### option 1: bundle HashLink bytecode
 ```
-docker compose run --rm heaps "haxe compile.hxml && ./bundle.sh hello.hl"
+docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl"
 ```
 
 `hl.exe` is copied as `hello.exe` and `hello.hl` as `hlboot.dat`. `hl.exe` started without arguments runs `hlboot.dat` from the current directory, so double clicking `hello.exe` starts the game.
@@ -147,7 +117,7 @@ x86_64-w64-mingw32-gcc -O2 -std=c11 -municode \
     -I out -I "$HASHLINK_WIN64/include" out/main.c -o hello.exe \
     -L "$HASHLINK_WIN64" -l:libhl.lib -l:fmt.lib -l:heaps.lib -l:openal.lib -l:sdl.lib -l:ui.lib -l:uv.lib \
     -ldbghelp &&
-./bundle.sh hello.exe
+bundle hello.exe
 '
 ```
 
@@ -156,7 +126,65 @@ x86_64-w64-mingw32-gcc -O2 -std=c11 -municode \
 Both options create the `dist/hello-win64` directory and the `dist/hello-win64.zip` archive. Extract the archive on a 64-bit Windows machine and run `hello.exe`.
 
 ###### notes:
-- `HDLLS` and `DLLS` list the files copied from `$HASHLINK_WIN64`. Add `ssl`, `sqlite` or `mysql` to `HDLLS` if the project uses them (and `-l:ssl.lib` etc. to the HL/C command).
+- `HDLLS` and `DLLS` list the files copied from `$HASHLINK_WIN64`. Add `ssl`, `sqlite` or `mysql` to `HDLLS` if the project uses them (and `-l:ssl.lib` etc. to the HL/C command). To change the lists, copy the command into the project (`cp /usr/local/bin/bundle .`), edit it and run `./bundle` instead.
 - To use DirectX instead of SDL, replace `-lib hlsdl` with `-lib hldx` in the `.hxml` file and add `directx` to `HDLLS` (`-l:directx.lib` for HL/C).
 - If the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the compiled file.
-- The bundle can be tested on Linux with Wine: `cd dist/hello-win64 && wine hello.exe`.
+- The image only builds for Windows, it can't run the game. The bundle can be tested on Linux with Wine, e.g. with the [aljazmc/wine-debian](https://hub.docker.com/r/aljazmc/wine-debian) image: `cd dist/hello-win64 && wine hello.exe`.
+
+## How to make a single executable .exe
+
+`makeexe` packs the bundle into one self-extracting `.exe` with [NSIS](https://nsis.sourceforge.io) (`makensis` is installed in the image). When it starts, it silently extracts the bundle to a temporary directory, runs the game from there with the same arguments, returns its exit code and deletes the directory when the game exits.
+
+###### the image contains this script as the `makeexe` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforwindows/makeexe)):
+```
+#!/bin/bash
+set -e
+
+DIR="${1:?usage: makeexe <directory> <executable in the directory> <output.exe>}"
+RUN="${2:?usage: makeexe <directory> <executable in the directory> <output.exe>}"
+OUT="${3:?usage: makeexe <directory> <executable in the directory> <output.exe>}"
+NSI="$(mktemp --suffix=.nsi)"
+
+cat <<EOF > "$NSI"
+Unicode true
+SetCompressor /SOLID lzma
+RequestExecutionLevel user
+SilentInstall silent
+Name "$(basename "$OUT" .exe)"
+OutFile "$OUT"
+!include FileFunc.nsh
+
+Section
+    InitPluginsDir
+    SetOutPath "\$PLUGINSDIR\\app"
+    File /r "$DIR/*"
+    \${GetParameters} \$0
+    ExecWait '"\$PLUGINSDIR\\app\\$RUN" \$0' \$1
+    SetOutPath "\$TEMP"
+    StrCpy \$2 0
+    retry:
+        RMDir /r "\$PLUGINSDIR\\app"
+        IfFileExists "\$PLUGINSDIR\\app" 0 done
+        IntOp \$2 \$2 + 1
+        IntCmp \$2 50 done
+        Sleep 100
+        Goto retry
+    done:
+    SetErrorLevel \$1
+SectionEnd
+EOF
+makensis -NOCD -V2 "$NSI"
+rm "$NSI"
+```
+
+###### create the executable:
+```
+docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl && makeexe dist/hello-win64 hello.exe dist/hello.exe"
+```
+
+The result is `dist/hello.exe`, a single file that runs on 64-bit Windows. It works the same way for both bundle options (HashLink bytecode and HL/C).
+
+###### notes:
+- usage: `makeexe <directory> <executable in the directory> <output.exe>`. The whole directory is packed and the executable is started from inside it, so files next to it (DLLs, `hlboot.dat`, `assets`, ...) are found.
+- The `.exe` has the default NSIS icon. To use your own, copy the command into the project (`cp /usr/local/bin/makeexe .`), add `Icon "icon.ico"` below `OutFile` and run `./makeexe` instead.
+- Self-extracting executables are sometimes flagged by antivirus heuristics or SmartScreen. Signing the `.exe` helps.

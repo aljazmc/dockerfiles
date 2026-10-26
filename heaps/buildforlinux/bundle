@@ -1,0 +1,35 @@
+#!/bin/bash
+set -e
+
+HL_FILE="${1:-hello.hl}"
+NAME="$(basename "$HL_FILE" .hl)"
+DIST="dist/$NAME"
+HDLLS=(fmt heaps openal sdl ui uv)
+BUNDLE_LIBS="libSDL3|libopenal|libpng16|libturbojpeg|libvorbis|libogg|libuv|libsndio|libdecor|libmbed|libsqlite3"
+
+rm -rf "$DIST"
+mkdir -p "$DIST"
+
+cp "$HL_FILE" "$(command -v hl)" /usr/local/lib/libhl.so "$DIST"/
+for HDLL in "${HDLLS[@]}"; do
+    cp /usr/local/lib/"$HDLL".hdll "$DIST"/
+done
+if [ -d res ]; then
+    cp -r res "$DIST"/
+fi
+
+ldd "$DIST"/*.hdll \
+    | awk '/=> \// {print $3}' \
+    | grep -E "/($BUNDLE_LIBS)[^/]*$" \
+    | sort -u \
+    | xargs -r cp -L -t "$DIST"/
+
+cat <<EOF > "$DIST/$NAME"
+#!/bin/sh
+cd "\$(dirname "\$0")"
+export LD_LIBRARY_PATH="\$PWD\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}"
+exec ./hl $NAME.hl "\$@"
+EOF
+chmod +x "$DIST/$NAME"
+
+tar -czf "dist/$NAME.tar.gz" -C dist "$NAME"

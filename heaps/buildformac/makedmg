@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+APP="${1:?usage: makedmg <app bundle> <output.dmg>}"
+OUT="${2:?usage: makedmg <app bundle> <output.dmg>}"
+NAME="$(basename "$APP" .app)"
+STAGE="$(mktemp -d)"
+chmod 755 "$STAGE"
+
+cp -a "$APP" "$STAGE"/
+ln -s /Applications "$STAGE/Applications"
+rm -f "$OUT"
+xorriso -as mkisofs -quiet -V "$NAME" -hfsplus -R -o "$OUT" "$STAGE"
+rm -rf "$STAGE"

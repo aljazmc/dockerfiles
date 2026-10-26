@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+
+INPUT="${1:-hello.hl}"
+NAME="$(basename "${INPUT%.*}")"
+DIST="dist/$NAME-win64"
+HDLLS=(fmt heaps openal sdl ui uv)
+DLLS=(libhl OpenAL32 SDL3 vcruntime140)
+
+rm -rf "$DIST" "$DIST.zip"
+mkdir -p "$DIST"
+
+case "$INPUT" in
+    *.hl)
+        cp "$HASHLINK_WIN64/hl.exe" "$DIST/$NAME.exe"
+        cp "$INPUT" "$DIST/hlboot.dat"
+        ;;
+    *.exe)
+        cp "$INPUT" "$DIST/$NAME.exe"
+        ;;
+    *)
+        echo "ERROR: expected a .hl or .exe file"
+        exit 1
+        ;;
+esac
+for HDLL in "${HDLLS[@]}"; do
+    cp "$HASHLINK_WIN64/$HDLL.hdll" "$DIST"/
+done
+for DLL in "${DLLS[@]}"; do
+    cp "$HASHLINK_WIN64/$DLL.dll" "$DIST"/
+done
+if [ -d res ]; then
+    cp -r res "$DIST"/
+fi
+
+(cd dist && zip -qr "$NAME-win64.zip" "$NAME-win64")

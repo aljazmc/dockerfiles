@@ -4,17 +4,8 @@ EXPECTED_HEAPS_VERSION="2.1.0"
 CONTAINER_USER=heaps
 
 DOCKER_ARGS=(
---device /dev/dri:/dev/dri
---device /dev/snd:/dev/snd
---network=host
 --user "$CONTAINER_USER"
--e DISPLAY="$DISPLAY"
--e XDG_RUNTIME_DIR=/run/user/1000
 -v ".:/home/$CONTAINER_USER"
--v "/home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority"
--v "$XDG_RUNTIME_DIR:/run/user/1000"
--v /tmp/.X11-unix:/tmp/.X11-unix
--v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
 -w "/home/$CONTAINER_USER"
 )
 
@@ -27,19 +18,8 @@ services:
         image: aljazmc/heaps-buildforwindows
         working_dir: /home/$CONTAINER_USER
         user: $CONTAINER_USER
-        environment:
-            DISPLAY: $DISPLAY
-            XDG_RUNTIME_DIR: /run/user/1000
         volumes:
             - .:/home/$CONTAINER_USER
-            - /home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority
-            - $XDG_RUNTIME_DIR:/run/user/1000
-            - /tmp/.X11-unix:/tmp/.X11-unix
-            - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
-        devices:
-            - /dev/dri:/dev/dri
-            - /dev/snd:/dev/snd
-        network_mode: host
 EOF
 fi
 
@@ -53,7 +33,15 @@ docker image ls
 docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps-buildforwindows:latest
 docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps-buildforwindows:latest "printenv"
 docker compose run --rm heaps "haxelib list"
-docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps-buildforwindows:latest "haxe compile.hxml && hl hello.hl"
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps-buildforwindows:latest "haxe compile.hxml && ls -l hello.hl"
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/heaps-buildforwindows:latest '
+haxe -cp src -lib format -lib heaps -lib hlsdl -hl out/main.c -main Main &&
+x86_64-w64-mingw32-gcc -O2 -std=c11 -municode \
+    -I out -I "$HASHLINK_WIN64/include" out/main.c -o hello.exe \
+    -L "$HASHLINK_WIN64" -l:libhl.lib -l:fmt.lib -l:heaps.lib -l:openal.lib -l:sdl.lib -l:ui.lib -l:uv.lib \
+    -ldbghelp &&
+ls -l hello.exe
+'
 
 }
 
@@ -64,6 +52,8 @@ docker image ls aljazmc/heaps-buildforwindows -q | sort -u | xargs -r docker rmi
 find . -mindepth 1 -maxdepth 1 \
     | sed "
         /Dockerfile/d;
+        /bundle/d;
+        /makeexe/d;
         /README.md/d;
         /docker-entrypoint.sh/d;
         /project.sh/d;

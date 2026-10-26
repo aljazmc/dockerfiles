@@ -7,7 +7,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV USER=heaps
 
 RUN <<'EOT'
-runtimeDeps=(
+commonDeps=(
+    ca-certificates
+    git
     haxe
     libapr1t64
     libgc1
@@ -18,33 +20,31 @@ runtimeDeps=(
     libmbedx509-7
     libneko2
     libpcre2-8-0
-    libpulse0
     libsqlite3-0
     neko
-    pipewire-bin
     rsync
     sudo
     zlib1g
 )
-buildDeps=(
-    ca-certificates
+linuxDeps=(
     g++
-    git
     libglu1-mesa-dev
     libmbedtls-dev
     libopenal-dev
     libpng-dev
+    libpulse0
     libsdl3-dev
     libsqlite3-dev
     libturbojpeg0-dev
     libuv1-dev
     libvorbis-dev
     make
+    pipewire-bin
 )
 apt-get update
-apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y
+apt-get install --no-install-recommends "${commonDeps[@]}" "${linuxDeps[@]}" -y
 rm -rf /var/lib/apt/lists/*
-mkdir -p /usr/src/hashlink /usr/lib/haxe/lib
+mkdir -p /usr/src/hashlink
 cd /usr/src/hashlink
 git clone --depth 1 --branch latest https://github.com/HaxeFoundation/hashlink .
 make
@@ -61,7 +61,7 @@ echo "$USER:$USER" | chpasswd
 echo "${USER} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/90-$USER"
 EOT
 
-COPY --chmod="+x" docker-entrypoint.sh /usr/local/bin/
+COPY --chmod="+x" bundle docker-entrypoint.sh makesh /usr/local/bin/
 
 USER $USER
 WORKDIR /home/$USER
