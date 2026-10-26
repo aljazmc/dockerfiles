@@ -1,0 +1,99 @@
+#!/bin/bash
+
+EXPECTED_GODOT_VERSION="4.7.2"
+CONTAINER_USER=godot
+GROUP_IDS=($(stat -c %g /dev/dri/renderD* /dev/dri/card* /dev/snd/controlC* 2>/dev/null | sort -un | sed '/^0$/d'))
+GROUP_ADD=$(printf '            - "%s"\n' "${GROUP_IDS[@]}")
+
+DOCKER_ARGS=(
+--device /dev/dri:/dev/dri
+--device /dev/snd:/dev/snd
+"${GROUP_IDS[@]/#/--group-add=}"
+--network=host
+--user "$CONTAINER_USER"
+-e DISPLAY="$DISPLAY"
+-e XDG_RUNTIME_DIR=/run/user/1000
+-v ".:/home/$CONTAINER_USER"
+-v "/home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority"
+-v "$XDG_RUNTIME_DIR:/run/user/1000"
+-v /tmp/.X11-unix:/tmp/.X11-unix
+-v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
+-w "/home/$CONTAINER_USER"
+)
+
+build() {
+
+if [ ! -f docker-compose.yml ]; then
+    cat <<-EOF > docker-compose.yml
+services:
+    godot:
+        image: aljazmc/godot-buildforlinux
+        working_dir: /home/$CONTAINER_USER
+        user: $CONTAINER_USER
+        environment:
+            DISPLAY: $DISPLAY
+            XDG_RUNTIME_DIR: /run/user/1000
+        volumes:
+            - .:/home/$CONTAINER_USER
+            - /home/$USER/.Xauthority:/home/$CONTAINER_USER/.Xauthority
+            - $XDG_RUNTIME_DIR:/run/user/1000
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id
+        devices:
+            - /dev/dri:/dev/dri
+            - /dev/snd:/dev/snd
+${GROUP_IDS[*]:+        group_add:
+$GROUP_ADD
+}        network_mode: host
+EOF
+fi
+
+docker build . -t aljazmc/godot-buildforlinux
+
+ACTUAL_GODOT_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/godot-buildforlinux:latest "godot --version" | sed 's/\.stable.*//')
+docker tag aljazmc/godot-buildforlinux aljazmc/godot-buildforlinux:"${ACTUAL_GODOT_VERSION}"
+docker tag aljazmc/godot-buildforlinux aljazmc/godot-buildforlinux:latest
+
+docker image ls
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/godot-buildforlinux:latest
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/godot-buildforlinux:latest "printenv"
+docker compose run --rm godot "godot --version"
+docker run --rm "${DOCKER_ARGS[@]}" aljazmc/godot-buildforlinux:latest "godot --headless --import && godot --headless --export-release Linux build/linux/hello.x86_64 && build/linux/hello.x86_64"
+
+}
+
+clean() {
+
+docker image ls aljazmc/godot-buildforlinux -q | sort -u | xargs -r docker rmi -f
+
+find . -mindepth 1 -maxdepth 1 \
+    | sed "
+        /Dockerfile/d;
+        /makesh/d;
+        /README.md/d;
+        /docker-entrypoint.sh/d;
+        /project.sh/d;
+    " \
+    | xargs -I {} rm -rf {}
+
+}
+
+combo() {
+
+    ./project.sh clean && \
+    ./project.sh build
+
+}
+
+publish() {
+
+ACTUAL_GODOT_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/godot-buildforlinux:latest "godot --version" | sed 's/\.stable.*//')
+
+[[ "${ACTUAL_GODOT_VERSION}" == "${EXPECTED_GODOT_VERSION}" ]] || \
+    { echo "ERROR: Unexpected godot version"; exit 1; }
+
+docker push -a aljazmc/godot-buildforlinux
+
+}
+
+"$@"
