@@ -1,7 +1,5 @@
 #!/bin/bash
 
-IMAGE_SPINNER_VERSION="0.0.0"
-
 build() {
 
 if [[ ! -f docker-compose.yml ]]; then
@@ -19,17 +17,18 @@ EOF
 fi
 
 docker build . -t aljazmc/image-spinner
-docker tag aljazmc/image-spinner aljazmc/image-spinner:"${IMAGE_SPINNER_VERSION}"
+ACTUAL_ALPINE_VERSION=$(docker run --rm aljazmc/image-spinner "cat /etc/alpine-release")
+docker tag aljazmc/image-spinner aljazmc/image-spinner:"${ACTUAL_ALPINE_VERSION}"
 docker tag aljazmc/image-spinner aljazmc/image-spinner:latest
 
 docker image ls
-docker run --user aljazmc:aljazmc -v .:/home/aljazmc aljazmc/image-spinner
+docker run --rm --user aljazmc:aljazmc -v .:/home/aljazmc aljazmc/image-spinner
 
 }
 
 clean() {
 
-docker system prune -af --volumes
+docker image ls aljazmc/image-spinner -q | sort -u | xargs -r docker rmi -f
 
 find . -mindepth 1 -maxdepth 1 \
     | sed "
