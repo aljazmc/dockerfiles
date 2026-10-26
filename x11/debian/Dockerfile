@@ -13,32 +13,29 @@ RUN <<'EOF'
 runtimeDeps=(
     gtk2-engines-murrine
     gtk2-engines-pixbuf
-    openbox
-    pipewire
-    pipewire-audio-client-libraries
-    pipewire-pulse
+    libpulse0
+    pipewire-alsa
     sudo
-    wireplumber
-    xauth
-    xinit
-    xorg
     xterm
 )
 libraries=(
-    libegl-dev
-    libgl-dev
-    libglu1-mesa-dev
-    libglx-dev
-    libmbedtls-dev
-    libopenal-dev
-    libpng-dev
-    libsdl3-dev
-    libsqlite3-dev
-    libturbojpeg0-dev
-    libuv1-dev
-    libvorbis-dev
-    libvulkan-dev
-    mesa-common-dev
+    libdecor-0-0
+    libegl1
+    libgl1
+    libgl1-mesa-dri
+    libglx-mesa0
+    libvulkan1
+    libwayland-client0
+    libwayland-cursor0
+    libwayland-egl1
+    libxcursor1
+    libxi6
+    libxinerama1
+    libxkbcommon-x11-0
+    libxkbcommon0
+    libxrandr2
+    libxss1
+    mesa-vulkan-drivers
 )
 apt-get update
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${libraries[@]}" -y

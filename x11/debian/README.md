@@ -16,7 +16,7 @@ docker run --rm -it -v .:/home/x11 -w /home/x11 aljazmc/x11-debian sh -c "bash"
 docker run --rm -it -v .:/home/x11 -w /home/x11 aljazmc/x11-debian sh -c "printenv"
 ```
 
-## use cases with docker-compose:
+## use cases with docker compose:
 
 docker-compose.yml file
 ```
@@ -34,6 +34,10 @@ services:
         devices:
             - /dev/dri:/dev/dri
             - /dev/snd:/dev/snd
+        group_add:
+            - "992" # render group: stat -c %g /dev/dri/renderD128
+            - "44"  # video group: stat -c %g /dev/dri/card0
+            - "29"  # audio group: stat -c %g /dev/snd/controlC0
         environment:
             DISPLAY: $DISPLAY
             HOME: /home/x11
@@ -43,15 +47,17 @@ services:
 
 ###### start container shell
 ```
-docker-compose run --rm x11 sh -c "sh"
+docker compose run --rm x11 sh -c "sh"
 ```
 
 ###### use shell inside the container to print environment variables
 ```
-docker-compose run --rm x11 sh -c "printenv"
+docker compose run --rm x11 sh -c "printenv"
 ```
 
 ##### notes
 - not intended for production use.
 - passwordless sudo
+- the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
+- there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
 
