@@ -6,18 +6,18 @@ build() {
 
 docker build . -t aljazmc/corepack-debian
 
-ACTUAL_COREPACK_VERSION=$(docker run aljazmc/corepack-debian sh -c "corepack -v")
+ACTUAL_COREPACK_VERSION=$(docker run --rm aljazmc/corepack-debian sh -c "corepack -v")
 docker tag aljazmc/corepack-debian aljazmc/corepack-debian:"${ACTUAL_COREPACK_VERSION}"
 docker tag aljazmc/corepack-debian aljazmc/corepack-debian:latest
 
-docker run aljazmc/corepack-debian sh -c "printenv"
+docker run --rm aljazmc/corepack-debian sh -c "printenv"
 docker image ls
 
 }
 
 clean() {
 
-docker system prune -af --volumes
+docker image ls aljazmc/corepack-debian -q | sort -u | xargs -r docker rmi -f
 
 find . -mindepth 1 -maxdepth 1 \
     | sed "
@@ -58,7 +58,7 @@ fi
 
 publish() {
 
-ACTUAL_COREPACK_VERSION=$(docker run aljazmc/corepack-debian sh -c "corepack -v")
+ACTUAL_COREPACK_VERSION=$(docker run --rm aljazmc/corepack-debian sh -c "corepack -v")
 
 [[ "${ACTUAL_COREPACK_VERSION}" == "${EXPECTED_COREPACK_VERSION}" ]] || \
     { echo "ERROR: Unexpected corepack version"; exit 1; }
