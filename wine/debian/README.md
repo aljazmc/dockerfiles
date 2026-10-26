@@ -16,7 +16,7 @@ docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-debian sh -c "bas
 docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-debian sh -c "printenv"
 ```
 
-## use cases with docker-compose:
+## use cases with docker compose:
 
 docker-compose.yml file
 ```
@@ -34,6 +34,10 @@ services:
         devices:
             - /dev/dri:/dev/dri
             - /dev/snd:/dev/snd
+        group_add:
+            - "992" # render group: stat -c %g /dev/dri/renderD128
+            - "44"  # video group: stat -c %g /dev/dri/card0
+            - "29"  # audio group: stat -c %g /dev/snd/controlC0
         environment:
             DISPLAY: $DISPLAY
             HOME: /home/wine
@@ -43,15 +47,19 @@ services:
 
 ###### start container shell
 ```
-docker-compose run --rm wine sh -c "sh"
+docker compose run --rm wine sh -c "sh"
 ```
 
 ###### use shell inside the container to print environment variables
 ```
-docker-compose run --rm wine sh -c "printenv"
+docker compose run --rm wine sh -c "printenv"
 ```
 
 ##### notes
 - not intended for production use.
 - passwordless sudo
+- the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
+- there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
+- on the first start of a new prefix Wine asks to install Wine Mono (needed for .NET applications) and Wine Gecko (needed for applications with an embedded browser). To skip both, set `WINEDLLOVERRIDES="mscoree,mshtml="`, e.g. `docker compose run --rm -e WINEDLLOVERRIDES="mscoree,mshtml=" wine sh -c "wineboot -i"`.
+- 32-bit and 64-bit Windows applications are supported, with OpenGL and Vulkan (DXVK, VKD3D).
 
