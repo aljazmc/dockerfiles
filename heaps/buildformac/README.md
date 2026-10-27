@@ -48,6 +48,8 @@ docker compose run --rm heaps "haxe compile.hxml"
 
 ## How to bundle static libraries
 
+The first run creates a small project, unless the files already exist: `compile.hxml`, `src/Main.hx`, which sets up the window and a 960x540 scene that is scaled to fit the window (so the layout doesn't depend on the window size), `src/Hello.hx` with a centered greeting, and an empty `res` directory for resources, which `Main` embeds into the compiled game with `hxd.Res.initEmbed()`. Add further parts of the game as classes of their own.
+
 The image contains the macOS (x86_64) build of HashLink (`hl`, `libhl.2.dylib`, `libopenal.1.dylib`, `*.hdll` and headers) in `$HASHLINK_MACOS` (`/usr/local/hashlink-macos`). SDL3 is linked into `sdl.hdll`, so no other libraries are needed. It is the same HashLink version as the Haxe libraries (`hlsdl`, ...) installed in the container, so a project compiled in the container runs on macOS when all of these files are copied into an `.app` bundle.
 
 ###### the image contains this script as the `bundle` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildformac/bundle)):
@@ -156,3 +158,4 @@ The result is `dist/hello.dmg`. Open it on a Mac and drag `hello.app` to `Applic
 - usage: `makedmg <app bundle> <output.dmg>`
 - The image is an uncompressed hybrid ISO 9660 / HFS+ image with an Apple partition map, which macOS mounts like any other `.dmg`. Compressed `.dmg` images (UDZO) can only be created with `hdiutil` on macOS.
 - Browsers mark downloaded `.dmg` files with the quarantine flag and macOS passes it on to the app, so the notes about Gatekeeper above apply to the app copied from the `.dmg` too.
+- An app started directly from the mounted `.dmg` runs from a read-only directory, and `launcher` changes to `Contents/MacOS`, so write files that should persist, like saved games, to `~/Library/Application Support`. `hxd.Save` writes to the working directory by default.

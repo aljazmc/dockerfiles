@@ -90,7 +90,7 @@ docker compose run --rm bevy "cargo run --release"
 
 ## How to bundle the game
 
-The first run creates a `hello` crate (`Cargo.toml` and `src/main.rs`) that depends on Bevy from crates.io, unless the files already exist. The Rust toolchain is installed in the image, crates are downloaded to `.cargo` and compiled to `target` in the project directory.
+The first run creates a `hello` crate that depends on Bevy from crates.io and an empty `assets` directory, unless they already exist. `src/main.rs` sets up the window and adds the `HelloPlugin` from `src/hello.rs`, which shows a centered greeting in a 960x540 view that the camera scales to fit the window (so the layout doesn't depend on the window size). Add further parts of the game as plugins in modules of their own. The Rust toolchain is installed in the image, crates are downloaded to `.cargo` and compiled to `target` in the project directory.
 
 ###### build and bundle the game:
 ```
@@ -150,4 +150,5 @@ Run it after bundling the game (see above). The result is `dist/hello.sh`. Copy 
 - usage: `makesh <directory> <executable in the directory> <output.sh>`. The whole directory is packed and the executable is started from inside it.
 - The game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
 - The executable finds the `assets` directory because Bevy looks for it next to the executable.
+- The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`$XDG_DATA_HOME`, by default `~/.local/share`), not to the working directory.
 - The requirements of the bundle (glibc 2.41 or newer, libasound2, libudev1, X11 or Wayland, Vulkan driver) apply to the `.sh` archive too.

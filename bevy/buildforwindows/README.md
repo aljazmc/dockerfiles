@@ -48,7 +48,7 @@ docker compose run --rm bevy "cargo build --release --target x86_64-pc-windows-g
 
 ## How to bundle the game
 
-The first run creates a `hello` crate (`Cargo.toml` and `src/main.rs`) that depends on Bevy from crates.io, unless the files already exist. The Rust toolchain with the `x86_64-pc-windows-gnu` target is installed in the image, crates are downloaded to `.cargo` and compiled to `target` in the project directory.
+The first run creates a `hello` crate that depends on Bevy from crates.io and an empty `assets` directory, unless they already exist. `src/main.rs` sets up the window and adds the `HelloPlugin` from `src/hello.rs`, which shows a centered greeting in a 960x540 view that the camera scales to fit the window (so the layout doesn't depend on the window size). Add further parts of the game as plugins in modules of their own. The Rust toolchain with the `x86_64-pc-windows-gnu` target is installed in the image, crates are downloaded to `.cargo` and compiled to `target` in the project directory.
 
 ###### build and bundle the game:
 ```
@@ -128,4 +128,5 @@ Run it after bundling the game (see above). The result is `dist/hello.exe`, a si
 - usage: `makeexe <directory> <executable in the directory> <output.exe>`. The whole directory is packed and the executable is started from inside it, so files next to it (DLLs, `hlboot.dat`, `assets`, ...) are found.
 - The `.exe` has the default NSIS icon. To use your own, copy the command into the project (`cp /usr/local/bin/makeexe .`), add `Icon "icon.ico"` below `OutFile` and run `./makeexe` instead.
 - Self-extracting executables are sometimes flagged by antivirus heuristics or SmartScreen. Signing the `.exe` helps.
-- Without an `assets` directory the compiled `hello.exe` already is a single file and doesn't need to be packed.
+- Without files in the `assets` directory the compiled `hello.exe` already is a single file and doesn't need to be packed.
+- The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`%APPDATA%`), not to the working directory.

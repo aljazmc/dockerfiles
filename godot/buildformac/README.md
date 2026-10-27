@@ -48,7 +48,7 @@ docker compose run --rm godot "godot --headless --import && godot --headless --e
 
 ## How to export the project
 
-The first run creates a small project (`project.godot`, `main.tscn`) and an `export_presets.cfg` with a `macOS` preset, unless the files already exist. The image contains the Godot editor (`godot`) and the macOS export template (universal: Apple Silicon and Intel).
+The first run creates a small project and an `export_presets.cfg` with a `macOS` preset, unless the files already exist: `project.godot` with a 960x540 viewport that is scaled to fit the window (so the layout doesn't depend on the window size), `main.tscn` as the main scene and `hello.tscn` with a label centered in the viewport, which `main.tscn` instances. Add further parts of the game as scenes of their own. The image contains the Godot editor (`godot`) and the macOS export template (universal: Apple Silicon and Intel).
 
 ###### export the game:
 ```
