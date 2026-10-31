@@ -159,3 +159,7 @@ The result is `dist/hello.dmg`. Open it on a Mac and drag `hello.app` to `Applic
 - The image is an uncompressed hybrid ISO 9660 / HFS+ image with an Apple partition map, which macOS mounts like any other `.dmg`. Compressed `.dmg` images (UDZO) can only be created with `hdiutil` on macOS.
 - Browsers mark downloaded `.dmg` files with the quarantine flag and macOS passes it on to the app, so the notes about Gatekeeper above apply to the app copied from the `.dmg` too.
 - An app started directly from the mounted `.dmg` runs from a read-only directory, and `launcher` changes to `Contents/MacOS`, so write files that should persist, like saved games, to `~/Library/Application Support`. `hxd.Save` writes to the working directory by default.
+
+## license
+
+Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).
