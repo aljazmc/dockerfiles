@@ -64,3 +64,6 @@ docker-compose run --rm node sh -c "printenv"
 - not intended for production use.
 - passwordless doas
 
+## license
+
+Corepack is free and open-source software released under the [MIT License](https://github.com/nodejs/corepack/blob/main/LICENSE.md).
