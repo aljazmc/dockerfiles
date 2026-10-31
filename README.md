@@ -7,12 +7,26 @@ Docker images with Rust and everything necessary to build Bevy games for GNU/Lin
 
 [aljazmc/bevy-buildforwindows](https://hub.docker.com/r/aljazmc/bevy-buildforwindows) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/bevy-buildforwindows) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/bevy-buildforwindows) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/bevy-buildforwindows)
 
+## > blender
+Docker images with Blender and FFmpeg. For rendering and Python scripting.
+
+[aljazmc/blender-alpine](https://hub.docker.com/r/aljazmc/blender-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-alpine)
+
+[aljazmc/blender-debian](https://hub.docker.com/r/aljazmc/blender-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-debian)
+
 ## > corepack
 Docker image with corepack, node and git. For yarn berry enthusiasts.
 
 [aljazmc/corepack-alpine](https://hub.docker.com/r/aljazmc/corepack-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/corepack-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/corepack-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/corepack-alpine)
 
 [aljazmc/corepack-debian](https://hub.docker.com/r/aljazmc/corepack-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/corepack-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/corepack-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/corepack-debian)
+
+## > fluidsynth
+Docker images with FluidSynth, FFmpeg and Python 3. For rendering MIDI to audio.
+
+[aljazmc/fluidsynth-alpine](https://hub.docker.com/r/aljazmc/fluidsynth-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/fluidsynth-alpine)
+
+[aljazmc/fluidsynth-debian](https://hub.docker.com/r/aljazmc/fluidsynth-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/fluidsynth-debian)
 
 ## > godot
 Docker images with Godot and export templates for GNU/Linux, Windows and macOS.
@@ -36,6 +50,13 @@ Docker images with Heaps, Haxe, Neko and Hashlink. For game development for GNU/
 Docker image with everything necessary to create custom Alpine Linux distributions.
 
 [aljazmc/image-spinner](https://hub.docker.com/r/aljazmc/image-spinner) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/image-spinner) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/image-spinner) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/image-spinner)
+
+## > inkscape
+Docker images with Inkscape and full Python 3 extension support.
+
+[aljazmc/inkscape-alpine](https://hub.docker.com/r/aljazmc/inkscape-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/inkscape-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/inkscape-alpine)
+
+[aljazmc/inkscape-debian](https://hub.docker.com/r/aljazmc/inkscape-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/inkscape-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/inkscape-debian)
 
 ## > Wine
 Docker images with Wine. For testing Windows applications.
