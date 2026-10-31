@@ -75,3 +75,7 @@ Nothing else is needed: with `binary_format/embed_pck=true` (set in the generate
 
 ###### notes:
 - If the project needs more files next to the executable, e.g. GDExtension DLLs or a separate `hello.pck`, pack them into one self-extracting `.exe` with NSIS like in [heaps/buildforwindows](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforwindows) (`makensis` isn't installed in this image: `sudo apt-get update && sudo apt-get install nsis`).
+
+## license
+
+Godot is free and open-source software released under the [MIT License](https://github.com/godotengine/godot/blob/master/LICENSE.txt). The licenses of bundled third-party code are listed in [COPYRIGHT.txt](https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt).
