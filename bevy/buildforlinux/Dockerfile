@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV BEVY_VERSION="0.20.0" \
+ENV BEVY_VERSION="0.20" \
     RUSTUP_HOME=/usr/local/rustup \
     USER=bevy
 

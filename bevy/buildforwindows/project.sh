@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPECTED_BEVY_VERSION="0.20.0"
+EXPECTED_BEVY_VERSION="0.20"
 CONTAINER_USER=bevy
 
 DOCKER_ARGS=(
@@ -64,7 +64,7 @@ publish() {
 
 ACTUAL_BEVY_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/bevy-buildforwindows:latest "cargo generate-lockfile -q && cargo pkgid bevy" | sed 's/.*@//')
 
-[[ "${ACTUAL_BEVY_VERSION}" == "${EXPECTED_BEVY_VERSION}" ]] || \
+[[ "${ACTUAL_BEVY_VERSION}" == "${EXPECTED_BEVY_VERSION}".* ]] || \
     { echo "ERROR: Unexpected bevy version"; exit 1; }
 
 docker push -a aljazmc/bevy-buildforwindows && readme

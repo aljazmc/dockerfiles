@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPECTED_BEVY_VERSION="0.20.0"
+EXPECTED_BEVY_VERSION="0.20"
 CONTAINER_USER=bevy
 GROUP_IDS=($(stat -c %g /dev/dri/renderD* /dev/dri/card* /dev/snd/controlC* 2>/dev/null | sort -un | sed '/^0$/d'))
 GROUP_ADD=$(printf '            - "%s"\n' "${GROUP_IDS[@]}")
@@ -89,7 +89,7 @@ publish() {
 
 ACTUAL_BEVY_VERSION=$(docker run --rm "${DOCKER_ARGS[@]}" aljazmc/bevy-buildforlinux:latest "cargo generate-lockfile -q && cargo pkgid bevy" | sed 's/.*@//')
 
-[[ "${ACTUAL_BEVY_VERSION}" == "${EXPECTED_BEVY_VERSION}" ]] || \
+[[ "${ACTUAL_BEVY_VERSION}" == "${EXPECTED_BEVY_VERSION}".* ]] || \
     { echo "ERROR: Unexpected bevy version"; exit 1; }
 
 docker push -a aljazmc/bevy-buildforlinux && readme
