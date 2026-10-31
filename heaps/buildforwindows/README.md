@@ -191,3 +191,7 @@ The result is `dist/hello.exe`, a single file that runs on 64-bit Windows. It wo
 - The `.exe` has the default NSIS icon. To use your own, copy the command into the project (`cp /usr/local/bin/makeexe .`), add `Icon "icon.ico"` below `OutFile` and run `./makeexe` instead.
 - Self-extracting executables are sometimes flagged by antivirus heuristics or SmartScreen. Signing the `.exe` helps.
 - The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`%APPDATA%`). `hxd.Save` writes to the working directory by default.
+
+## license
+
+Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).
