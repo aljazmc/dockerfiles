@@ -152,3 +152,7 @@ Run it after bundling the game (see above). The result is `dist/hello.sh`. Copy 
 - The executable finds the `assets` directory because Bevy looks for it next to the executable.
 - The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`$XDG_DATA_HOME`, by default `~/.local/share`), not to the working directory.
 - The requirements of the bundle (glibc 2.41 or newer, libasound2, libudev1, X11 or Wayland, Vulkan driver) apply to the `.sh` archive too.
+
+## license
+
+Bevy is free and open-source software dual-licensed under the [MIT License](https://github.com/bevyengine/bevy/blob/main/LICENSE-MIT) or the [Apache License 2.0](https://github.com/bevyengine/bevy/blob/main/LICENSE-APACHE), at your option.
