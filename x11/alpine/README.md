@@ -61,3 +61,7 @@ docker compose run --rm x11 sh -c "printenv"
 - the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 - there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
 - Alpine Linux uses musl instead of glibc, so binaries built on glibc distributions (e.g. Debian, Ubuntu, Fedora) don't run here. Use Alpine packages or programs built on Alpine.
+
+## license
+
+The X Window System libraries from X.Org are free and open-source software released mostly under the MIT/X11 license and similar permissive licenses: [X.Org licenses](https://www.x.org/releases/current/doc/xorg-docs/License.html). Each component has its own `COPYING` file in its repository on [gitlab.freedesktop.org/xorg](https://gitlab.freedesktop.org/xorg).
