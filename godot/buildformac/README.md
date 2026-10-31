@@ -100,3 +100,7 @@ The result is `build/hello.dmg`. Open it on a Mac and drag `Hello.app` to `Appli
 - Browsers mark downloaded `.dmg` files with the quarantine flag and macOS passes it on to the app, so the notes about Gatekeeper above apply to the app copied from the `.dmg` too.
 - Godot can export a `.dmg` directly only on macOS, on other systems it exports a `.zip`. The commands above extract the `.app` from the `.zip` first.
 - The ad-hoc signature of the app is kept, because it is stored inside the `.app` bundle.
+
+## license
+
+Godot is free and open-source software released under the [MIT License](https://github.com/godotengine/godot/blob/master/LICENSE.txt). The licenses of bundled third-party code are listed in [COPYRIGHT.txt](https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt).
