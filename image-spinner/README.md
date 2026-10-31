@@ -45,3 +45,7 @@ docker compose run --rm spinner "sh aports/scripts/mkimage.sh --tag edge --outdi
 ## notes:
 
 - if `aports/README.md` file doesn't exist, aports github repository is cloned into temporary folder and then moved into `aports` folder
+
+## license
+
+Alpine Linux [aports](https://github.com/alpinelinux/aports) (GitHub mirror of [gitlab.alpinelinux.org/alpine/aports](https://gitlab.alpinelinux.org/alpine/aports)) has no single license: every package is released under its own free and open-source license, declared in the `license` field of its `APKBUILD`.
