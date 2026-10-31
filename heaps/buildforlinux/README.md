@@ -192,3 +192,7 @@ The result is `dist/hello.sh`. Copy it to the target machine and start it with `
 - The game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
 - The requirements of the bundle (glibc 2.41 or newer, X11 or Wayland desktop) apply to the `.sh` archive too.
 - The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`$XDG_DATA_HOME`, by default `~/.local/share`). `hxd.Save` writes to the working directory by default.
+
+## license
+
+Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).
