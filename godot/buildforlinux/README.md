@@ -156,3 +156,7 @@ The result is `build/hello.sh`. Copy it to the target machine and start it with 
 - usage: `makesh <directory> <executable in the directory> <output.sh>`. The whole directory is packed and the executable is started from inside it.
 - The game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
 - With `binary_format/embed_pck=true` the exported `hello.x86_64` already is a single file. The `.sh` archive is useful when the game needs more files next to the executable, e.g. GDExtension libraries or a separate `hello.pck`.
+
+## license
+
+Godot is free and open-source software released under the [MIT License](https://github.com/godotengine/godot/blob/master/LICENSE.txt). The licenses of bundled third-party code are listed in [COPYRIGHT.txt](https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt).
