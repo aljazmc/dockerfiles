@@ -13,11 +13,17 @@ RUN <<'EOF'
 runtimeDeps="
     bash
     blender~$BLENDER_VERSION
+    blender-headless~$BLENDER_VERSION
+    blender-shared~$BLENDER_VERSION
     doas
     ffmpeg
     findutils
     libpulse
     pipewire-alsa
+    py3-blender
+    py3-cattrs
+    py3-numpy
+    py3-requests
     xterm
 "
 libraries="
