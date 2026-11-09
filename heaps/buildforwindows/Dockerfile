@@ -21,6 +21,7 @@ commonDeps=(
     libmbedx509-7
     libneko2
     libpcre2-8-0
+    libsndio7.0
     libsqlite3-0
     neko
     rsync

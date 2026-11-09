@@ -24,6 +24,7 @@ libraries=(
     libgl1
     libgl1-mesa-dri
     libglx-mesa0
+    libsndio7.0
     libvulkan1
     libwayland-client0
     libwayland-cursor0

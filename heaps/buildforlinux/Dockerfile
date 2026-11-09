@@ -34,6 +34,7 @@ linuxDeps=(
     libpng-dev
     libpulse0
     libsdl3-dev
+    libsndio7.0
     libsqlite3-dev
     libturbojpeg0-dev
     libuv1-dev
