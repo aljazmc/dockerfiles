@@ -18,6 +18,7 @@ runtimeDeps="
 "
 libraries="
     libdecor
+    libvorbis
     libxcursor
     libxi
     libxinerama
