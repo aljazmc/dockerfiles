@@ -4,22 +4,20 @@
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/fluidsynth/alpine)
 
-## use cases with docker:
+## > Examples with docker:
 
-###### start container shell
 ```
+## start container shell
 docker run --rm -it -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-alpine sh -c "sh"
-```
 
-###### render song.mid to song.mp3
-```
+## render song.mid to song.mp3
 docker run --rm -it -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-alpine sh -c "fluidsynth -ni -F song.wav /usr/share/soundfonts/default.sf2 song.mid && ffmpeg -i song.wav song.mp3"
 ```
 
-## use cases with docker compose:
+## > Examples with docker compose:
 
-docker-compose.yml file
 ```
+## docker-compose.yml file
 services:
     fluidsynth:
         image: aljazmc/fluidsynth-alpine
@@ -43,19 +41,16 @@ services:
             HOME: /home/fluidsynth
             XDG_RUNTIME_DIR: /run/user/1000
         network_mode: host
-```
 
-###### start container shell
-```
+## start container shell
 docker compose run --rm fluidsynth sh -c "sh"
-```
 
-###### render song.mid to song.mp3
-```
+## render song.mid to song.mp3
 docker compose run --rm fluidsynth sh -c "fluidsynth -ni -F song.wav /usr/share/soundfonts/default.sf2 song.mid && ffmpeg -i song.wav song.mp3"
 ```
 
-##### notes
+## > Notes
+
 - not intended for production use.
 - passwordless doas (`doas apk add ...`)
 - the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
@@ -65,6 +60,6 @@ docker compose run --rm fluidsynth sh -c "fluidsynth -ni -F song.wav /usr/share/
 - the `SOUNDFONT` environment variable points to the default soundfont (`/usr/share/soundfonts/default.sf2`). Override it with `-e SOUNDFONT=/path/to/soundfont.sf2`.
 - `bash` and `findutils` (GNU `find`) are included for bash scripts that use `find -printf`.
 
-## license
+## > License
 
 FluidSynth is free and open-source software released under the [GNU Lesser General Public License (LGPL) v2.1+](https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE).
