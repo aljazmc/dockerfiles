@@ -1,12 +1,5 @@
 # aljazmc's dockerfiles
 
-## > bevy
-Docker images with Rust and everything necessary to build Bevy games for GNU/Linux and Windows.
-
-[aljazmc/bevy-buildforlinux](https://hub.docker.com/r/aljazmc/bevy-buildforlinux) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/bevy-buildforlinux) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/bevy-buildforlinux) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/bevy-buildforlinux)
-
-[aljazmc/bevy-buildforwindows](https://hub.docker.com/r/aljazmc/bevy-buildforwindows) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/bevy-buildforwindows) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/bevy-buildforwindows) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/bevy-buildforwindows)
-
 ## > blender
 Docker images with Blender and FFmpeg. For rendering and Python scripting.
 
