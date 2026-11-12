@@ -4,31 +4,26 @@
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/corepack/debian)
 
-## use cases with docker:
-###### print corepack version
+## > Examples with docker:
+
 ```
+## print corepack version
 docker run --rm aljazmc/corepack-debian corepack -v
-```
 
-###### set yarn version to berry
-```
+## set yarn version to berry
 docker run --rm aljazmc/corepack-debian yarn set version berry
-```
 
-###### initialize a new project
-```
+## initialize a new project
 docker run --rm -v .:/home/node -w /home/node aljazmc/corepack-debian yarn init
-```
 
-###### use shell inside the container to print environment variables
-```
+## use shell inside the container to print environment variables
 docker run --rm -it aljazmc/corepack-debian sh -c "printenv"
 ```
 
-## use cases with docker-compose:
+## > Examples with docker-compose:
 
-docker-compose.yml file
 ```
+## docker-compose.yml file
 services:
     node:
         image: aljazmc/corepack-debian
@@ -39,31 +34,25 @@ services:
             HOME: /home/node
             NODE_ENV: development
         network_mode: host
-```
-###### print corepack version
-```
+
+## print corepack version
 docker-compose run --rm node corepack -v
-```
 
-###### set yarn version to berry
-```
+## set yarn version to berry
 docker-compose run --rm node yarn set version berry
-```
 
-###### initialize a new project
-```
+## initialize a new project
 docker-compose run --rm node yarn init
-```
 
-###### use shell inside the container to print environment variables
-```
+## use shell inside the container to print environment variables
 docker-compose run --rm node sh -c "printenv"
 ```
 
-##### notes
+## > Notes
+
 - not intended for production use.
 - passwordless sudo
 
-## license
+## > License
 
 Corepack is free and open-source software released under the [MIT License](https://github.com/nodejs/corepack/blob/main/LICENSE.md).
