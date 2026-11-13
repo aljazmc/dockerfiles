@@ -4,10 +4,10 @@
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforlinux)
 
-## use cases with docker:
+## > Examples with docker:
 
-###### prepare a directory for development:
 ```
+## prepare a directory for development:
 docker run \
 --device /dev/dri:/dev/dri \
 --device /dev/snd:/dev/snd \
@@ -25,10 +25,8 @@ docker run \
 -v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
 -w /home/heaps \
 aljazmc/heaps-buildforlinux:latest
-```
 
-###### afterwards append shell commands in the end:
-```
+## afterwards append shell commands in the end:
 docker run \
 --device /dev/dri:/dev/dri \
 --device /dev/snd:/dev/snd \
@@ -48,14 +46,14 @@ docker run \
 aljazmc/heaps-buildforlinux:latest "haxe compile.hxml && hl hello.hl"
 ```
 
-###### GPU access:
+## > GPU access:
 The container user needs the host's `render`, `video` and `audio` groups to use the GPU and the sound card. Without them the game falls back to software rendering. The group ids differ between distributions, so look them up with `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 
-## use cases with docker compose
+## > Examples with docker compose
 
-###### prepare a directory for development:
 ```
-# docker-compose.yml example for GNU/Linux host
+## prepare a directory for development:
+## docker-compose.yml example for GNU/Linux host
 services:
     heaps:
         image: aljazmc/heaps-buildforlinux
@@ -79,23 +77,21 @@ services:
             - "29"  # audio group: stat -c %g /dev/snd/controlC0
         network_mode: host
 
-# command
+## command
 docker compose run --rm heaps
-```
 
-###### afterwards append shell commands in the end:
-```
+## afterwards append shell commands in the end:
 docker compose run --rm heaps "haxe compile.hxml && hl hello.hl"
 ```
 
-## How to bundle static libraries
+## > How to bundle static libraries
 
 The first run creates a small project, unless the files already exist: `compile.hxml`, `src/Main.hx`, which sets up the window and a 960x540 scene that is scaled to fit the window (so the layout doesn't depend on the window size), `src/Hello.hx` with a centered greeting, and an empty `res` directory for resources, which `Main` embeds into the compiled game with `hxd.Res.initEmbed()`. Add further parts of the game as classes of their own.
 
 A compiled `.hl` file needs the HashLink runtime (`hl`, `libhl.so`, `*.hdll`) and the libraries the `.hdll` files depend on (SDL3, OpenAL, libpng, libturbojpeg, libvorbis, libuv, ...). To run the game on a machine without Haxe and HashLink installed, copy all of them next to the `.hl` file together with a small launcher script.
 
-###### the image contains this script as the `bundle` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforlinux/bundle)):
 ```
+## the image contains this script as the `bundle` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforlinux/bundle)):
 #!/bin/bash
 set -e
 
@@ -131,32 +127,28 @@ EOF
 chmod +x "$DIST/$NAME"
 
 tar -czf "dist/$NAME.tar.gz" -C dist "$NAME"
-```
 
-###### compile and bundle the project:
-```
+## compile and bundle the project:
 docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl"
-```
 
-The result is the `dist/hello` directory and the `dist/hello.tar.gz` archive. To run the game, extract the archive on the target machine and start the launcher:
-```
+## the result is the `dist/hello` directory and the `dist/hello.tar.gz` archive. To run the game, extract the archive on the target machine and start the launcher:
 tar -xzf hello.tar.gz
 ./hello/hello
 ```
 
-###### notes:
+## > Notes:
 - `HDLLS` lists the HashLink libraries that are copied. Add `ssl`, `sqlite` or `mysql` if the project uses them. Their dependencies are picked up automatically. To change the lists, copy the command into the project (`cp /usr/local/bin/bundle .`), edit it and run `./bundle` instead.
 - `BUNDLE_LIBS` lists the libraries that are copied from the image. Everything else, such as glibc, X11, Wayland, GPU drivers, ALSA, PulseAudio and PipeWire, is expected on the target machine.
-- If the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the `.hl` file.
-- The libraries come from Debian 13 (trixie), so the target machine needs glibc 2.41 or newer (e.g. Debian 13, Ubuntu 25.04, Fedora 42 or newer) and an X11 or Wayland desktop.
-- The launcher sets `LD_LIBRARY_PATH` to its own directory, so the bundled libraries are used instead of the system ones.
+- if the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the `.hl` file.
+- the libraries come from Debian 13 (trixie), so the target machine needs glibc 2.41 or newer (e.g. Debian 13, Ubuntu 25.04, Fedora 42 or newer) and an X11 or Wayland desktop.
+- the launcher sets `LD_LIBRARY_PATH` to its own directory, so the bundled libraries are used instead of the system ones.
 
-## How to make a self-extracting .sh archive
+## > How to make a self-extracting .sh archive
 
 The `.sh` file is a small shell script with the game appended as a `.tar.gz` archive. When it starts, it extracts the game to a temporary directory, runs it with the same arguments, returns its exit code and deletes the directory when the game exits. It only needs `sh`, `tar`, `gzip` and `mktemp`, which every GNU/Linux distribution has.
 
-###### the image contains this script as the `makesh` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforlinux/makesh)):
 ```
+## the image contains this script as the `makesh` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforlinux/makesh)):
 #!/bin/bash
 set -e
 
@@ -178,21 +170,19 @@ __ARCHIVE__
 EOF
 tar -czf - -C "$DIR" . >> "$OUT"
 chmod +x "$OUT"
-```
 
-###### create the archive:
-```
+## create the archive:
 docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl && makesh dist/hello hello dist/hello.sh"
 ```
 
 The result is `dist/hello.sh`. Copy it to the target machine and start it with `./hello.sh`.
 
-###### notes:
+## > Notes:
 - usage: `makesh <directory> <executable in the directory> <output.sh>`. The whole directory is packed and the executable is started from inside it.
-- The game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
-- The requirements of the bundle (glibc 2.41 or newer, X11 or Wayland desktop) apply to the `.sh` archive too.
-- The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`$XDG_DATA_HOME`, by default `~/.local/share`). `hxd.Save` writes to the working directory by default.
+- the game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
+- the requirements of the bundle (glibc 2.41 or newer, X11 or Wayland desktop) apply to the `.sh` archive too.
+- the game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`$XDG_DATA_HOME`, by default `~/.local/share`). `hxd.Save` writes to the working directory by default.
 
-## license
+## > License
 
 Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).
