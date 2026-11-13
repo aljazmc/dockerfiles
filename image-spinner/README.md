@@ -4,7 +4,7 @@
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/image-spinner)
 
-## workflow with docker:
+## > Workflow with docker:
 
 ##### 1.) prepare a directory:
 ```
@@ -17,7 +17,7 @@ docker run --rm -v .:/home/aljazmc -w /home/aljazmc aljazmc/image-spinner:latest
 docker run -it --rm --user aljazmc -v .:/home/aljazmc -w /home/aljazmc aljazmc/image-spinner:latest "sh aports/scripts/mkimage.sh --tag edge --outdir iso --arch x86_64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --repository https://dl-cdn.alpinelinux.org/alpine/edge/community --profile test"
 ```
 
-## workflow with docker compose:
+## > Workflow with docker compose:
 
 ##### 1.) prepare a directory:
 ```
@@ -42,10 +42,10 @@ docker compose run --rm spinner
 docker compose run --rm spinner "sh aports/scripts/mkimage.sh --tag edge --outdir iso --arch x86_64 --repository https://dl-cdn.alpinelinux.org/alpine/edge/main --repository https://dl-cdn.alpinelinux.org/alpine/edge/community --profile test"
 ```
 
-## notes:
+## > Notes:
 
 - if `aports/README.md` file doesn't exist, aports github repository is cloned into temporary folder and then moved into `aports` folder
 
-## license
+## > License
 
 Alpine Linux [aports](https://github.com/alpinelinux/aports) (GitHub mirror of [gitlab.alpinelinux.org/alpine/aports](https://gitlab.alpinelinux.org/alpine/aports)) has no single license: every package is released under its own free and open-source license, declared in the `license` field of its `APKBUILD`.
