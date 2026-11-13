@@ -4,19 +4,17 @@
 
 [GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforwindows)
 
-## use cases with docker:
+## > Examples with docker:
 
-###### prepare a directory for development:
 ```
+## prepare a directory for development:
 docker run \
 --user heaps \
 -v .:/home/heaps \
 -w /home/heaps \
 aljazmc/heaps-buildforwindows:latest
-```
 
-###### afterwards append shell commands in the end:
-```
+## afterwards append shell commands in the end:
 docker run \
 --user heaps \
 -v .:/home/heaps \
@@ -24,11 +22,11 @@ docker run \
 aljazmc/heaps-buildforwindows:latest "haxe compile.hxml"
 ```
 
-## use cases with docker compose
+## > Examples with docker compose
 
-###### prepare a directory for development:
 ```
-# docker-compose.yml example
+## prepare a directory for development:
+## docker-compose.yml example
 services:
     heaps:
         image: aljazmc/heaps-buildforwindows
@@ -37,23 +35,21 @@ services:
         volumes:
             - .:/home/heaps
 
-# command
+## command
 docker compose run --rm heaps
-```
 
-###### afterwards append shell commands in the end:
-```
+## afterwards append shell commands in the end:
 docker compose run --rm heaps "haxe compile.hxml"
 ```
 
-## How to bundle static libraries
+## > How to bundle static libraries
 
 The first run creates a small project, unless the files already exist: `compile.hxml`, `src/Main.hx`, which sets up the window and a 960x540 scene that is scaled to fit the window (so the layout doesn't depend on the window size), `src/Hello.hx` with a centered greeting, and an empty `res` directory for resources, which `Main` embeds into the compiled game with `hxd.Res.initEmbed()`. Add further parts of the game as classes of their own.
 
 The image contains the Windows build of HashLink (`hl.exe`, `libhl.dll`, `*.hdll`, `SDL3.dll`, `OpenAL32.dll`, `vcruntime140.dll`, import libraries and headers) in `$HASHLINK_WIN64` (`/usr/local/hashlink-win64`). It is the same HashLink version as the Haxe libraries (`hlsdl`, `hldx`, ...) installed in the container, so a project compiled in the container runs on Windows when all of these files are copied next to it.
 
-###### the image contains this script as the `bundle` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforwindows/bundle)):
 ```
+## the image contains this script as the `bundle` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforwindows/bundle)):
 #!/bin/bash
 set -e
 
@@ -90,29 +86,23 @@ if [ -d res ]; then
 fi
 
 (cd dist && zip -qr "$NAME-win64.zip" "$NAME-win64")
-```
 
-###### option 1: bundle HashLink bytecode
-```
+## option 1: bundle HashLink bytecode
 docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl"
-```
 
-`hl.exe` is copied as `hello.exe` and `hello.hl` as `hlboot.dat`. `hl.exe` started without arguments runs `hlboot.dat` from the current directory, so double clicking `hello.exe` starts the game.
+## `hl.exe` is copied as `hello.exe` and `hello.hl` as `hlboot.dat`. `hl.exe` started without arguments runs `hlboot.dat` from the current directory, so double clicking `hello.exe` starts the game.
 
-###### option 2: bundle a native executable (HL/C, compiled with mingw-w64)
+## option 2: bundle a native executable (HL/C, compiled with mingw-w64)
 
-Save this as `compile-hlc.hxml`:
-```
+## Save this as `compile-hlc.hxml`:
 -cp src
 -lib format
 -lib heaps
 -lib hlsdl
 -hl out/main.c
 -main Main
-```
 
-Compile the generated C code to `hello.exe` and bundle it:
-```
+## Compile the generated C code to `hello.exe` and bundle it:
 docker compose run --rm heaps '
 haxe compile-hlc.hxml &&
 x86_64-w64-mingw32-gcc -O2 -std=c11 -municode \
@@ -123,22 +113,22 @@ bundle hello.exe
 '
 ```
 
-###### result
+## > Result
 
 Both options create the `dist/hello-win64` directory and the `dist/hello-win64.zip` archive. Extract the archive on a 64-bit Windows machine and run `hello.exe`.
 
-###### notes:
+## > Notes:
 - `HDLLS` and `DLLS` list the files copied from `$HASHLINK_WIN64`. Add `ssl`, `sqlite` or `mysql` to `HDLLS` if the project uses them (and `-l:ssl.lib` etc. to the HL/C command). To change the lists, copy the command into the project (`cp /usr/local/bin/bundle .`), edit it and run `./bundle` instead.
-- To use DirectX instead of SDL, replace `-lib hlsdl` with `-lib hldx` in the `.hxml` file and add `directx` to `HDLLS` (`-l:directx.lib` for HL/C).
-- If the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the compiled file.
-- The image only builds for Windows, it can't run the game. The bundle can be tested on Linux with Wine, e.g. with the [aljazmc/wine-debian](https://hub.docker.com/r/aljazmc/wine-debian) image: `cd dist/hello-win64 && wine hello.exe`.
+- to use DirectX instead of SDL, replace `-lib hlsdl` with `-lib hldx` in the `.hxml` file and add `directx` to `HDLLS` (`-l:directx.lib` for HL/C).
+- ff the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the compiled file.
+- the image only builds for Windows, it can't run the game. The bundle can be tested on Linux with Wine, e.g. with the [aljazmc/wine-debian](https://hub.docker.com/r/aljazmc/wine-debian) image: `cd dist/hello-win64 && wine hello.exe`.
 
-## How to make a single executable .exe
+## > How to make a single executable .exe
 
 `makeexe` packs the bundle into one self-extracting `.exe` with [NSIS](https://nsis.sourceforge.io) (`makensis` is installed in the image). When it starts, it silently extracts the bundle to a temporary directory, runs the game from there with the same arguments, returns its exit code and deletes the directory when the game exits.
 
-###### the image contains this script as the `makeexe` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforwindows/makeexe)):
 ```
+## the image contains this script as the `makeexe` command ([source](https://github.com/aljazmc/dockerfiles/blob/main/heaps/buildforwindows/makeexe)):
 #!/bin/bash
 set -e
 
@@ -177,21 +167,19 @@ SectionEnd
 EOF
 makensis -NOCD -V2 "$NSI"
 rm "$NSI"
-```
 
-###### create the executable:
-```
+## create the executable:
 docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl && makeexe dist/hello-win64 hello.exe dist/hello.exe"
 ```
 
 The result is `dist/hello.exe`, a single file that runs on 64-bit Windows. It works the same way for both bundle options (HashLink bytecode and HL/C).
 
-###### notes:
+## > Notes:
 - usage: `makeexe <directory> <executable in the directory> <output.exe>`. The whole directory is packed and the executable is started from inside it, so files next to it (DLLs, `hlboot.dat`, `assets`, ...) are found.
-- The `.exe` has the default NSIS icon. To use your own, copy the command into the project (`cp /usr/local/bin/makeexe .`), add `Icon "icon.ico"` below `OutFile` and run `./makeexe` instead.
-- Self-extracting executables are sometimes flagged by antivirus heuristics or SmartScreen. Signing the `.exe` helps.
-- The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`%APPDATA%`). `hxd.Save` writes to the working directory by default.
+- the `.exe` has the default NSIS icon. To use your own, copy the command into the project (`cp /usr/local/bin/makeexe .`), add `Icon "icon.ico"` below `OutFile` and run `./makeexe` instead.
+- self-extracting executables are sometimes flagged by antivirus heuristics or SmartScreen. Signing the `.exe` helps.
+- the game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`%APPDATA%`). `hxd.Save` writes to the working directory by default.
 
-## license
+## > License
 
 Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).
