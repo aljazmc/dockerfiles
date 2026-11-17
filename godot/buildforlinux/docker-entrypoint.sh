@@ -75,6 +75,38 @@ export_path="build/linux/hello.x86_64"
 
 binary_format/embed_pck=true
 binary_format/architecture="x86_64"
+
+[preset.1]
+
+name="macOS"
+platform="macOS"
+runnable=true
+export_filter="all_resources"
+include_filter=""
+exclude_filter=""
+export_path="build/macos/hello.zip"
+
+[preset.1.options]
+
+binary_format/architecture="universal"
+application/bundle_identifier="com.example.hello"
+codesign/codesign=1
+notarization/notarization=0
+
+[preset.2]
+
+name="Windows Desktop"
+platform="Windows Desktop"
+runnable=true
+export_filter="all_resources"
+include_filter=""
+exclude_filter=""
+export_path="build/windows/hello.exe"
+
+[preset.2.options]
+
+binary_format/embed_pck=true
+binary_format/architecture="x86_64"
 EOF
 fi
 
