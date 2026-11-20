@@ -1,30 +1,24 @@
 #!/bin/bash
 
-IMAGES=$(
-    find . -type d | 
-    sed "
-        /.git/d;
-        /^\.$/d;
-        /blender$/d;
-        /corepack$/d;
-        /fluidsynth$/d;
-        /godot$/d;
-        /heaps$/d;
-        /inkscape$/d;
-        /wine$/d;
-        /x11$/d;
-        s/\.\///g;
-        s/\//-/g;
-    " |
-    sort | 
-    tr '\n' ' '
+cd "$(dirname "$0")" || exit 1
+
+## every directory containing a Dockerfile, e.g. "godot/buildforlinux"
+DIRS=$(
+    find . -name Dockerfile -not -path './.git/*' -exec dirname {} \; |
+    sed 's/^\.\///' |
+    sort
 )
+
+## image name is the directory path with "/" replaced by "-"
+image_name() {
+    echo "${1//\//-}"
+}
 
 clean() {
 
-for i in ${IMAGES[@]}; do
+for dir in $DIRS; do
 
-    image=$i
+    image=$(image_name "$dir")
 
     docker image ls aljazmc/$image -q | sort -u | xargs -r docker rmi -f
 
@@ -34,24 +28,17 @@ done
 
 publish() {
 
-for i in ${IMAGES[@]}; do
+for dir in $DIRS; do
 
-    ## image-spinner is just one level deep
-    dir=$(echo $i | sed 's/-/\//g;s/image\//image-/g')
-    image=$i
-    
-    cd $dir
-    docker build . -t aljazmc/$image
-    docker tag aljazmc/$image aljazmc/$image:latest
-    docker push -a aljazmc/$image
-    docker image ls aljazmc/$image -q | sort -u | xargs -r docker rmi -f
+    image=$(image_name "$dir")
 
-    cd ..
-    if test "$dir" = "image-spinner"; then
-        continue
-    else
-        cd ..
-    fi
+    (
+        cd "$dir" || exit 1
+        docker build . -t aljazmc/$image
+        docker tag aljazmc/$image aljazmc/$image:latest
+        docker push -a aljazmc/$image
+        docker image ls aljazmc/$image -q | sort -u | xargs -r docker rmi -f
+    )
 
     ## it's important to be nice
     sleep 30
