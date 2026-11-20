@@ -20,7 +20,7 @@ for dir in $DIRS; do
 
     image=$(image_name "$dir")
 
-    docker image ls aljazmc/$image -q | sort -u | xargs -r docker rmi -f
+    docker image ls "aljazmc/$image" -q | sort -u | xargs -r docker rmi -f
 
 done
 
@@ -34,10 +34,10 @@ for dir in $DIRS; do
 
     (
         cd "$dir" || exit 1
-        docker build . -t aljazmc/$image
-        docker tag aljazmc/$image aljazmc/$image:latest
-        docker push -a aljazmc/$image
-        docker image ls aljazmc/$image -q | sort -u | xargs -r docker rmi -f
+        docker build . -t "aljazmc/$image"
+        docker tag "aljazmc/$image" "aljazmc/$image:latest"
+        docker push -a "aljazmc/$image"
+        docker image ls "aljazmc/$image" -q | sort -u | xargs -r docker rmi -f
     )
 
     ## it's important to be nice
