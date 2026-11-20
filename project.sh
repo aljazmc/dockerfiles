@@ -28,22 +28,35 @@ done
 
 publish() {
 
+failed=()
+
 for dir in $DIRS; do
 
     image=$(image_name "$dir")
 
-    (
-        cd "$dir" || exit 1
-        docker build . -t "aljazmc/$image"
+    ## only push images that build and pass their smoke test
+    if ! (cd "$dir" && docker build . -t "aljazmc/$image"); then
+        echo "aljazmc/$image: build failed, not pushing"
+        failed+=("$image")
+    elif ! tests/smoke_test.sh --no-build "$image"; then
+        echo "aljazmc/$image: smoke test failed, not pushing"
+        failed+=("$image")
+    else
         docker tag "aljazmc/$image" "aljazmc/$image:latest"
         docker push -a "aljazmc/$image"
-        docker image ls "aljazmc/$image" -q | sort -u | xargs -r docker rmi -f
-    )
+    fi
+
+    docker image ls "aljazmc/$image" -q | sort -u | xargs -r docker rmi -f
 
     ## it's important to be nice
     sleep 30
 
 done
+
+if [ "${#failed[@]}" -gt 0 ]; then
+    echo "not pushed: ${failed[*]}"
+    exit 1
+fi
 
 }
 
