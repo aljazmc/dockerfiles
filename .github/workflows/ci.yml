@@ -1,4 +1,4 @@
-name: shellcheck
+name: ci
 
 on:
   push:
@@ -23,3 +23,11 @@ jobs:
               head -n1 "$f" | grep -qE '^#!.*/(env )?(ba|da|k)?sh\b' && printf '%s\0' "$f"
             done |
             xargs -0 -t shellcheck
+
+  project-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run project test
+        run: tests/project_test.sh
