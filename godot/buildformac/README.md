@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/godot-buildformac) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/godot-buildformac) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/godot-buildformac)
+# aljazmc/godot-buildformac
 
-# Docker image with Godot and the macOS export templates
+Godot with the macOS export templates, for exporting Godot games for macOS from Linux.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/godot/buildformac)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/godot-buildformac)](https://hub.docker.com/r/aljazmc/godot-buildformac) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/godot-buildformac)](https://hub.docker.com/r/aljazmc/godot-buildformac) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/godot-buildformac)](https://hub.docker.com/r/aljazmc/godot-buildformac)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/godot-buildformac) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/godot/buildformac) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `debian:13.7` |
+| **Software** | Godot 4.7.2 (official build) with export templates |
+| **Also included** | `makedmg` (`.dmg` disk images), xorriso |
+| **User** | `godot` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
+| **Tags** | `latest`, `4.7.2` |
+
+## Usage with Docker
 
 ```
 ## prepare a directory for development:
@@ -22,7 +34,7 @@ docker run \
 aljazmc/godot-buildformac:latest "godot --headless --import && godot --headless --export-release macOS build/macos/hello.zip"
 ```
 
-## > Examples with docker compose
+## Usage with Docker Compose
 
 ```
 ## prepare a directory for development:
@@ -42,7 +54,7 @@ docker compose run --rm godot
 docker compose run --rm godot "godot --headless --import && godot --headless --export-release macOS build/macos/hello.zip"
 ```
 
-## > How to export the project
+## How to export the project
 
 The first run creates a small project and an `export_presets.cfg` with a `macOS` preset, unless the files already exist: `project.godot` with a 960x540 viewport that is scaled to fit the window (so the layout doesn't depend on the window size), `main.tscn` as the main scene and `hello.tscn` with a label centered in the viewport, which `main.tscn` instances. Add further parts of the game as scenes of their own. The image contains the Godot editor (`godot`) and the macOS export template (universal: Apple Silicon and Intel).
 
@@ -53,11 +65,11 @@ docker compose run --rm godot "godot --headless --import && godot --headless --e
 
 The result is the `build/macos/hello.zip` archive with `Hello.app` inside. Extract it on a Mac and open `Hello.app`.
 
-## > Notes:
-- macOS exports need `textures/vram_compression/import_etc2_astc=true` in `project.godot`, otherwise the export fails with a configuration error. The generated project already has it. Add it to your own projects too.
+### Notes
+- MacOS exports need `textures/vram_compression/import_etc2_astc=true` in `project.godot`, otherwise the export fails with a configuration error. The generated project already has it. Add it to your own projects too.
 - `application/bundle_identifier` is required. Change `com.example.hello` to your own identifier.
 - `codesign/codesign=1` signs the app ad-hoc with Godot's built-in signer. Without a signature the app doesn't start on Apple Silicon.
-- the app isn't notarized, so macOS blocks it on the first start. Allow it in "System Settings" → "Privacy & Security" → "Open Anyway", or remove the quarantine flag with `xattr -dr com.apple.quarantine Hello.app`.
+- The app isn't notarized, so macOS blocks it on the first start. Allow it in "System Settings" → "Privacy & Security" → "Open Anyway", or remove the quarantine flag with `xattr -dr com.apple.quarantine Hello.app`.
 - `--import` imports the project's resources first. It is only needed when resources were added or changed outside of the editor.
 - `build/.gdignore` keeps Godot from importing the exported files.
 
@@ -88,13 +100,19 @@ docker compose run --rm godot "godot --headless --import && godot --headless --e
 
 The result is `build/hello.dmg`. Open it on a Mac and drag `Hello.app` to `Applications`.
 
-## > Notes:
-- usage: `makedmg <app bundle> <output.dmg>`
-- the image is an uncompressed hybrid ISO 9660 / HFS+ image with an Apple partition map, which macOS mounts like any other `.dmg`. Compressed `.dmg` images (UDZO) can only be created with `hdiutil` on macOS.
-- browsers mark downloaded `.dmg` files with the quarantine flag and macOS passes it on to the app, so the notes about Gatekeeper above apply to the app copied from the `.dmg` too.
-- godot can export a `.dmg` directly only on macOS, on other systems it exports a `.zip`. The commands above extract the `.app` from the `.zip` first.
-- the ad-hoc signature of the app is kept, because it is stored inside the `.app` bundle.
+### Notes
+- Usage: `makedmg <app bundle> <output.dmg>`.
+- The image is an uncompressed hybrid ISO 9660 / HFS+ image with an Apple partition map, which macOS mounts like any other `.dmg`. Compressed `.dmg` images (UDZO) can only be created with `hdiutil` on macOS.
+- Browsers mark downloaded `.dmg` files with the quarantine flag and macOS passes it on to the app, so the notes about Gatekeeper above apply to the app copied from the `.dmg` too.
+- Godot can export a `.dmg` directly only on macOS, on other systems it exports a `.zip`. The commands above extract the `.app` from the `.zip` first.
+- The ad-hoc signature of the app is kept, because it is stored inside the `.app` bundle.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `4.7.2`: the Godot version in the image, e.g. `aljazmc/godot-buildformac:4.7.2`. Use it to stay on a known version.
+- Godot is the official build and export templates from GitHub, pinned with `GODOT_VERSION` in the Dockerfile.
+
+## License
 
 Godot is free and open-source software released under the [MIT License](https://github.com/godotengine/godot/blob/master/LICENSE.txt). The licenses of bundled third-party code are listed in [COPYRIGHT.txt](https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt).

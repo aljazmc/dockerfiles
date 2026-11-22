@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforlinux) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforlinux) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforlinux)
+# aljazmc/heaps-buildforlinux
 
-# Docker image with Heaps, Haxe, Neko and Hashlink
+Heaps, Haxe, Neko and HashLink on Debian, for building Heaps games for GNU/Linux.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforlinux)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforlinux)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforlinux)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforlinux)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/heaps-buildforlinux) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforlinux) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `debian:13.7` |
+| **Software** | Heaps 2.1.0 (installed from haxelib on the first start) |
+| **Also included** | Haxe, Neko, HashLink (built from source), g++, SDL3, OpenAL, `bundle` and `makesh` |
+| **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
+| **Tags** | `latest`, `2.1.0` |
+
+## Usage with Docker
 
 ```
 ## prepare a directory for development:
@@ -46,10 +58,10 @@ docker run \
 aljazmc/heaps-buildforlinux:latest "haxe compile.hxml && hl hello.hl"
 ```
 
-## > GPU access:
+## GPU access
 The container user needs the host's `render`, `video` and `audio` groups to use the GPU and the sound card. Without them the game falls back to software rendering. The group ids differ between distributions, so look them up with `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 
-## > Examples with docker compose
+## Usage with Docker Compose
 
 ```
 ## prepare a directory for development:
@@ -84,7 +96,7 @@ docker compose run --rm heaps
 docker compose run --rm heaps "haxe compile.hxml && hl hello.hl"
 ```
 
-## > How to bundle static libraries
+## How to bundle the game with its libraries
 
 The first run creates a small project, unless the files already exist: `compile.hxml`, `src/Main.hx`, which sets up the window and a 960x540 scene that is scaled to fit the window (so the layout doesn't depend on the window size), `src/Hello.hx` with a centered greeting, and an empty `res` directory for resources, which `Main` embeds into the compiled game with `hxd.Res.initEmbed()`. Add further parts of the game as classes of their own.
 
@@ -136,14 +148,14 @@ tar -xzf hello.tar.gz
 ./hello/hello
 ```
 
-## > Notes:
+### Notes
 - `HDLLS` lists the HashLink libraries that are copied. Add `ssl`, `sqlite` or `mysql` if the project uses them. Their dependencies are picked up automatically. To change the lists, copy the command into the project (`cp /usr/local/bin/bundle .`), edit it and run `./bundle` instead.
 - `BUNDLE_LIBS` lists the libraries that are copied from the image. Everything else, such as glibc, X11, Wayland, GPU drivers, ALSA, PulseAudio and PipeWire, is expected on the target machine.
-- if the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the `.hl` file.
-- the libraries come from Debian 13 (trixie), so the target machine needs glibc 2.41 or newer (e.g. Debian 13, Ubuntu 25.04, Fedora 42 or newer) and an X11 or Wayland desktop.
-- the launcher sets `LD_LIBRARY_PATH` to its own directory, so the bundled libraries are used instead of the system ones.
+- If the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the `.hl` file.
+- The libraries come from Debian 13 (trixie), so the target machine needs glibc 2.41 or newer (e.g. Debian 13, Ubuntu 25.04, Fedora 42 or newer) and an X11 or Wayland desktop.
+- The launcher sets `LD_LIBRARY_PATH` to its own directory, so the bundled libraries are used instead of the system ones.
 
-## > How to make a self-extracting .sh archive
+## How to make a self-extracting .sh archive
 
 The `.sh` file is a small shell script with the game appended as a `.tar.gz` archive. When it starts, it extracts the game to a temporary directory, runs it with the same arguments, returns its exit code and deletes the directory when the game exits. It only needs `sh`, `tar`, `gzip` and `mktemp`, which every GNU/Linux distribution has.
 
@@ -177,12 +189,18 @@ docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl && makesh di
 
 The result is `dist/hello.sh`. Copy it to the target machine and start it with `./hello.sh`.
 
-## > Notes:
-- usage: `makesh <directory> <executable in the directory> <output.sh>`. The whole directory is packed and the executable is started from inside it.
-- the game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
-- the requirements of the bundle (glibc 2.41 or newer, X11 or Wayland desktop) apply to the `.sh` archive too.
-- the game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`$XDG_DATA_HOME`, by default `~/.local/share`). `hxd.Save` writes to the working directory by default.
+### Notes
+- Usage: `makesh <directory> <executable in the directory> <output.sh>`. The whole directory is packed and the executable is started from inside it.
+- The game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
+- The requirements of the bundle (glibc 2.41 or newer, X11 or Wayland desktop) apply to the `.sh` archive too.
+- The game runs from a temporary directory that is removed when it exits, so write files that should persist, like saved games, to the user's data directory (`$XDG_DATA_HOME`, by default `~/.local/share`). `hxd.Save` writes to the working directory by default.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `2.1.0`: the Heaps version in the image, e.g. `aljazmc/heaps-buildforlinux:2.1.0`. Use it to stay on a known version.
+- Heaps is installed from haxelib on the first start of the container (into `~/haxelib`), pinned with the `HEAPS_VERSION` environment variable set in the Dockerfile. An existing `~/haxelib` directory is kept as it is.
+
+## License
 
 Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).

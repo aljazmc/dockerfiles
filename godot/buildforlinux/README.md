@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/godot-buildforlinux) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/godot-buildforlinux) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/godot-buildforlinux)
+# aljazmc/godot-buildforlinux
 
-# Docker image with Godot and the Linux export templates
+Godot with the Linux export templates, for exporting and running Godot games for GNU/Linux.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/godot/buildforlinux)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/godot-buildforlinux)](https://hub.docker.com/r/aljazmc/godot-buildforlinux) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/godot-buildforlinux)](https://hub.docker.com/r/aljazmc/godot-buildforlinux) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/godot-buildforlinux)](https://hub.docker.com/r/aljazmc/godot-buildforlinux)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/godot-buildforlinux) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/godot/buildforlinux) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `debian:13.7` |
+| **Software** | Godot 4.7.2 (official build) with export templates |
+| **Also included** | `makesh` (self-extracting `.sh` archives), Mesa, Vulkan, PipeWire |
+| **User** | `godot` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
+| **Tags** | `latest`, `4.7.2` |
+
+## Usage with Docker
 
 ```
 ## prepare a directory for development:
@@ -46,10 +58,10 @@ docker run \
 aljazmc/godot-buildforlinux:latest "godot --headless --import && godot --headless --export-release Linux build/linux/hello.x86_64 && build/linux/hello.x86_64"
 ```
 
-## > GPU access:
+## GPU access
 The container user needs the host's `render`, `video` and `audio` groups to use the GPU and the sound card. Without them the game falls back to software rendering. The group ids differ between distributions, so look them up with `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 
-## > Examples with docker compose:
+## Usage with Docker Compose
 
 ```
 ## prepare a directory for development:
@@ -84,7 +96,7 @@ docker compose run --rm godot
 docker compose run --rm godot "godot --headless --import && godot --headless --export-release Linux build/linux/hello.x86_64 && build/linux/hello.x86_64"
 ```
 
-## > How to export the project
+## How to export the project
 
 The first run creates a small project and an `export_presets.cfg` with a `Linux` preset, unless the files already exist: `project.godot` with a 960x540 viewport that is scaled to fit the window (so the layout doesn't depend on the window size), `main.tscn` as the main scene and `hello.tscn` with a label centered in the viewport, which `main.tscn` instances. Add further parts of the game as scenes of their own. The image contains the Godot editor (`godot`) and the Linux export templates (x86_64 and arm64).
 
@@ -101,14 +113,14 @@ docker compose run --rm godot "tar -czf build/hello-linux-x86_64.tar.gz -C build
 
 Extract the archive on the target machine and run `./hello.x86_64`.
 
-## > Notes:
+### Notes
 - `binary_format/embed_pck=true` puts the game data inside the executable. Without it, keep `hello.pck` next to `hello.x86_64`.
-- for an arm64 build, set `binary_format/architecture="arm64"` in `export_presets.cfg`.
+- For an arm64 build, set `binary_format/architecture="arm64"` in `export_presets.cfg`.
 - `--import` imports the project's resources first. It is only needed when resources were added or changed outside of the editor.
 - `build/.gdignore` keeps Godot from importing the exported files.
 - The official export templates run on any x86_64 GNU/Linux with glibc 2.28 or newer and an X11 or Wayland desktop with a Vulkan or OpenGL 3.3 driver.
 
-## > How to make a self-extracting .sh archive
+## How to make a self-extracting .sh archive
 
 The `.sh` file is a small shell script with the game appended as a `.tar.gz` archive. When it starts, it extracts the game to a temporary directory, runs it with the same arguments, returns its exit code and deletes the directory when the game exits. It only needs `sh`, `tar`, `gzip` and `mktemp`, which every GNU/Linux distribution has.
 
@@ -142,11 +154,17 @@ docker compose run --rm godot "godot --headless --import && godot --headless --e
 
 The result is `build/hello.sh`. Copy it to the target machine and start it with `./hello.sh`.
 
-## > Notes:
-- usage: `makesh <directory> <executable in the directory> <output.sh>`. The whole directory is packed and the executable is started from inside it.
-- the game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
-- with `binary_format/embed_pck=true` the exported `hello.x86_64` already is a single file. The `.sh` archive is useful when the game needs more files next to the executable, e.g. GDExtension libraries or a separate `hello.pck`.
+### Notes
+- Usage: `makesh <directory> <executable in the directory> <output.sh>`. The whole directory is packed and the executable is started from inside it.
+- The game is extracted on every start. If `/tmp` is mounted with `noexec`, point `TMPDIR` to another directory: `TMPDIR=~/.cache ./hello.sh`.
+- With `binary_format/embed_pck=true` the exported `hello.x86_64` already is a single file. The `.sh` archive is useful when the game needs more files next to the executable, e.g. GDExtension libraries or a separate `hello.pck`.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `4.7.2`: the Godot version in the image, e.g. `aljazmc/godot-buildforlinux:4.7.2`. Use it to stay on a known version.
+- Godot is the official build and export templates from GitHub, pinned with `GODOT_VERSION` in the Dockerfile.
+
+## License
 
 Godot is free and open-source software released under the [MIT License](https://github.com/godotengine/godot/blob/master/LICENSE.txt). The licenses of bundled third-party code are listed in [COPYRIGHT.txt](https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt).

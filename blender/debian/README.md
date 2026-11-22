@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-debian)
+# aljazmc/blender-debian
 
-# Docker image with Blender and FFmpeg
+The official Blender build and FFmpeg on Debian, for headless rendering and Python scripting.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/blender/debian)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-debian)](https://hub.docker.com/r/aljazmc/blender-debian) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-debian)](https://hub.docker.com/r/aljazmc/blender-debian) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-debian)](https://hub.docker.com/r/aljazmc/blender-debian)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/blender-debian) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/blender/debian) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `debian:13.7` |
+| **Software** | Blender 5.2.x (official build from blender.org, with its own Python) |
+| **Also included** | FFmpeg, xterm |
+| **User** | `blender` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
+| **Tags** | `latest`, `5.2.4` |
+
+## Usage with Docker
 
 ```
 ## start container shell
@@ -14,7 +26,7 @@ docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-debian s
 docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-debian sh -c "blender -b scene.blend -o //render_#### -f 1"
 ```
 
-## > Examples with docker compose:
+## Usage with Docker Compose
 
 ```
 ## docker-compose.yml file
@@ -49,14 +61,19 @@ docker compose run --rm blender sh -c "sh"
 docker compose run --rm blender sh -c "blender -b scene.blend -o //render_#### -f 1"
 ```
 
-## > Notes
+## Notes
 
-- passwordless sudo
-- the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
-- there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
-- Blender is the official build from [blender.org](https://www.blender.org/download/), installed in `/opt/blender` and verified against its sha256 checksum from blender.org. It is pinned to the 5.2 series: the build picks the newest 5.2.x release, and the image is also tagged with the exact installed version (e.g. `5.2.3`). It comes with its own Python, so `blender -b file.blend --python script.py` works without a system Python.
+- The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
+- There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
+- Blender is the official build from [blender.org](https://www.blender.org/download/), installed in `/opt/blender` and verified against its sha256 checksum from blender.org. It comes with its own Python, so `blender -b file.blend --python script.py` works without a system Python.
 - `ffmpeg` is included for encoding rendered frames into video.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `5.2.4`: the Blender version in the image, e.g. `aljazmc/blender-debian:5.2.4`. Use it to stay on a known version.
+- Blender is the official build from blender.org, pinned to the 5.2 series with `BLENDER_VERSION` in the Dockerfile, so the newest 5.2.x release is installed.
+
+## License
 
 Blender is free and open-source software released primarily under the GNU General Public License (GPL) v2+ (or v3+ for binaries): [COPYING](https://github.com/blender/blender/blob/main/COPYING), [GPL v2](https://github.com/blender/blender/blob/main/doc/license/GPL-license.txt), [GPL v3](https://github.com/blender/blender/blob/main/doc/license/GPL3-license.txt). The licenses of bundled third-party code are in [doc/license](https://github.com/blender/blender/tree/main/doc/license).

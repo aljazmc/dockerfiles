@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/x11-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/x11-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/x11-alpine)
+# aljazmc/x11-alpine
 
-# Docker image with x11 on Alpine Linux
+A base image for GUI applications on Alpine Linux that use the host's X server.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/x11/alpine)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/x11-alpine)](https://hub.docker.com/r/aljazmc/x11-alpine) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/x11-alpine)](https://hub.docker.com/r/aljazmc/x11-alpine) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/x11-alpine)](https://hub.docker.com/r/aljazmc/x11-alpine)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/x11-alpine) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/x11/alpine) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `alpine:3.24.4` |
+| **Software** | libX11 1.8.14 |
+| **Also included** | xterm, GTK 2, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client |
+| **User** | `x11` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
+| **Tags** | `latest`, `1.8.14` |
+
+## Usage with Docker
 
 ```
 ## start container shell
@@ -14,7 +26,7 @@ docker run --rm -it -v .:/home/x11 -w /home/x11 aljazmc/x11-alpine sh -c "sh"
 docker run --rm -it -v .:/home/x11 -w /home/x11 aljazmc/x11-alpine sh -c "printenv"
 ```
 
-## > Examples with docker compose:
+## Usage with Docker Compose
 
 ```
 ## docker-compose.yml file
@@ -49,13 +61,18 @@ docker compose run --rm x11 sh -c "sh"
 docker compose run --rm x11 sh -c "printenv"
 ```
 
-## > Notes
-- not intended for production use.
-- passwordless doas (`doas apk add ...`)
-- the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
-- there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
+## Notes
+- Not intended for production use.
+- The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
+- There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
 - Alpine Linux uses musl instead of glibc, so binaries built on glibc distributions (e.g. Debian, Ubuntu, Fedora) don't run here. Use Alpine packages or programs built on Alpine.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `1.8.14`: the libX11 version in the image, e.g. `aljazmc/x11-alpine:1.8.14`. Use it to stay on a known version.
+- libX11 is the Alpine `libx11` package, pinned with `LIBX11_VERSION` in the Dockerfile (`libx11~1.8.14`).
+
+## License
 
 The X Window System libraries from X.Org are free and open-source software released mostly under the MIT/X11 license and similar permissive licenses: [X.Org licenses](https://www.x.org/releases/current/doc/xorg-docs/License.html). Each component has its own `COPYING` file in its repository on [gitlab.freedesktop.org/xorg](https://gitlab.freedesktop.org/xorg).

@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildformac) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildformac) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildformac)
+# aljazmc/heaps-buildformac
 
-# Docker image with Heaps, Haxe, Neko and the macOS build of Hashlink.
+Heaps, Haxe, Neko and the macOS build of HashLink, for building Heaps games for macOS from Linux.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildformac)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildformac)](https://hub.docker.com/r/aljazmc/heaps-buildformac) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildformac)](https://hub.docker.com/r/aljazmc/heaps-buildformac) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildformac)](https://hub.docker.com/r/aljazmc/heaps-buildformac)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/heaps-buildformac) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildformac) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `debian:13.7` |
+| **Software** | Heaps 2.1.0 (installed from haxelib on the first start) |
+| **Also included** | Haxe, Neko, HashLink for macOS (x86_64), `bundle` and `makedmg`, xorriso, zip |
+| **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
+| **Tags** | `latest`, `2.1.0` |
+
+## Usage with Docker
 
 ```
 ## prepare a directory for development:
@@ -22,7 +34,7 @@ docker run \
 aljazmc/heaps-buildformac:latest "haxe compile.hxml"
 ```
 
-## > Examples with docker compose
+## Usage with Docker Compose
 
 ```
 ## prepare a directory for development:
@@ -42,7 +54,7 @@ docker compose run --rm heaps
 docker compose run --rm heaps "haxe compile.hxml"
 ```
 
-## > How to bundle static libraries
+## How to bundle the game with its libraries
 
 The first run creates a small project, unless the files already exist: `compile.hxml`, `src/Main.hx`, which sets up the window and a 960x540 scene that is scaled to fit the window (so the layout doesn't depend on the window size), `src/Hello.hx` with a centered greeting, and an empty `res` directory for resources, which `Main` embeds into the compiled game with `hxd.Res.initEmbed()`. Add further parts of the game as classes of their own.
 
@@ -110,16 +122,16 @@ docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl"
 
 The result is the `dist/hello.app` bundle and the `dist/hello-macos.zip` archive. Extract the archive on a Mac and open `hello.app`.
 
-## > Notes:
+### Notes
 - `HDLLS` lists the HashLink libraries that are copied. Add `ssl` or `sqlite` if the project uses them. To change the lists, copy the command into the project (`cp /usr/local/bin/bundle .`), edit it and run `./bundle` instead.
-- if the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the `.hl` file.
+- If the project loads resources from the `res` directory at runtime (`hxd.Res.initLocal()`), the directory is copied too. With `hxd.Res.initEmbed()` the resources are already inside the `.hl` file.
 - `hl` reads the `.hl` file from the current directory, so `launcher` changes to `Contents/MacOS` before it starts the game.
-- the HashLink JIT only exists for x86_64. On Apple Silicon the game runs through Rosetta 2 (macOS asks to install it the first time).
-- only HashLink bytecode can be bundled. A native HL/C build for macOS needs the Apple SDK and its compiler, which can't be shipped in this image.
-- the bundle isn't signed or notarized. macOS blocks apps downloaded from the internet, so right click `hello.app` and choose "Open", or remove the quarantine flag with `xattr -dr com.apple.quarantine hello.app`.
-- change `com.example.$NAME` in `Info.plist` to your own bundle identifier.
+- The HashLink JIT only exists for x86_64. On Apple Silicon the game runs through Rosetta 2 (macOS asks to install it the first time).
+- Only HashLink bytecode can be bundled. A native HL/C build for macOS needs the Apple SDK and its compiler, which can't be shipped in this image.
+- The bundle isn't signed or notarized. macOS blocks apps downloaded from the internet, so right click `hello.app` and choose "Open", or remove the quarantine flag with `xattr -dr com.apple.quarantine hello.app`.
+- Change `com.example.$NAME` in `Info.plist` to your own bundle identifier.
 
-## > How to make a .dmg disk image
+## How to make a .dmg disk image
 
 Applications for macOS are `.app` bundles and they are usually distributed in a `.dmg` disk image. Opening the `.dmg` shows the app next to a link to the `Applications` folder, and the app is installed by dragging it there. `makedmg` creates such an image with `xorriso` (installed in the image).
 
@@ -146,12 +158,18 @@ docker compose run --rm heaps "haxe compile.hxml && bundle hello.hl && makedmg d
 
 The result is `dist/hello.dmg`. Open it on a Mac and drag `hello.app` to `Applications`.
 
-## > Notes:
-- usage: `makedmg <app bundle> <output.dmg>`
-- the image is an uncompressed hybrid ISO 9660 / HFS+ image with an Apple partition map, which macOS mounts like any other `.dmg`. Compressed `.dmg` images (UDZO) can only be created with `hdiutil` on macOS.
-- browsers mark downloaded `.dmg` files with the quarantine flag and macOS passes it on to the app, so the notes about Gatekeeper above apply to the app copied from the `.dmg` too.
-- an app started directly from the mounted `.dmg` runs from a read-only directory, and `launcher` changes to `Contents/MacOS`, so write files that should persist, like saved games, to `~/Library/Application Support`. `hxd.Save` writes to the working directory by default.
+### Notes
+- Usage: `makedmg <app bundle> <output.dmg>`.
+- The image is an uncompressed hybrid ISO 9660 / HFS+ image with an Apple partition map, which macOS mounts like any other `.dmg`. Compressed `.dmg` images (UDZO) can only be created with `hdiutil` on macOS.
+- Browsers mark downloaded `.dmg` files with the quarantine flag and macOS passes it on to the app, so the notes about Gatekeeper above apply to the app copied from the `.dmg` too.
+- An app started directly from the mounted `.dmg` runs from a read-only directory, and `launcher` changes to `Contents/MacOS`, so write files that should persist, like saved games, to `~/Library/Application Support`. `hxd.Save` writes to the working directory by default.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `2.1.0`: the Heaps version in the image, e.g. `aljazmc/heaps-buildformac:2.1.0`. Use it to stay on a known version.
+- Heaps is installed from haxelib on the first start of the container (into `~/haxelib`), pinned with the `HEAPS_VERSION` environment variable set in the Dockerfile. An existing `~/haxelib` directory is kept as it is.
+
+## License
 
 Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).

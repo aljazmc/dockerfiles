@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/fluidsynth-alpine)
+# aljazmc/fluidsynth-alpine
 
-# Docker image with FluidSynth, FFmpeg and Python 3 on Alpine Linux
+FluidSynth, FFmpeg and Python 3 on Alpine Linux, for rendering MIDI to audio.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/fluidsynth/alpine)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-alpine)](https://hub.docker.com/r/aljazmc/fluidsynth-alpine) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-alpine)](https://hub.docker.com/r/aljazmc/fluidsynth-alpine) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/fluidsynth-alpine)](https://hub.docker.com/r/aljazmc/fluidsynth-alpine)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/fluidsynth-alpine) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/fluidsynth/alpine) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `alpine:3.24.4` |
+| **Software** | FluidSynth 2.5.4 (Alpine package) |
+| **Also included** | TimGM6mb General MIDI soundfont, FFmpeg, Python 3 with NumPy and pip, bash, GNU findutils |
+| **User** | `fluidsynth` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
+| **Tags** | `latest`, `2.5.4` |
+
+## Usage with Docker
 
 ```
 ## start container shell
@@ -14,7 +26,7 @@ docker run --rm -it -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth
 docker run --rm -it -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-alpine sh -c "fluidsynth -ni -F song.wav /usr/share/soundfonts/default.sf2 song.mid && ffmpeg -i song.wav song.mp3"
 ```
 
-## > Examples with docker compose:
+## Usage with Docker Compose
 
 ```
 ## docker-compose.yml file
@@ -49,17 +61,22 @@ docker compose run --rm fluidsynth sh -c "sh"
 docker compose run --rm fluidsynth sh -c "fluidsynth -ni -F song.wav /usr/share/soundfonts/default.sf2 song.mid && ffmpeg -i song.wav song.mp3"
 ```
 
-## > Notes
+## Notes
 
-- not intended for production use.
-- passwordless doas (`doas apk add ...`)
-- the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
-- there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
+- Not intended for production use.
+- The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
+- There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
 - Alpine Linux uses musl instead of glibc, so binaries built on glibc distributions (e.g. Debian, Ubuntu, Fedora) don't run here. Use Alpine packages or programs built on Alpine.
-- the default General MIDI soundfont is `/usr/share/soundfonts/default.sf2` (TimGM6mb).
-- the `SOUNDFONT` environment variable points to the default soundfont (`/usr/share/soundfonts/default.sf2`). Override it with `-e SOUNDFONT=/path/to/soundfont.sf2`.
+- The default General MIDI soundfont is `/usr/share/soundfonts/default.sf2` (TimGM6mb).
+- The `SOUNDFONT` environment variable points to the default soundfont (`/usr/share/soundfonts/default.sf2`). Override it with `-e SOUNDFONT=/path/to/soundfont.sf2`.
 - `bash` and `findutils` (GNU `find`) are included for bash scripts that use `find -printf`.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `2.5.4`: the FluidSynth version in the image, e.g. `aljazmc/fluidsynth-alpine:2.5.4`. Use it to stay on a known version.
+- FluidSynth is the Alpine `fluidsynth` package, pinned with `FLUIDSYNTH_VERSION` in the Dockerfile (`fluidsynth~2.5.4`).
+
+## License
 
 FluidSynth is free and open-source software released under the [GNU Lesser General Public License (LGPL) v2.1+](https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE).

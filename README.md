@@ -1,66 +1,93 @@
 # aljazmc's dockerfiles
 
-## > blender
-Docker images with Blender and FFmpeg. For rendering and Python scripting.
+Docker images for rendering, media conversion, game development, Windows app testing and building Alpine Linux ISO images. Most images come in an Alpine Linux and a Debian variant. They all follow the same conventions: a non-root user with uid 1000, passwordless `doas` or `sudo`, and a pinned version of the main software that the image is also tagged with.
 
-[aljazmc/blender-alpine](https://hub.docker.com/r/aljazmc/blender-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-alpine)
+All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/aljazmc). Each image's own README explains how to use it.
 
-[aljazmc/blender-debian](https://hub.docker.com/r/aljazmc/blender-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-debian)
+## Images
 
-## > corepack
-Docker image with corepack, node and git. For yarn berry enthusiasts.
+| Image | Base | Software | Description |
+|---|---|---|---|
+| [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg. |
+| [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Official blender.org build with its own Python, with FFmpeg. |
+| [corepack-alpine](corepack/alpine) | Alpine 3.24 | Corepack 0.36 | Node.js 26 (unofficial musl build), Corepack and git. |
+| [corepack-debian](corepack/debian) | Debian 13 | Corepack 0.36 | Node.js 26 (official build, GPG verified), Corepack and git. |
+| [fluidsynth-alpine](fluidsynth/alpine) | Alpine 3.24 | FluidSynth 2.5 | Renders MIDI to audio. TimGM6mb soundfont, FFmpeg, Python 3 with NumPy. |
+| [fluidsynth-debian](fluidsynth/debian) | Debian 13 | FluidSynth 2.4 | Renders MIDI to audio. FluidR3 soundfont, FFmpeg, Python 3 with NumPy, mido and rtmidi. |
+| [godot-buildforlinux](godot/buildforlinux) | Debian 13 | Godot 4.7 | Exports and runs games for GNU/Linux. `makesh` packs a game into one self-extracting `.sh`. |
+| [godot-buildformac](godot/buildformac) | Debian 13 | Godot 4.7 | Exports ad-hoc signed macOS `.app` bundles. `makedmg` creates `.dmg` images. |
+| [godot-buildforwindows](godot/buildforwindows) | Debian 13 | Godot 4.7 | Exports games as a single Windows `.exe`. |
+| [heaps-buildforlinux](heaps/buildforlinux) | Debian 13 | Heaps 2.1 | Haxe, Neko and HashLink. `bundle` ships the game with its libraries, `makesh` packs it into one `.sh`. |
+| [heaps-buildformac](heaps/buildformac) | Debian 13 | Heaps 2.1 | Haxe, Neko and the macOS build of HashLink. `bundle` creates an `.app`, `makedmg` a `.dmg`. |
+| [heaps-buildforwindows](heaps/buildforwindows) | Debian 13 | Heaps 2.1 | Haxe, Neko, the Windows build of HashLink, mingw-w64 and NSIS. `makeexe` creates a single `.exe`. |
+| [image-spinner](image-spinner) | Alpine 3.24 | Alpine 3.24 | `abuild`, GRUB, syslinux, squashfs-tools and xorriso for building custom ISO images with `mkimage.sh`. |
+| [inkscape-alpine](inkscape/alpine) | Alpine 3.24 | Inkscape 1.4.2 | Inkscape with every Python extension and the import/export helpers. |
+| [inkscape-debian](inkscape/debian) | Debian 13 | Inkscape 1.4 | Inkscape with every Python extension and the import/export helpers. |
+| [wine-alpine](wine/alpine) | Alpine 3.24 | Wine 11.0 | Stable Wine release for 32-bit and 64-bit Windows applications. |
+| [wine-debian](wine/debian) | Debian 13 | Wine 11.22 | WineHQ development build for 32-bit and 64-bit Windows applications. |
+| [x11-alpine](x11/alpine) | Alpine 3.24 | libX11 1.8 | xterm, GTK 2, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
+| [x11-debian](x11/debian) | Debian 13 | libX11 1.8 | xterm, GTK 2 engines, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
 
-[aljazmc/corepack-alpine](https://hub.docker.com/r/aljazmc/corepack-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/corepack-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/corepack-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/corepack-alpine)
+### Alpine or Debian?
 
-[aljazmc/corepack-debian](https://hub.docker.com/r/aljazmc/corepack-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/corepack-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/corepack-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/corepack-debian)
+- **Alpine** images are smaller, but they use musl instead of glibc, so binaries built on glibc distributions (Debian, Ubuntu, Fedora, ...) don't run in them.
+- **Debian** images are larger, but they run glibc binaries and, where Debian's package is too old, ship the upstream builds (for example Blender from blender.org and Wine from WineHQ).
 
-## > fluidsynth
-Docker images with FluidSynth, FFmpeg and Python 3. For rendering MIDI to audio.
+## Tags
 
-[aljazmc/fluidsynth-alpine](https://hub.docker.com/r/aljazmc/fluidsynth-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/fluidsynth-alpine)
+Every image is published with two tags:
 
-[aljazmc/fluidsynth-debian](https://hub.docker.com/r/aljazmc/fluidsynth-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/fluidsynth-debian)
+| Tag | Meaning |
+|---|---|
+| `latest` | The newest build. |
+| `<version>` | The version of the software the image is named after, e.g. `aljazmc/blender-debian:5.2.4` or `aljazmc/godot-buildforlinux:4.7.2`. |
 
-## > godot
-Docker images with Godot and export templates for GNU/Linux, Windows and macOS.
+These versions are pinned in the Dockerfiles (`BLENDER_VERSION`, `GODOT_VERSION`, ...), so a version tag always refers to the same version of the software. Two images are tagged differently: `image-spinner` with its Alpine Linux version and the `x11` images with their libX11 version. Use a version tag in scripts and CI to keep builds reproducible.
 
-[aljazmc/godot-buildforlinux](https://hub.docker.com/r/aljazmc/godot-buildforlinux) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/godot-buildforlinux) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/godot-buildforlinux) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/godot-buildforlinux)
+## Quick start
 
-[aljazmc/godot-buildforwindows](https://hub.docker.com/r/aljazmc/godot-buildforwindows) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/godot-buildforwindows) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/godot-buildforwindows) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/godot-buildforwindows)
+```sh
+# open a shell in a container, with the current directory mounted as the home directory
+docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-alpine sh
 
-[aljazmc/godot-buildformac](https://hub.docker.com/r/aljazmc/godot-buildformac) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/godot-buildformac) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/godot-buildformac) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/godot-buildformac)
+# render frame 1 of scene.blend
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-alpine:5.1.2 \
+    sh -c "blender -b scene.blend -o //render_#### -f 1"
+```
 
-## > heaps
-Docker images with Heaps, Haxe, Neko and Hashlink. For game development for GNU/Linux, Windows and macOS.
+Each image's README has examples for `docker run` and Docker Compose.
 
-[aljazmc/heaps-buildforlinux](https://hub.docker.com/r/aljazmc/heaps-buildforlinux) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforlinux) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforlinux) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforlinux)
+## Running GUI applications
 
-[aljazmc/heaps-buildforwindows](https://hub.docker.com/r/aljazmc/heaps-buildforwindows) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforwindows) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforwindows) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforwindows)
+The images don't contain an X server or an audio server. GUI apps use the host's X server and the host's PipeWire or PulseAudio:
 
-[aljazmc/heaps-buildformac](https://hub.docker.com/r/aljazmc/heaps-buildformac) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildformac) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildformac) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildformac)
+- mount `/tmp/.X11-unix` and `~/.Xauthority`, and pass `DISPLAY`,
+- mount `$XDG_RUNTIME_DIR` to `/run/user/1000` for audio,
+- pass `/dev/dri` and `/dev/snd`, and add the host's `render`, `video` and `audio` groups to the container user (`--group-add` or `group_add`). The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`. Without these groups, apps fall back to software rendering.
 
-## > image-spinner
-Docker image with everything necessary to create custom Alpine Linux distributions.
+The container user has uid 1000, so files it creates in a mounted directory belong to the first user on most hosts.
 
-[aljazmc/image-spinner](https://hub.docker.com/r/aljazmc/image-spinner) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/image-spinner) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/image-spinner) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/image-spinner)
+## Building and testing
 
-## > inkscape
-Docker images with Inkscape and full Python 3 extension support.
+`project.sh` builds every directory that contains a `Dockerfile`. The image name is the directory path with `/` replaced by `-`, e.g. `godot/buildforlinux` becomes `aljazmc/godot-buildforlinux`.
 
-[aljazmc/inkscape-alpine](https://hub.docker.com/r/aljazmc/inkscape-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/inkscape-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/inkscape-alpine)
+```sh
+./project.sh publish            # build, smoke test, tag and push every image
+./project.sh clean              # remove all local aljazmc/* images
 
-[aljazmc/inkscape-debian](https://hub.docker.com/r/aljazmc/inkscape-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/inkscape-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/inkscape-debian)
+tests/smoke_test.sh             # build every image and check that its tools run
+tests/smoke_test.sh x11-alpine  # build and check a single image
+tests/project_test.sh           # test project.sh with docker stubbed out
+```
 
-## > Wine
-Docker images with Wine. For testing Windows applications.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest` and with the version reported by the software in the image, and it waits 30 seconds between images. CI runs `shellcheck` on every shell script and `tests/project_test.sh` on every push and pull request.
 
-[aljazmc/wine-alpine](https://hub.docker.com/r/aljazmc/wine-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-alpine)
+To build a single image locally:
 
-[aljazmc/wine-debian](https://hub.docker.com/r/aljazmc/wine-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-debian)
+```sh
+docker build -t aljazmc/inkscape-debian inkscape/debian
+```
 
-## > x11
-Docker images with x11. For GUI testing.
+## License
 
-[aljazmc/x11-alpine](https://hub.docker.com/r/aljazmc/x11-alpine) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/x11-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/x11-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/x11-alpine)
-
-[aljazmc/x11-debian](https://hub.docker.com/r/aljazmc/x11-debian) ![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/x11-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/x11-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/x11-debian)
+The Dockerfiles and scripts in this repository are released under the [MIT License](LICENSE). The software in the images keeps its own license; each image's README links to it.

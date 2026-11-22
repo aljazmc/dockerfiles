@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-alpine) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/inkscape-alpine) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/inkscape-alpine)
+# aljazmc/inkscape-alpine
 
-# Docker image with Inkscape and Python 3 extensions on Alpine Linux
+Inkscape with full Python 3 extension support on Alpine Linux, for converting and exporting SVG files.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/inkscape/alpine)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-alpine)](https://hub.docker.com/r/aljazmc/inkscape-alpine) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/inkscape-alpine)](https://hub.docker.com/r/aljazmc/inkscape-alpine) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/inkscape-alpine)](https://hub.docker.com/r/aljazmc/inkscape-alpine)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/inkscape-alpine) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/inkscape/alpine) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `alpine:3.24.4` |
+| **Software** | Inkscape 1.4.2 (Alpine package) |
+| **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm |
+| **User** | `inkscape` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
+| **Tags** | `latest`, `1.4.2` |
+
+## Usage with Docker
 
 ```
 ## start container shell
@@ -14,7 +26,7 @@ docker run --rm -it -v .:/home/inkscape -w /home/inkscape aljazmc/inkscape-alpin
 docker run --rm -it -v .:/home/inkscape -w /home/inkscape aljazmc/inkscape-alpine sh -c "inkscape drawing.svg --export-type=pdf"
 ```
 
-## > Examples with docker compose:
+## Usage with Docker Compose
 
 ```
 ## docker-compose.yml file
@@ -49,16 +61,21 @@ docker compose run --rm inkscape sh -c "sh"
 docker compose run --rm inkscape sh -c "inkscape drawing.svg --export-type=pdf"
 ```
 
-## > Notes
-- not intended for production use.
-- passwordless doas (`doas apk add ...`)
-- the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
-- there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
+## Notes
+- Not intended for production use.
+- The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
+- There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
 - Alpine Linux uses musl instead of glibc, so binaries built on glibc distributions (e.g. Debian, Ubuntu, Fedora) don't run here. Use Alpine packages or programs built on Alpine.
-- every bundled Python extension works, including the GTK based ones (`python3-gi`), plotter output (`pyserial`), web image import (`requests`), optimized SVG (`scour`) and the import/export helpers (`ghostscript`, `fig2dev`, `imagemagick`, `libwmf`, `rsvg-convert`).
+- Every bundled Python extension works, including the GTK based ones (`python3-gi`), plotter output (`pyserial`), web image import (`requests`), optimized SVG (`scour`) and the import/export helpers (`ghostscript`, `fig2dev`, `imagemagick`, `libwmf`, `rsvg-convert`).
 - `scour` is installed with `pip` because Alpine only packages it in the testing repository.
 - `bash` and `findutils` (GNU `find`) are included for bash scripts that use `find -printf`.
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `1.4.2`: the Inkscape version in the image, e.g. `aljazmc/inkscape-alpine:1.4.2`. Use it to stay on a known version.
+- Inkscape is the Alpine `inkscape` package, pinned with `INKSCAPE_VERSION` in the Dockerfile (`inkscape~1.4.2`).
+
+## License
 
 Inkscape is free and open-source software released primarily under the GNU General Public License (GPL) v2+ (or v3+ for binaries): [COPYING](https://gitlab.com/inkscape/inkscape/-/blob/master/COPYING), [LICENSES](https://gitlab.com/inkscape/inkscape/-/tree/master/LICENSES).

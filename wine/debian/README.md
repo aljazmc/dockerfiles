@@ -1,10 +1,22 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-debian) ![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-debian) ![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-debian)
+# aljazmc/wine-debian
 
-# Docker image with Wine
+The WineHQ development build of Wine on Debian, for running and testing Windows applications.
 
-[GitHub repository](https://github.com/aljazmc/dockerfiles/tree/main/wine/debian)
+[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-debian)](https://hub.docker.com/r/aljazmc/wine-debian) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-debian)](https://hub.docker.com/r/aljazmc/wine-debian) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-debian)](https://hub.docker.com/r/aljazmc/wine-debian)
 
-## > Examples with docker:
+[Docker Hub](https://hub.docker.com/r/aljazmc/wine-debian) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/wine/debian) · [All images](https://github.com/aljazmc/dockerfiles)
+
+## Overview
+
+| | |
+|---|---|
+| **Base image** | `debian:13.7` |
+| **Software** | Wine 11.22 (WineHQ `winehq-devel`) |
+| **Also included** | 32-bit and 64-bit Mesa, Vulkan and SDL2 libraries, GnuTLS |
+| **User** | `wine` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
+| **Tags** | `latest`, `11.22` |
+
+## Usage with Docker
 
 ```
 ## start container shell
@@ -14,7 +26,7 @@ docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-debian sh -c "bas
 docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-debian sh -c "printenv"
 ```
 
-## > Examples with docker compose:
+## Usage with Docker Compose
 
 ```
 ## docker-compose.yml file
@@ -49,13 +61,18 @@ docker compose run --rm wine sh -c "sh"
 docker compose run --rm wine sh -c "printenv"
 ```
 
-## > Notes
-- passwordless sudo
-- the container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
-- there is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
-- on the first start of a new prefix Wine asks to install Wine Mono (needed for .NET applications) and Wine Gecko (needed for applications with an embedded browser). To skip both, set `WINEDLLOVERRIDES="mscoree,mshtml="`, e.g. `docker compose run --rm -e WINEDLLOVERRIDES="mscoree,mshtml=" wine sh -c "wineboot -i"`.
+## Notes
+- The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
+- There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
+- On the first start of a new prefix Wine asks to install Wine Mono (needed for .NET applications) and Wine Gecko (needed for applications with an embedded browser). To skip both, set `WINEDLLOVERRIDES="mscoree,mshtml="`, e.g. `docker compose run --rm -e WINEDLLOVERRIDES="mscoree,mshtml=" wine sh -c "wineboot -i"`.
 - 32-bit and 64-bit Windows applications are supported, with OpenGL and Vulkan (DXVK, VKD3D).
 
-## > License
+## Tags
+
+- `latest`: the newest build.
+- `11.22`: the Wine version in the image, e.g. `aljazmc/wine-debian:11.22`. Use it to stay on a known version.
+- Wine is the WineHQ development build (`winehq-devel`), pinned with `WINE_VERSION` in the Dockerfile (`winehq-devel=11.22~*`).
+
+## License
 
 Wine is free and open-source software released under the GNU Lesser General Public License (LGPL) v2.1+: [LICENSE](https://github.com/wine-mirror/wine/blob/master/LICENSE), [COPYING.LIB](https://github.com/wine-mirror/wine/blob/master/COPYING.LIB) (GitHub mirror of [gitlab.winehq.org/wine/wine](https://gitlab.winehq.org/wine/wine)).
