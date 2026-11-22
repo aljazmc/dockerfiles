@@ -17,12 +17,12 @@ image_name() {
 ## version of the software the image is named after, read from the built
 ## image, e.g. "5.2.3" for blender-alpine; prints nothing if it can't tell
 version() {
+    # shellcheck disable=SC2016 # heaps-*: expanded inside the container
     case "$1" in
         blender-*)       cmd='blender --version' ;;
         corepack-*)      cmd='corepack --version' ;;
         fluidsynth-*)    cmd='fluidsynth --version' ;;
         godot-*)         cmd='godot --headless --version' ;;
-        # shellcheck disable=SC2016 # expanded inside the container
         heaps-*)         cmd='echo "$HEAPS_VERSION"' ;;
         image-spinner)   cmd='cat /etc/alpine-release' ;;
         inkscape-*)      cmd='inkscape --version' ;;
