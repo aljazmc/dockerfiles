@@ -1,3 +1,4 @@
+sbom/
 bevy/buildforlinux/*
 bevy/buildforwindows/*
 blender/alpine/*
