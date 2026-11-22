@@ -40,6 +40,7 @@ libraries="
     wayland-libs-cursor
     wayland-libs-egl
 "
+apk upgrade --no-cache
 apk add --no-cache $runtimeDeps $libraries
 
 addgroup -g 1000 "$USER"

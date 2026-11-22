@@ -60,6 +60,7 @@ libraries="
     wayland-libs-cursor
     wayland-libs-egl
 "
+apk upgrade --no-cache
 apk add --no-cache $runtimeDeps $python $libraries
 
 # scour is only packaged in Alpine's testing repository

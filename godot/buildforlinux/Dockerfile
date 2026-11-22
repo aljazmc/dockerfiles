@@ -42,6 +42,7 @@ linuxDeps=(
     pipewire-bin
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${commonDeps[@]}" "${linuxDeps[@]}" -y
 rm -rf /var/lib/apt/lists/*
 GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"

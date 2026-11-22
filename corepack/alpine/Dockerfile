@@ -11,6 +11,7 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     PATH="$PATH:/home/$USER:/home/$USER/.yarn/releases"
 
 RUN <<EOF
+apk upgrade --no-cache
 apk add --no-cache ca-certificates doas git libstdc++
 apk add --no-cache --virtual .build-deps curl
 

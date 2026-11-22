@@ -18,6 +18,7 @@ runtimeDeps="
     syslinux
     xorriso
 "
+apk upgrade --no-cache
 apk add --no-cache ${runtimeDeps}
 addgroup -g 1000 "$USER"
 adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"

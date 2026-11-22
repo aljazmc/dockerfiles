@@ -44,6 +44,8 @@ Every image is published with two tags:
 
 These versions are pinned in the Dockerfiles (`BLENDER_VERSION`, `GODOT_VERSION`, ...), so a version tag always refers to the same version of the software. Two images are tagged differently: `image-spinner` with its Alpine Linux version and the `x11` images with their libX11 version. Use a version tag in scripts and CI to keep builds reproducible.
 
+The rest of the system isn't pinned. Every build first runs `apt-get upgrade` (Debian) or `apk upgrade` (Alpine), so it includes the latest bug and security fixes of the base distribution. A rebuild with the same version of the main software is pushed under the same version tag and replaces the previous image.
+
 ## Quick start
 
 ```sh

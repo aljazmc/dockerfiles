@@ -42,6 +42,7 @@ libraries=(
     mesa-vulkan-drivers
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${libraries[@]}" -y
 apt-get dist-clean
 

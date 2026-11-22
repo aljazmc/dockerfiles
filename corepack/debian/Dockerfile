@@ -24,6 +24,7 @@ runtimeDeps=(
     xz-utils
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" -y
 apt-get dist-clean
 

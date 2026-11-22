@@ -37,6 +37,7 @@ libraries="
 wine="
     wine~$WINE_VERSION
 "
+apk upgrade --no-cache
 apk add --no-cache $runtimeDeps $libraries $wine
 
 addgroup -g 1000 "$USER"

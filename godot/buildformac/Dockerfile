@@ -20,6 +20,7 @@ macDeps=(
     xorriso
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${commonDeps[@]}" "${macDeps[@]}" -y
 rm -rf /var/lib/apt/lists/*
 GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"

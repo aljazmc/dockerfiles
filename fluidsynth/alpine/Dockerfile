@@ -26,6 +26,7 @@ python="
     py3-pip
     python3
 "
+apk upgrade --no-cache
 apk add --no-cache $runtimeDeps $python
 
 addgroup -g 1000 "$USER"

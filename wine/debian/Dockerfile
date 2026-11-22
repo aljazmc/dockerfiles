@@ -61,6 +61,7 @@ wine=(
     "winehq-devel=$WINE_VERSION~*"
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y
 
 dpkg --add-architecture i386

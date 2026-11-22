@@ -28,6 +28,7 @@ python=(
     python3-venv
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${python[@]}" -y
 apt-get dist-clean
 

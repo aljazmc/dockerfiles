@@ -52,6 +52,7 @@ libraries=(
     mesa-vulkan-drivers
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${buildDeps[@]}" "${runtimeDeps[@]}" "${libraries[@]}" -y
 
 BLENDER_URL="https://download.blender.org/release/Blender${BLENDER_VERSION}"

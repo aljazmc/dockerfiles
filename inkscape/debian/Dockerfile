@@ -65,6 +65,7 @@ libraries=(
     libxss1
 )
 apt-get update
+apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${python[@]}" "${libraries[@]}" -y
 apt-get dist-clean
 
