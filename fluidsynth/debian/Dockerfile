@@ -24,6 +24,7 @@ python=(
     python3-mido
     python3-numpy
     python3-pip
+    python3-pytest
     python3-rtmidi
     python3-venv
 )

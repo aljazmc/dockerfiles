@@ -8,12 +8,12 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 
 | Image | Base | Software | Description |
 |---|---|---|---|
-| [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg. |
-| [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Official blender.org build with its own Python, with FFmpeg. |
+| [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg and pytest. |
+| [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Official blender.org build with its own Python, with FFmpeg and pytest. |
 | [corepack-alpine](corepack/alpine) | Alpine 3.24 | Corepack 0.36 | Node.js 26 (unofficial musl build), Corepack and git. |
 | [corepack-debian](corepack/debian) | Debian 13 | Corepack 0.36 | Node.js 26 (official build, GPG verified), Corepack and git. |
-| [fluidsynth-alpine](fluidsynth/alpine) | Alpine 3.24 | FluidSynth 2.5 | Renders MIDI to audio. TimGM6mb soundfont, FFmpeg, Python 3 with NumPy. |
-| [fluidsynth-debian](fluidsynth/debian) | Debian 13 | FluidSynth 2.4 | Renders MIDI to audio. FluidR3 soundfont, FFmpeg, Python 3 with NumPy, mido and rtmidi. |
+| [fluidsynth-alpine](fluidsynth/alpine) | Alpine 3.24 | FluidSynth 2.5 | Renders MIDI to audio. TimGM6mb soundfont, FFmpeg, Python 3 with NumPy and pytest. |
+| [fluidsynth-debian](fluidsynth/debian) | Debian 13 | FluidSynth 2.4 | Renders MIDI to audio. FluidR3 soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi and pytest. |
 | [godot-buildforlinux](godot/buildforlinux) | Debian 13 | Godot 4.7 | Exports and runs games for GNU/Linux. `makesh` packs a game into one self-extracting `.sh`. |
 | [godot-buildformac](godot/buildformac) | Debian 13 | Godot 4.7 | Exports ad-hoc signed macOS `.app` bundles. `makedmg` creates `.dmg` images. |
 | [godot-buildforwindows](godot/buildforwindows) | Debian 13 | Godot 4.7 | Exports games as a single Windows `.exe`. |

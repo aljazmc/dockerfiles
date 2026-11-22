@@ -71,6 +71,11 @@ tar -xJf "/tmp/${BLENDER_ARCHIVE}" -C /opt/blender --strip-components=1
 rm "/tmp/${BLENDER_ARCHIVE}"
 ln -s /opt/blender/blender /usr/local/bin/blender
 
+# pytest in Blender's own Python, for tests that need bpy, which only works
+# inside Blender: blender -b --python-expr "import sys, pytest; sys.exit(pytest.main([]))"
+/opt/blender/"$BLENDER_VERSION"/python/bin/python3.* -m pip install \
+    --no-cache-dir --root-user-action=ignore --disable-pip-version-check pytest
+
 apt-get purge "${buildDeps[@]}" -y
 apt-get autoremove -y
 apt-get dist-clean

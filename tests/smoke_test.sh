@@ -63,6 +63,12 @@ smoke() {
                 blender -b --factory-startup --python-expr "import bpy; print(\"BPY\", bpy.app.version_string)" | grep BPY
                 ffmpeg -hide_banner -version | head -n1
             '
+            if [ "$1" = blender-alpine ]; then
+                CHECK+='python3 -c "import bpy, numpy, pytest; print(\"bpy, numpy and pytest\", pytest.__version__)"'
+            fi
+            if [ "$1" = blender-debian ]; then
+                CHECK+='blender -b --factory-startup --python-exit-code 1 --python-expr "import numpy, pytest; print(\"PYTEST\", pytest.__version__)" | grep PYTEST'
+            fi
             ;;
         corepack-alpine|corepack-debian)
             RUN="exec"
@@ -84,6 +90,10 @@ smoke() {
                 ffmpeg -hide_banner -loglevel error -i out.wav out.flac && test -s out.flac && echo 'encoded out.wav to out.flac'
                 python3 -c 'import numpy; print(\"numpy\", numpy.__version__)'
             "
+            if [ "$1" = fluidsynth-alpine ] || [ "$1" = fluidsynth-debian ]; then
+                CHECK+="python3 -m pytest --version
+"
+            fi
             if [ "$1" = fluidsynth-debian ]; then
                 CHECK+="python3 -c 'import mido, rtmidi; print(\"mido and rtmidi ok\")'"
             fi

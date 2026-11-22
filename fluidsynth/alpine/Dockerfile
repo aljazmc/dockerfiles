@@ -24,6 +24,7 @@ runtimeDeps="
 python="
     py3-numpy
     py3-pip
+    py3-pytest
     python3
 "
 apk upgrade --no-cache

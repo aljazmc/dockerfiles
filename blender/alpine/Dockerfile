@@ -23,6 +23,7 @@ runtimeDeps="
     py3-blender
     py3-cattrs
     py3-numpy
+    py3-pytest
     py3-requests
     xterm
 "

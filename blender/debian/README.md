@@ -12,7 +12,7 @@ The official Blender build and FFmpeg on Debian, for headless rendering and Pyth
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Blender 5.2.x (official build from blender.org, with its own Python) |
-| **Also included** | FFmpeg, xterm |
+| **Also included** | FFmpeg, pytest (in Blender's Python), xterm |
 | **User** | `blender` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `5.2.4`, `5.2.4-YYYYMMDD` |
 
@@ -66,6 +66,7 @@ docker compose run --rm blender sh -c "blender -b scene.blend -o //render_#### -
 - The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 - There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
 - Blender is the official build from [blender.org](https://www.blender.org/download/), installed in `/opt/blender` and verified against its sha256 checksum from blender.org. It comes with its own Python, so `blender -b file.blend --python script.py` works without a system Python.
+- pytest is installed in Blender's Python. `bpy` only imports inside Blender, so run tests through it: `blender -b --factory-startup --python-exit-code 1 --python-expr "import sys, pytest; sys.exit(pytest.main([]))"`. Pass pytest's arguments in the list (for example `pytest.main(["-x", "tests"])`), since `sys.argv` holds Blender's own arguments. The exit code is pytest's.
 - `ffmpeg` is included for encoding rendered frames into video.
 
 ## Tags
