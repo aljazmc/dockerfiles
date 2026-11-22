@@ -74,6 +74,7 @@ The container user has uid 1000, so files it creates in a mounted directory belo
 ```sh
 ./project.sh publish            # build, smoke test, tag and push every image
 ./project.sh clean              # remove all local aljazmc/* images
+./project.sh scan [image...]    # write SBOMs and list HIGH and CRITICAL vulnerabilities
 
 tests/smoke_test.sh             # build every image and check that its tools run
 tests/smoke_test.sh x11-alpine  # build and check a single image
@@ -81,6 +82,22 @@ tests/project_test.sh           # test project.sh with docker stubbed out
 ```
 
 `publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest` and with the version reported by the software in the image, and it waits 30 seconds between images. CI runs `shellcheck` on every shell script and `tests/project_test.sh` on every push and pull request.
+
+### SBOM and vulnerability scanning
+
+`./project.sh scan` runs [Trivy](https://trivy.dev) from its Docker image (`aquasec/trivy`, pinned in `project.sh`), so nothing has to be installed. For every image, or only the images given, e.g. `./project.sh scan x11-alpine wine-debian`, it:
+
+1. writes a [CycloneDX](https://cyclonedx.org) SBOM, the list of every package and library in the image, to `sbom/<image>.cdx.json`,
+2. checks that SBOM for known vulnerabilities and prints them as a table.
+
+It scans the local image, or pulls it from Docker Hub when there is none. The vulnerability database is downloaded on the first run and cached in `~/.cache/trivy`. The command exits with 1 if any image has a vulnerability of the selected severity.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `SEVERITY` | `HIGH,CRITICAL` | Severities to report, e.g. `SEVERITY=CRITICAL` or `SEVERITY=LOW,MEDIUM,HIGH,CRITICAL`. |
+| `IGNORE_UNFIXED` | unset | Set to `1` to hide vulnerabilities that have no fixed version yet. |
+
+The SBOM covers what is installed in the image at build time. The heaps images install Heaps and its haxelib libraries on the first start, and HashLink is built from source, so these don't show up in their SBOMs.
 
 To build a single image locally:
 
