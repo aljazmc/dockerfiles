@@ -2,7 +2,8 @@ FROM alpine:3.24.4
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG USER=fluidsynth
+ARG FLUIDSYNTH_VERSION=2.5.4 \
+    USER=fluidsynth
 
 ENV LANG=C \
     LC_ALL=C \
@@ -15,7 +16,7 @@ runtimeDeps="
     doas
     ffmpeg
     findutils
-    fluidsynth
+    fluidsynth~$FLUIDSYNTH_VERSION
     libpulse
     pipewire-alsa
     soundfont-timgm

@@ -2,7 +2,8 @@ FROM alpine:3.24.4
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG USER=wine
+ARG USER=wine \
+    WINE_VERSION=11.0
 
 ENV PATH="$PATH:/home/$USER"
 
@@ -34,7 +35,7 @@ libraries="
     vulkan-loader
 "
 wine="
-    wine
+    wine~$WINE_VERSION
 "
 apk add --no-cache $runtimeDeps $libraries $wine
 

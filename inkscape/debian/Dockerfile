@@ -3,6 +3,7 @@ FROM debian:13.7
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive \
+    INKSCAPE_VERSION=1.4 \
     USER=inkscape
 
 ENV LANG=C \
@@ -17,7 +18,7 @@ runtimeDeps=(
     fonts-dejavu
     ghostscript
     imagemagick
-    inkscape
+    "inkscape=$INKSCAPE_VERSION-*"
     libimage-magick-perl
     librsvg2-bin
     libwmf-bin

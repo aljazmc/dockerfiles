@@ -5,6 +5,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV HASHLINK_MACOS=/usr/local/hashlink-macos \
+    HEAPS_VERSION="2.1.0" \
     USER=heaps
 
 RUN <<'EOT'

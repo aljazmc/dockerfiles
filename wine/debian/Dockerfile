@@ -3,7 +3,8 @@ FROM debian:13.7
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive \
-    USER=wine
+    USER=wine \
+    WINE_VERSION=11.22
 
 ENV PATH="$PATH:/home/$USER"
 
@@ -57,7 +58,7 @@ libraries=(
     mesa-vulkan-drivers:i386
 )
 wine=(
-    winehq-devel
+    "winehq-devel=$WINE_VERSION~*"
 )
 apt-get update
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y

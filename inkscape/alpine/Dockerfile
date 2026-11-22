@@ -2,7 +2,8 @@ FROM alpine:3.24.4
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG USER=inkscape
+ARG INKSCAPE_VERSION=1.4.2 \
+    USER=inkscape
 
 ENV LANG=C \
     LC_ALL=C \
@@ -19,7 +20,7 @@ runtimeDeps="
     font-dejavu
     ghostscript
     imagemagick
-    inkscape
+    inkscape~$INKSCAPE_VERSION
     libwmf
     rsvg-convert
     ruby

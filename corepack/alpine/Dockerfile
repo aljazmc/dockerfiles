@@ -2,7 +2,8 @@ FROM alpine:3.24.4
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG NODE_VERSION="26.13.0" \
+ARG COREPACK_VERSION="0.36.0" \
+    NODE_VERSION="26.13.0" \
     SHA="22d5be50b7a52a49b4e30e3349a24a5753e3c8b401d0f7a404019dbd4c39216c" \
     USER=node
 
@@ -36,7 +37,7 @@ EOF
 USER $USER
 WORKDIR /home/$USER
 
-RUN doas npm install -g corepack
+RUN doas npm install -g "corepack@$COREPACK_VERSION"
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]

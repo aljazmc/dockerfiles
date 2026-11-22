@@ -4,7 +4,8 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV USER=heaps
+ENV HEAPS_VERSION="2.1.0" \
+    USER=heaps
 
 RUN <<'EOT'
 commonDeps=(

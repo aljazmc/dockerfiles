@@ -3,6 +3,7 @@ FROM debian:13.7
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive \
+    FLUIDSYNTH_VERSION=2.4.4 \
     USER=fluidsynth
 
 ENV LANG=C \
@@ -13,7 +14,7 @@ RUN <<'EOF'
 runtimeDeps=(
     ffmpeg
     fluid-soundfont-gm
-    fluidsynth
+    "fluidsynth=$FLUIDSYNTH_VERSION*"
     libpulse0
     pipewire-alsa
     sudo

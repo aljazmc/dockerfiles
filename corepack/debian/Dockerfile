@@ -2,7 +2,8 @@ FROM debian:13.7
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-ARG DEBIAN_FRONTEND=noninteractive \
+ARG COREPACK_VERSION="0.36.0" \
+    DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION="26.13.0" \
     USER=node
 
@@ -57,7 +58,7 @@ EOF
 USER $USER
 WORKDIR /home/$USER
 
-RUN sudo npm install -g corepack
+RUN sudo npm install -g "corepack@$COREPACK_VERSION"
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]

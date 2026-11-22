@@ -2,7 +2,8 @@ FROM alpine:3.24.4
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG USER=x11
+ARG LIBX11_VERSION=1.8.14 \
+    USER=x11
 
 ENV LANG=C \
     LC_ALL=C \
@@ -19,6 +20,7 @@ runtimeDeps="
 libraries="
     libdecor
     libvorbis
+    libx11~$LIBX11_VERSION
     libxcursor
     libxi
     libxinerama

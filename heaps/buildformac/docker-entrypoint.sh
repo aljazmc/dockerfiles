@@ -17,7 +17,7 @@ if [ ! -d /home/"$USER"/haxelib ]; then
     haxelib dev hashlink /usr/src/hashlink/other/haxelib
     haxelib dev hlopenal /usr/src/hashlink/libs/openal
     haxelib dev hlsdl /usr/src/hashlink/libs/sdl
-    haxelib install heaps
+    haxelib install heaps "$HEAPS_VERSION"
     haxelib install utest
 fi
 

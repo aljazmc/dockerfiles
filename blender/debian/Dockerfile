@@ -2,9 +2,9 @@ FROM debian:13.7
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-ARG DEBIAN_FRONTEND=noninteractive \
-    USER=blender \
-    BLENDER_VERSION=5.2
+ARG BLENDER_VERSION=5.2 \
+    DEBIAN_FRONTEND=noninteractive \
+    USER=blender
 
 ENV LANG=C \
     LC_ALL=C \

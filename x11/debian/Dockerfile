@@ -3,6 +3,7 @@ FROM debian:13.7
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive \
+    LIBX11_VERSION=1.8.12 \
     USER=x11
 
 ENV LANG=C \
@@ -30,6 +31,7 @@ libraries=(
     libwayland-client0
     libwayland-cursor0
     libwayland-egl1
+    "libx11-6=2:$LIBX11_VERSION-*"
     libxcursor1
     libxi6
     libxinerama1

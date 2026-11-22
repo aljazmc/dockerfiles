@@ -2,8 +2,8 @@ FROM alpine:3.24.4
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG USER=blender \
-    BLENDER_VERSION=5.1
+ARG BLENDER_VERSION=5.1 \
+    USER=blender
 
 ENV LANG=C \
     LC_ALL=C \
