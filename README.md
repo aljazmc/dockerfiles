@@ -35,16 +35,19 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 
 ## Tags
 
-Every image is published with two tags:
+Every image is published with three tags:
 
 | Tag | Meaning |
 |---|---|
 | `latest` | The newest build. |
 | `<version>` | The version of the software the image is named after, e.g. `aljazmc/blender-debian:5.2.4` or `aljazmc/godot-buildforlinux:4.7.2`. |
+| `<version>-<YYYYMMDD>` | The same version, built on that date (UTC), e.g. `aljazmc/blender-debian:5.2.4-20261122`. Every build gets its own tag that never moves. |
 
-These versions are pinned in the Dockerfiles (`BLENDER_VERSION`, `GODOT_VERSION`, ...), so a version tag always refers to the same version of the software. Two images are tagged differently: `image-spinner` with its Alpine Linux version and the `x11` images with their libX11 version. Use a version tag in scripts and CI to keep builds reproducible.
+These versions are pinned in the Dockerfiles (`BLENDER_VERSION`, `GODOT_VERSION`, ...), so a version tag always refers to the same version of the software. Two images are tagged differently: `image-spinner` with its Alpine Linux version and the `x11` images with their libX11 version. Use `<version>` to stay on a version of the software, and `<version>-<YYYYMMDD>` to stay on one exact build.
 
-The rest of the system isn't pinned. Every build first runs `apt-get upgrade` (Debian) or `apk upgrade` (Alpine), so it includes the latest bug and security fixes of the base distribution. A rebuild with the same version of the main software is pushed under the same version tag and replaces the previous image.
+The rest of the system isn't pinned. Every build first runs `apt-get upgrade` (Debian) or `apk upgrade` (Alpine), so it includes the latest bug and security fixes of the base distribution. A rebuild with the same version of the main software moves `latest` and `<version>` to the new image. The dated tag of the previous build keeps pointing to it, unless the rebuild happens on the same day, which overwrites it.
+
+A rebuild isn't bit-for-bit reproducible, because the upgraded packages change over time. To get exactly the same image again, use a dated tag or the image digest (`aljazmc/<image>@sha256:...`).
 
 ## Quick start
 
@@ -83,7 +86,7 @@ tests/smoke_test.sh x11-alpine  # build and check a single image
 tests/project_test.sh           # test project.sh with docker stubbed out
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest` and with the version reported by the software in the image, and it waits 30 seconds between images. CI runs `shellcheck` on every shell script and `tests/project_test.sh` on every push and pull request.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC), and it waits 30 seconds between images. CI runs `shellcheck` on every shell script and `tests/project_test.sh` on every push and pull request.
 
 ### SBOM and vulnerability scanning
 

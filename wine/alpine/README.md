@@ -14,7 +14,7 @@ Wine on Alpine Linux, for running and testing Windows applications.
 | **Software** | Wine 11.0 (Alpine package, stable release) |
 | **Also included** | Mesa, Vulkan, SDL2, GnuTLS, PipeWire ALSA plugin |
 | **User** | `wine` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
-| **Tags** | `latest`, `11.0` |
+| **Tags** | `latest`, `11.0`, `11.0-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -72,6 +72,7 @@ docker compose run --rm wine sh -c "printenv"
 
 - `latest`: the newest build.
 - `11.0`: the Wine version in the image, e.g. `aljazmc/wine-alpine:11.0`. Use it to stay on a known version.
+- `11.0-YYYYMMDD`: the same version, built on that date (UTC), e.g. `11.0-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Wine is the Alpine `wine` package (a stable release), pinned with `WINE_VERSION` in the Dockerfile (`wine~11.0`).
 
 ## License

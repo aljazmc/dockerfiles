@@ -14,7 +14,7 @@ Inkscape with full Python 3 extension support on Debian, for converting and expo
 | **Software** | Inkscape 1.4 (Debian package) |
 | **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm |
 | **User** | `inkscape` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `1.4` |
+| **Tags** | `latest`, `1.4`, `1.4-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -70,6 +70,7 @@ docker compose run --rm inkscape sh -c "inkscape drawing.svg --export-type=pdf"
 
 - `latest`: the newest build.
 - `1.4`: the Inkscape version in the image, e.g. `aljazmc/inkscape-debian:1.4`. Use it to stay on a known version.
+- `1.4-YYYYMMDD`: the same version, built on that date (UTC), e.g. `1.4-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Inkscape is the Debian `inkscape` package, pinned with `INKSCAPE_VERSION` in the Dockerfile (`inkscape=1.4-*`), so Debian updates of 1.4 are still installed.
 
 ## License

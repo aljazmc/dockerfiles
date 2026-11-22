@@ -14,7 +14,7 @@ Godot with the Linux export templates, for exporting and running Godot games for
 | **Software** | Godot 4.7.2 (official build) with export templates |
 | **Also included** | `makesh` (self-extracting `.sh` archives), Mesa, Vulkan, PipeWire |
 | **User** | `godot` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `4.7.2` |
+| **Tags** | `latest`, `4.7.2`, `4.7.2-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -163,6 +163,7 @@ The result is `build/hello.sh`. Copy it to the target machine and start it with 
 
 - `latest`: the newest build.
 - `4.7.2`: the Godot version in the image, e.g. `aljazmc/godot-buildforlinux:4.7.2`. Use it to stay on a known version.
+- `4.7.2-YYYYMMDD`: the same version, built on that date (UTC), e.g. `4.7.2-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Godot is the official build and export templates from GitHub, pinned with `GODOT_VERSION` in the Dockerfile.
 
 ## License

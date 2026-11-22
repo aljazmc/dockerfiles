@@ -5,6 +5,7 @@
 #   - exactly one image is built per Dockerfile directory, from the right
 #     directory, under the right image name
 #   - every image is pushed, except one whose smoke test fails
+#   - every pushed image is tagged latest, <version> and <version>-<date>
 #   - publish exits non-zero when an image was not pushed
 #
 # Usage: tests/project_test.sh
@@ -18,24 +19,27 @@ trap 'rm -rf "$TMP"' EXIT
 # The image whose smoke test is made to fail.
 FAIL_SMOKE=x11-alpine
 
-# Stub docker: record "<cwd> <args>" for every build and the image for every
-# push, make `docker run` fail for $FAIL_SMOKE, ignore everything else.
+# Stub docker: record "<cwd> <args>" for every build, the new tag for every
+# tag and the image for every push, make `docker run` report version 1.2.3 and
+# fail for $FAIL_SMOKE, ignore everything else.
 mkdir -p "$TMP/bin"
 cat > "$TMP/bin/docker" <<STUB
 #!/bin/bash
 case "\$1" in
     build) echo "\${PWD#$ROOT/} \$*" >> "$TMP/builds" ;;
+    tag)   echo "\${@: -1}" >> "$TMP/tags" ;;
     push)  echo "\${@: -1}" >> "$TMP/pushes" ;;
-    run)   [[ " \$* " != *" aljazmc/$FAIL_SMOKE "* ]] ;;
+    run)   echo "version 1.2.3"; [[ " \$* " != *" aljazmc/$FAIL_SMOKE "* ]] ;;
 esac
 STUB
 printf '#!/bin/sh\n' > "$TMP/bin/sleep"
 chmod +x "$TMP/bin/docker" "$TMP/bin/sleep"
-touch "$TMP/builds" "$TMP/pushes"
+touch "$TMP/builds" "$TMP/tags" "$TMP/pushes"
 
 cd "$ROOT"
 status=0
 PATH="$TMP/bin:$PATH" ./project.sh publish > "$TMP/output" 2>&1 || status=$?
+DATE=$(date -u +%Y%m%d)
 
 mapfile -t DIRS < <(git ls-files '*Dockerfile' | xargs -n1 dirname | sort)
 failures=0
@@ -61,6 +65,18 @@ if diff -u "$TMP/expected" "$TMP/actual"; then
     echo "PASS: pushes every image except $FAIL_SMOKE, whose smoke test failed"
 else
     echo "FAIL: pushes differ from expected (see diff above)"
+    failures=$((failures + 1))
+fi
+
+# Every pushed image tagged latest, with its version and with version-date.
+while read -r image; do
+    printf '%s\n' "$image:latest" "$image:1.2.3" "$image:1.2.3-$DATE"
+done < "$TMP/expected" | sort > "$TMP/expected-tags"
+sort "$TMP/tags" > "$TMP/actual"
+if diff -u "$TMP/expected-tags" "$TMP/actual"; then
+    echo "PASS: tags every pushed image latest, 1.2.3 and 1.2.3-$DATE"
+else
+    echo "FAIL: tags differ from expected (see diff above)"
     failures=$((failures + 1))
 fi
 

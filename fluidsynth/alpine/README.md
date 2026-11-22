@@ -14,7 +14,7 @@ FluidSynth, FFmpeg and Python 3 on Alpine Linux, for rendering MIDI to audio.
 | **Software** | FluidSynth 2.5.4 (Alpine package) |
 | **Also included** | TimGM6mb General MIDI soundfont, FFmpeg, Python 3 with NumPy and pip, bash, GNU findutils |
 | **User** | `fluidsynth` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
-| **Tags** | `latest`, `2.5.4` |
+| **Tags** | `latest`, `2.5.4`, `2.5.4-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -75,6 +75,7 @@ docker compose run --rm fluidsynth sh -c "fluidsynth -ni -F song.wav /usr/share/
 
 - `latest`: the newest build.
 - `2.5.4`: the FluidSynth version in the image, e.g. `aljazmc/fluidsynth-alpine:2.5.4`. Use it to stay on a known version.
+- `2.5.4-YYYYMMDD`: the same version, built on that date (UTC), e.g. `2.5.4-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - FluidSynth is the Alpine `fluidsynth` package, pinned with `FLUIDSYNTH_VERSION` in the Dockerfile (`fluidsynth~2.5.4`).
 
 ## License

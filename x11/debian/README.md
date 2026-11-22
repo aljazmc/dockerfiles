@@ -14,7 +14,7 @@ A base image for GUI applications on Debian that use the host's X server.
 | **Software** | libX11 1.8.12 |
 | **Also included** | xterm, GTK 2 engines, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client |
 | **User** | `x11` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `1.8.12` |
+| **Tags** | `latest`, `1.8.12`, `1.8.12-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -70,6 +70,7 @@ docker compose run --rm x11 sh -c "printenv"
 
 - `latest`: the newest build.
 - `1.8.12`: the libX11 version in the image, e.g. `aljazmc/x11-debian:1.8.12`. Use it to stay on a known version.
+- `1.8.12-YYYYMMDD`: the same version, built on that date (UTC), e.g. `1.8.12-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - libX11 is the Debian `libx11-6` package, pinned with `LIBX11_VERSION` in the Dockerfile (`libx11-6=2:1.8.12-*`).
 
 ## License

@@ -50,6 +50,9 @@ publish() {
 
 failed=()
 
+## build date (UTC), the same for every image of this run, e.g. "20261122"
+date=$(date -u +%Y%m%d)
+
 for dir in $DIRS; do
 
     image=$(image_name "$dir")
@@ -63,7 +66,14 @@ for dir in $DIRS; do
         failed+=("$image")
     else
         docker tag "aljazmc/$image" "aljazmc/$image:latest"
-        tag=$(version "$image") && [ -n "$tag" ] && docker tag "aljazmc/$image" "aljazmc/$image:$tag"
+        tag=$(version "$image")
+        if [ -n "$tag" ]; then
+            docker tag "aljazmc/$image" "aljazmc/$image:$tag"
+            ## e.g. "5.2.4-20261122", a tag that always points to this build
+            docker tag "aljazmc/$image" "aljazmc/$image:$tag-$date"
+        else
+            docker tag "aljazmc/$image" "aljazmc/$image:$date"
+        fi
         docker push -a "aljazmc/$image"
     fi
 

@@ -14,7 +14,7 @@ The WineHQ development build of Wine on Debian, for running and testing Windows 
 | **Software** | Wine 11.22 (WineHQ `winehq-devel`) |
 | **Also included** | 32-bit and 64-bit Mesa, Vulkan and SDL2 libraries, GnuTLS |
 | **User** | `wine` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `11.22` |
+| **Tags** | `latest`, `11.22`, `11.22-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -71,6 +71,7 @@ docker compose run --rm wine sh -c "printenv"
 
 - `latest`: the newest build.
 - `11.22`: the Wine version in the image, e.g. `aljazmc/wine-debian:11.22`. Use it to stay on a known version.
+- `11.22-YYYYMMDD`: the same version, built on that date (UTC), e.g. `11.22-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Wine is the WineHQ development build (`winehq-devel`), pinned with `WINE_VERSION` in the Dockerfile (`winehq-devel=11.22~*`).
 
 ## License

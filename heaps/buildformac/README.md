@@ -14,7 +14,7 @@ Heaps, Haxe, Neko and the macOS build of HashLink, for building Heaps games for 
 | **Software** | Heaps 2.1.0 (installed from haxelib on the first start) |
 | **Also included** | Haxe, Neko, HashLink for macOS (x86_64), `bundle` and `makedmg`, xorriso, zip |
 | **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `2.1.0` |
+| **Tags** | `latest`, `2.1.0`, `2.1.0-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -168,6 +168,7 @@ The result is `dist/hello.dmg`. Open it on a Mac and drag `hello.app` to `Applic
 
 - `latest`: the newest build.
 - `2.1.0`: the Heaps version in the image, e.g. `aljazmc/heaps-buildformac:2.1.0`. Use it to stay on a known version.
+- `2.1.0-YYYYMMDD`: the same version, built on that date (UTC), e.g. `2.1.0-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Heaps is installed from haxelib on the first start of the container (into `~/haxelib`), pinned with the `HEAPS_VERSION` environment variable set in the Dockerfile. An existing `~/haxelib` directory is kept as it is.
 
 ## License

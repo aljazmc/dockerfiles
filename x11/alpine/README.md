@@ -14,7 +14,7 @@ A base image for GUI applications on Alpine Linux that use the host's X server.
 | **Software** | libX11 1.8.14 |
 | **Also included** | xterm, GTK 2, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client |
 | **User** | `x11` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
-| **Tags** | `latest`, `1.8.14` |
+| **Tags** | `latest`, `1.8.14`, `1.8.14-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -71,6 +71,7 @@ docker compose run --rm x11 sh -c "printenv"
 
 - `latest`: the newest build.
 - `1.8.14`: the libX11 version in the image, e.g. `aljazmc/x11-alpine:1.8.14`. Use it to stay on a known version.
+- `1.8.14-YYYYMMDD`: the same version, built on that date (UTC), e.g. `1.8.14-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - libX11 is the Alpine `libx11` package, pinned with `LIBX11_VERSION` in the Dockerfile (`libx11~1.8.14`).
 
 ## License

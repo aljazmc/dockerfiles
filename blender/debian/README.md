@@ -14,7 +14,7 @@ The official Blender build and FFmpeg on Debian, for headless rendering and Pyth
 | **Software** | Blender 5.2.x (official build from blender.org, with its own Python) |
 | **Also included** | FFmpeg, xterm |
 | **User** | `blender` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `5.2.4` |
+| **Tags** | `latest`, `5.2.4`, `5.2.4-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -72,6 +72,7 @@ docker compose run --rm blender sh -c "blender -b scene.blend -o //render_#### -
 
 - `latest`: the newest build.
 - `5.2.4`: the Blender version in the image, e.g. `aljazmc/blender-debian:5.2.4`. Use it to stay on a known version.
+- `5.2.4-YYYYMMDD`: the same version, built on that date (UTC), e.g. `5.2.4-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Blender is the official build from blender.org, pinned to the 5.2 series with `BLENDER_VERSION` in the Dockerfile, so the newest 5.2.x release is installed.
 
 ## License

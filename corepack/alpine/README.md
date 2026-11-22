@@ -14,7 +14,7 @@ Node.js, Corepack and git on Alpine Linux, for projects that use Yarn Berry or p
 | **Software** | Corepack 0.36.0 |
 | **Also included** | Node.js 26.13.0 (unofficial musl build, sha256 checked), npm, git |
 | **User** | `node` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
-| **Tags** | `latest`, `0.36.0` |
+| **Tags** | `latest`, `0.36.0`, `0.36.0-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -68,6 +68,7 @@ docker-compose run --rm node sh -c "printenv"
 
 - `latest`: the newest build.
 - `0.36.0`: the Corepack version in the image, e.g. `aljazmc/corepack-alpine:0.36.0`. Use it to stay on a known version.
+- `0.36.0-YYYYMMDD`: the same version, built on that date (UTC), e.g. `0.36.0-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Corepack is pinned with `COREPACK_VERSION` in the Dockerfile (`npm install -g corepack@0.36.0`). Node.js is pinned to 26.13.0 with `NODE_VERSION`.
 
 ## License

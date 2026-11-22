@@ -14,7 +14,7 @@ Inkscape with full Python 3 extension support on Alpine Linux, for converting an
 | **Software** | Inkscape 1.4.2 (Alpine package) |
 | **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm |
 | **User** | `inkscape` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
-| **Tags** | `latest`, `1.4.2` |
+| **Tags** | `latest`, `1.4.2`, `1.4.2-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -74,6 +74,7 @@ docker compose run --rm inkscape sh -c "inkscape drawing.svg --export-type=pdf"
 
 - `latest`: the newest build.
 - `1.4.2`: the Inkscape version in the image, e.g. `aljazmc/inkscape-alpine:1.4.2`. Use it to stay on a known version.
+- `1.4.2-YYYYMMDD`: the same version, built on that date (UTC), e.g. `1.4.2-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Inkscape is the Alpine `inkscape` package, pinned with `INKSCAPE_VERSION` in the Dockerfile (`inkscape~1.4.2`).
 
 ## License

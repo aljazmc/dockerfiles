@@ -14,7 +14,7 @@ Everything needed to build custom Alpine Linux ISO images with `mkimage.sh` from
 | **Software** | Alpine Linux 3.24.4 build tools |
 | **Also included** | abuild, alpine-conf, git, GRUB, syslinux, mtools, squashfs-tools, xorriso, rsync |
 | **User** | `aljazmc` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
-| **Tags** | `latest`, `3.24.4` |
+| **Tags** | `latest`, `3.24.4`, `3.24.4-YYYYMMDD` |
 
 ## Workflow with Docker
 
@@ -62,6 +62,7 @@ docker compose run --rm spinner "sh aports/scripts/mkimage.sh --tag edge --outdi
 
 - `latest`: the newest build.
 - `3.24.4`: the Alpine Linux version in the image, e.g. `aljazmc/image-spinner:3.24.4`. Use it to stay on a known version.
+- `3.24.4-YYYYMMDD`: the same version, built on that date (UTC), e.g. `3.24.4-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Alpine Linux is the version of the `alpine:3.24.4` base image.
 
 ## License

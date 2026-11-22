@@ -14,7 +14,7 @@ Blender and FFmpeg on Alpine Linux, for headless rendering and Python scripting.
 | **Software** | Blender 5.1.x (Alpine package) |
 | **Also included** | FFmpeg, Python 3 with `bpy`, NumPy and Requests, xterm, bash, GNU findutils |
 | **User** | `blender` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
-| **Tags** | `latest`, `5.1.2` |
+| **Tags** | `latest`, `5.1.2`, `5.1.2-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -74,6 +74,7 @@ docker compose run --rm blender sh -c "blender -b scene.blend -o //render_#### -
 
 - `latest`: the newest build.
 - `5.1.2`: the Blender version in the image, e.g. `aljazmc/blender-alpine:5.1.2`. Use it to stay on a known version.
+- `5.1.2-YYYYMMDD`: the same version, built on that date (UTC), e.g. `5.1.2-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Blender is the Alpine `blender` package, pinned to the 5.1 series with `BLENDER_VERSION` in the Dockerfile (`blender~5.1`), so the newest 5.1.x patch release in Alpine 3.24 is installed.
 
 ## License

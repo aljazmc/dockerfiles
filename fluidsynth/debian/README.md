@@ -14,7 +14,7 @@ FluidSynth, FFmpeg and Python 3 on Debian, for rendering MIDI to audio.
 | **Software** | FluidSynth 2.4.4 (Debian package) |
 | **Also included** | FluidR3 General MIDI soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi, pip and venv |
 | **User** | `fluidsynth` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `2.4.4` |
+| **Tags** | `latest`, `2.4.4`, `2.4.4-YYYYMMDD` |
 
 ## Usage with Docker
 
@@ -71,6 +71,7 @@ docker compose run --rm fluidsynth sh -c "fluidsynth -ni -F song.wav /usr/share/
 
 - `latest`: the newest build.
 - `2.4.4`: the FluidSynth version in the image, e.g. `aljazmc/fluidsynth-debian:2.4.4`. Use it to stay on a known version.
+- `2.4.4-YYYYMMDD`: the same version, built on that date (UTC), e.g. `2.4.4-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - FluidSynth is the Debian `fluidsynth` package, pinned with `FLUIDSYNTH_VERSION` in the Dockerfile (`fluidsynth=2.4.4*`), so Debian security updates of 2.4.4 are still installed.
 
 ## License
