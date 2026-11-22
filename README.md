@@ -1,8 +1,32 @@
 # aljazmc's dockerfiles
 
+[![ci](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-19%20images-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
+[![Docker pulls](https://img.shields.io/badge/pulls-9%2C000%2B-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
+[![Alpine 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://alpinelinux.org/)
+[![Debian 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://www.debian.org/)
+[![ShellCheck](https://img.shields.io/badge/ShellCheck-checked-4eaa25?logo=gnubash&logoColor=white)](https://www.shellcheck.net/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-fe5196?logo=conventionalcommits&logoColor=white)](https://www.conventionalcommits.org/)
+
 Docker images for rendering, media conversion, game development, Windows app testing and building Alpine Linux ISO images. Most images come in an Alpine Linux and a Debian variant. They all follow the same conventions: a non-root user with uid 1000, passwordless `doas` or `sudo`, and a pinned version of the main software that the image is also tagged with.
 
 All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/aljazmc). Each image's own README explains how to use it.
+
+## Features
+
+- **19 images, two families.** Blender, Inkscape, FluidSynth, Wine, X11 and
+  Corepack in Alpine and Debian flavours, Godot and Heaps build images for
+  Linux, Windows and macOS, and `image-spinner` for custom Alpine ISOs.
+- **Pinned and tagged.** Every image starts from `debian:13.7` or
+  `alpine:3.24.4` and is pushed as `latest`, with its software version and
+  with that version plus the build date.
+- **Tested before it is pushed.** `project.sh publish` pushes an image only
+  after it builds and its smoke test runs its main tools.
+- **SBOMs and vulnerability scans.** `project.sh scan` writes a CycloneDX
+  SBOM of every image and lists its known vulnerabilities with Trivy.
+- **GUI apps on the host's display.** The images use the host's X server,
+  GPU and PipeWire or PulseAudio, and run as a non-root user with uid 1000.
 
 ## Images
 
