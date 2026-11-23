@@ -26,6 +26,7 @@ commonDeps=(
     libsqlite3-0
     neko
     rsync
+    shellcheck
     sudo
     zlib1g
 )

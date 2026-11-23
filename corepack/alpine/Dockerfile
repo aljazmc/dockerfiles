@@ -12,7 +12,7 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
 
 RUN <<EOF
 apk upgrade --no-cache
-apk add --no-cache ca-certificates doas git libstdc++
+apk add --no-cache ca-certificates doas git libstdc++ shellcheck
 apk add --no-cache --virtual .build-deps curl
 
 addgroup -g 1000 "$USER"

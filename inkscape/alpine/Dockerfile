@@ -3,6 +3,7 @@ FROM alpine:3.24.4
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 ARG INKSCAPE_VERSION=1.4.2 \
+    RUFF_VERSION=0.17.6 \
     USER=inkscape
 
 ENV LANG=C \
@@ -24,6 +25,7 @@ runtimeDeps="
     libwmf
     rsvg-convert
     ruby
+    shellcheck
     xterm
 "
 python="
@@ -65,6 +67,7 @@ apk add --no-cache $runtimeDeps $python $libraries
 
 # scour is only packaged in Alpine's testing repository
 pip3 install --no-cache-dir --break-system-packages scour
+pip3 install --no-cache-dir --break-system-packages "ruff==$RUFF_VERSION"
 
 addgroup -g 1000 "$USER"
 adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"

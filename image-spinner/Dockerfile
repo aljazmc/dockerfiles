@@ -14,6 +14,7 @@ runtimeDeps="
     grub
     mtools
     rsync
+    shellcheck
     squashfs-tools
     syslinux
     xorriso

@@ -4,6 +4,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive \
     FLUIDSYNTH_VERSION=2.4.4 \
+    RUFF_VERSION=0.17.6 \
     USER=fluidsynth
 
 ENV LANG=C \
@@ -17,6 +18,7 @@ runtimeDeps=(
     "fluidsynth=$FLUIDSYNTH_VERSION*"
     libpulse0
     pipewire-alsa
+    shellcheck
     sudo
 )
 python=(
@@ -31,6 +33,7 @@ python=(
 apt-get update
 apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${python[@]}" -y
+pip3 install --no-cache-dir --break-system-packages --root-user-action=ignore "ruff==$RUFF_VERSION"
 apt-get dist-clean
 
 groupadd --gid 1000 "$USER"

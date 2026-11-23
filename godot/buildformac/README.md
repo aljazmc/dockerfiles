@@ -12,7 +12,7 @@ Godot with the macOS export templates, for exporting Godot games for macOS from 
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Godot 4.7.2 (official build) with export templates |
-| **Also included** | `makedmg` (`.dmg` disk images), xorriso |
+| **Also included** | `makedmg` (`.dmg` disk images), xorriso, ShellCheck |
 | **User** | `godot` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `4.7.2`, `4.7.2-YYYYMMDD` |
 

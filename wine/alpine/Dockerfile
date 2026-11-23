@@ -11,6 +11,7 @@ RUN <<'EOF'
 runtimeDeps="
     ca-certificates
     doas
+    shellcheck
 "
 libraries="
     dbus-libs

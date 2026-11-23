@@ -161,6 +161,21 @@ smoke() {
             return 1
             ;;
     esac
+    # every image lints shell scripts, and the images with Python lint Python
+    CHECK+='
+                need shellcheck
+                printf "#!/bin/sh\necho \"\$1\"\n" > lint.sh
+                shellcheck lint.sh && echo "shellcheck $(shellcheck --version | sed -n "s/^version: //p"): lint.sh is clean"
+            '
+    case "$1" in
+        blender-*|fluidsynth-*|inkscape-*)
+            CHECK+='
+                need ruff
+                printf "print(\"lint\")\n" > lint.py
+                ruff check --no-cache --quiet lint.py && echo "$(ruff --version): lint.py is clean"
+            '
+            ;;
+    esac
 }
 
 mapfile -t DIRS < <(find . -name Dockerfile -not -path './.git/*' -exec dirname {} \; | sed 's/^\.\///' | sort)

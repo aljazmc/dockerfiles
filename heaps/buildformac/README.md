@@ -12,7 +12,7 @@ Heaps, Haxe, Neko and the macOS build of HashLink, for building Heaps games for 
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Heaps 2.1.0 (installed from haxelib on the first start) |
-| **Also included** | Haxe, Neko, HashLink for macOS (x86_64), `bundle` and `makedmg`, xorriso, zip |
+| **Also included** | Haxe, Neko, HashLink for macOS (x86_64), `bundle` and `makedmg`, xorriso, zip, ShellCheck |
 | **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `2.1.0`, `2.1.0-YYYYMMDD` |
 

@@ -12,7 +12,7 @@ Wine on Alpine Linux, for running and testing Windows applications.
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | Wine 11.0 (Alpine package, stable release) |
-| **Also included** | Mesa, Vulkan, SDL2, GnuTLS, PipeWire ALSA plugin |
+| **Also included** | Mesa, Vulkan, SDL2, GnuTLS, PipeWire ALSA plugin, ShellCheck |
 | **User** | `wine` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `11.0`, `11.0-YYYYMMDD` |
 

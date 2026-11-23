@@ -12,7 +12,7 @@ FluidSynth, FFmpeg and Python 3 on Debian, for rendering MIDI to audio.
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | FluidSynth 2.4.4 (Debian package) |
-| **Also included** | FluidR3 General MIDI soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi, pytest, pip and venv |
+| **Also included** | FluidR3 General MIDI soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi, pytest, pip and venv, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `fluidsynth` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `2.4.4`, `2.4.4-YYYYMMDD` |
 

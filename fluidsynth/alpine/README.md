@@ -12,7 +12,7 @@ FluidSynth, FFmpeg and Python 3 on Alpine Linux, for rendering MIDI to audio.
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | FluidSynth 2.5.4 (Alpine package) |
-| **Also included** | TimGM6mb General MIDI soundfont, FFmpeg, Python 3 with NumPy, pytest and pip, bash, GNU findutils |
+| **Also included** | TimGM6mb General MIDI soundfont, FFmpeg, Python 3 with NumPy, pytest and pip, bash, GNU findutils, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `fluidsynth` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `2.5.4`, `2.5.4-YYYYMMDD` |
 

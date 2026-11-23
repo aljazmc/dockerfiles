@@ -12,7 +12,7 @@ A base image for GUI applications on Alpine Linux that use the host's X server.
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | libX11 1.8.14 |
-| **Also included** | xterm, GTK 2, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client |
+| **Also included** | xterm, GTK 2, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client, ShellCheck |
 | **User** | `x11` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `1.8.14`, `1.8.14-YYYYMMDD` |
 

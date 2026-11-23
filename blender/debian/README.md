@@ -12,7 +12,7 @@ The official Blender build and FFmpeg on Debian, for headless rendering and Pyth
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Blender 5.2.x (official build from blender.org, with its own Python) |
-| **Also included** | FFmpeg, pytest (in Blender's Python), xterm |
+| **Also included** | FFmpeg, pytest and Ruff 0.17.6 (in Blender's Python), xterm, ShellCheck |
 | **User** | `blender` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `5.2.4`, `5.2.4-YYYYMMDD` |
 

@@ -3,6 +3,7 @@ FROM alpine:3.24.4
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 ARG FLUIDSYNTH_VERSION=2.5.4 \
+    RUFF_VERSION=0.17.6 \
     USER=fluidsynth
 
 ENV LANG=C \
@@ -19,6 +20,7 @@ runtimeDeps="
     fluidsynth~$FLUIDSYNTH_VERSION
     libpulse
     pipewire-alsa
+    shellcheck
     soundfont-timgm
 "
 python="
@@ -29,6 +31,7 @@ python="
 "
 apk upgrade --no-cache
 apk add --no-cache $runtimeDeps $python
+pip3 install --no-cache-dir --break-system-packages "ruff==$RUFF_VERSION"
 
 addgroup -g 1000 "$USER"
 adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"

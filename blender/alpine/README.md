@@ -12,7 +12,7 @@ Blender and FFmpeg on Alpine Linux, for headless rendering and Python scripting.
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | Blender 5.1.x (Alpine package) |
-| **Also included** | FFmpeg, Python 3 with `bpy`, NumPy, pytest and Requests, xterm, bash, GNU findutils |
+| **Also included** | FFmpeg, Python 3 with `bpy`, NumPy, pytest and Requests, xterm, bash, GNU findutils, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `blender` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `5.1.2`, `5.1.2-YYYYMMDD` |
 

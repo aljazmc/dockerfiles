@@ -12,7 +12,7 @@ Everything needed to build custom Alpine Linux ISO images with `mkimage.sh` from
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | Alpine Linux 3.24.4 build tools |
-| **Also included** | abuild, alpine-conf, git, GRUB, syslinux, mtools, squashfs-tools, xorriso, rsync |
+| **Also included** | abuild, alpine-conf, git, GRUB, syslinux, mtools, squashfs-tools, xorriso, rsync, ShellCheck |
 | **User** | `aljazmc` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `3.24.4`, `3.24.4-YYYYMMDD` |
 

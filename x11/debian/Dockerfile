@@ -16,6 +16,7 @@ runtimeDeps=(
     gtk2-engines-pixbuf
     libpulse0
     pipewire-alsa
+    shellcheck
     sudo
     xterm
 )

@@ -15,6 +15,7 @@ runtimeDeps="
     gtk+2.0
     libpulse
     pipewire-alsa
+    shellcheck
     xterm
 "
 libraries="

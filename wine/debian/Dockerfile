@@ -11,6 +11,7 @@ ENV PATH="$PATH:/home/$USER"
 RUN <<'EOF'
 runtimeDeps=(
     ca-certificates
+    shellcheck
     sudo
 )
 buildDeps=(

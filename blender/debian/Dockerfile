@@ -4,6 +4,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG BLENDER_VERSION=5.2 \
     DEBIAN_FRONTEND=noninteractive \
+    RUFF_VERSION=0.17.6 \
     USER=blender
 
 ENV LANG=C \
@@ -22,6 +23,7 @@ runtimeDeps=(
     gtk2-engines-pixbuf
     libpulse0
     pipewire-alsa
+    shellcheck
     sudo
     xterm
 )
@@ -73,8 +75,10 @@ ln -s /opt/blender/blender /usr/local/bin/blender
 
 # pytest in Blender's own Python, for tests that need bpy, which only works
 # inside Blender: blender -b --python-expr "import sys, pytest; sys.exit(pytest.main([]))"
+# and Ruff, linked onto the PATH, to lint the scripts
 /opt/blender/"$BLENDER_VERSION"/python/bin/python3.* -m pip install \
-    --no-cache-dir --root-user-action=ignore --disable-pip-version-check pytest
+    --no-cache-dir --root-user-action=ignore --disable-pip-version-check pytest "ruff==$RUFF_VERSION"
+ln -s /opt/blender/"$BLENDER_VERSION"/python/bin/ruff /usr/local/bin/ruff
 
 apt-get purge "${buildDeps[@]}" -y
 apt-get autoremove -y

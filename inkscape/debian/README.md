@@ -12,7 +12,7 @@ Inkscape with full Python 3 extension support on Debian, for converting and expo
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Inkscape 1.4 (Debian package) |
-| **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm |
+| **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `inkscape` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `1.4`, `1.4-YYYYMMDD` |
 

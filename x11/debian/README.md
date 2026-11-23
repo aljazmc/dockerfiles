@@ -12,7 +12,7 @@ A base image for GUI applications on Debian that use the host's X server.
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | libX11 1.8.12 |
-| **Also included** | xterm, GTK 2 engines, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client |
+| **Also included** | xterm, GTK 2 engines, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client, ShellCheck |
 | **User** | `x11` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `1.8.12`, `1.8.12-YYYYMMDD` |
 

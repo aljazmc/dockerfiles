@@ -12,7 +12,7 @@ Godot with the Linux export templates, for exporting and running Godot games for
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Godot 4.7.2 (official build) with export templates |
-| **Also included** | `makesh` (self-extracting `.sh` archives), Mesa, Vulkan, PipeWire |
+| **Also included** | `makesh` (self-extracting `.sh` archives), Mesa, Vulkan, PipeWire, ShellCheck |
 | **User** | `godot` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `4.7.2`, `4.7.2-YYYYMMDD` |
 

@@ -52,6 +52,8 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 | [x11-alpine](x11/alpine) | Alpine 3.24 | libX11 1.8 | xterm, GTK 2, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
 | [x11-debian](x11/debian) | Debian 13 | libX11 1.8 | xterm, GTK 2 engines, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
 
+Every image includes [ShellCheck](https://www.shellcheck.net/) from its distribution's repository. The images whose work is Python scripts (blender-*, fluidsynth-* and inkscape-*) also include [Ruff](https://docs.astral.sh/ruff/), installed with pip at 0.17.6 (in Blender's own Python on blender-debian), the version the GitHub Actions of the profile's repositories use.
+
 ### Alpine or Debian?
 
 - **Alpine** images are smaller, but they use musl instead of glibc, so binaries built on glibc distributions (Debian, Ubuntu, Fedora, ...) don't run in them.

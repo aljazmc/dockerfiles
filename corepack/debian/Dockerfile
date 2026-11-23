@@ -19,6 +19,7 @@ runtimeDeps=(
     gpg
     gpg-agent
     libatomic1
+    shellcheck
     sudo
     tar
     xz-utils

@@ -12,7 +12,7 @@ Heaps, Haxe, Neko, the Windows build of HashLink and mingw-w64, for building Hea
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Heaps 2.1.0 (installed from haxelib on the first start) |
-| **Also included** | Haxe, Neko, HashLink for Windows (x86_64), mingw-w64, NSIS, `bundle` and `makeexe` |
+| **Also included** | Haxe, Neko, HashLink for Windows (x86_64), mingw-w64, NSIS, `bundle` and `makeexe`, ShellCheck |
 | **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `2.1.0`, `2.1.0-YYYYMMDD` |
 

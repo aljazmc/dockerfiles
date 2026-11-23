@@ -3,6 +3,7 @@ FROM alpine:3.24.4
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 ARG BLENDER_VERSION=5.1 \
+    RUFF_VERSION=0.17.6 \
     USER=blender
 
 ENV LANG=C \
@@ -23,8 +24,10 @@ runtimeDeps="
     py3-blender
     py3-cattrs
     py3-numpy
+    py3-pip
     py3-pytest
     py3-requests
+    shellcheck
     xterm
 "
 libraries="
@@ -50,6 +53,7 @@ libraries="
 "
 apk upgrade --no-cache
 apk add --no-cache $runtimeDeps $libraries
+pip3 install --no-cache-dir --break-system-packages "ruff==$RUFF_VERSION"
 
 addgroup -g 1000 "$USER"
 adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"

@@ -12,7 +12,7 @@ The WineHQ development build of Wine on Debian, for running and testing Windows 
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Wine 11.22 (WineHQ `winehq-devel`) |
-| **Also included** | 32-bit and 64-bit Mesa, Vulkan and SDL2 libraries, GnuTLS |
+| **Also included** | 32-bit and 64-bit Mesa, Vulkan and SDL2 libraries, GnuTLS, ShellCheck |
 | **User** | `wine` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `11.22`, `11.22-YYYYMMDD` |
 

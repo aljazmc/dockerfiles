@@ -12,7 +12,7 @@ Inkscape with full Python 3 extension support on Alpine Linux, for converting an
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | Inkscape 1.4.2 (Alpine package) |
-| **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm |
+| **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `inkscape` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `1.4.2`, `1.4.2-YYYYMMDD` |
 

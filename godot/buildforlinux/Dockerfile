@@ -13,6 +13,7 @@ commonDeps=(
     ca-certificates
     curl
     libfontconfig1
+    shellcheck
     sudo
     unzip
 )

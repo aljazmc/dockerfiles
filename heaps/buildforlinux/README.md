@@ -12,7 +12,7 @@ Heaps, Haxe, Neko and HashLink on Debian, for building Heaps games for GNU/Linux
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Heaps 2.1.0 (installed from haxelib on the first start) |
-| **Also included** | Haxe, Neko, HashLink (built from source), g++, SDL3, OpenAL, `bundle` and `makesh` |
+| **Also included** | Haxe, Neko, HashLink (built from source), g++, SDL3, OpenAL, `bundle` and `makesh`, ShellCheck |
 | **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `2.1.0`, `2.1.0-YYYYMMDD` |
 

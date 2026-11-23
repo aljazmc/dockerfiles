@@ -4,6 +4,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive \
     INKSCAPE_VERSION=1.4 \
+    RUFF_VERSION=0.17.6 \
     USER=inkscape
 
 ENV LANG=C \
@@ -23,6 +24,7 @@ runtimeDeps=(
     librsvg2-bin
     libwmf-bin
     ruby
+    shellcheck
     sudo
     xterm
 )
@@ -40,6 +42,7 @@ python=(
     python3-numpy
     python3-packaging
     python3-pil
+    python3-pip
     python3-platformdirs
     python3-pyparsing
     python3-requests
@@ -67,6 +70,7 @@ libraries=(
 apt-get update
 apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${python[@]}" "${libraries[@]}" -y
+pip3 install --no-cache-dir --break-system-packages --root-user-action=ignore "ruff==$RUFF_VERSION"
 apt-get dist-clean
 
 groupadd --gid 1000 "$USER"
