@@ -3,8 +3,8 @@ FROM alpine:3.24.4
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
 ARG COREPACK_VERSION="0.36.0" \
-    NODE_VERSION="26.13.0" \
-    SHA="22d5be50b7a52a49b4e30e3349a24a5753e3c8b401d0f7a404019dbd4c39216c" \
+    NODE_VERSION="26.13.1" \
+    SHA="1b8a8a393c7fa5b2f66eaf0314aaa23c2f3cd3a3be14d5c7bac011bf9de236ea" \
     USER=node
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \

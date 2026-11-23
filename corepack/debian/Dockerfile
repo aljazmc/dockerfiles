@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG COREPACK_VERSION="0.36.0" \
     DEBIAN_FRONTEND=noninteractive \
-    NODE_VERSION="26.13.0" \
+    NODE_VERSION="26.13.1" \
     USER=node
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \

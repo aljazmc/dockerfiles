@@ -12,7 +12,7 @@ Node.js, Corepack and git on Alpine Linux, for projects that use Yarn Berry or p
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | Corepack 0.36.0 |
-| **Also included** | Node.js 26.13.0 (unofficial musl build, sha256 checked), npm, git, ShellCheck |
+| **Also included** | Node.js 26.13.1 (unofficial musl build, sha256 checked), npm, git, ShellCheck |
 | **User** | `node` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `0.36.0`, `0.36.0-YYYYMMDD` |
 

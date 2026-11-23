@@ -12,7 +12,7 @@ Node.js, Corepack and git on Debian, for projects that use Yarn Berry or pnpm.
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Corepack 0.36.0 |
-| **Also included** | Node.js 26.13.0 (official build, GPG verified), npm, git, ShellCheck |
+| **Also included** | Node.js 26.13.1 (official build, GPG verified), npm, git, ShellCheck |
 | **User** | `node` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `0.36.0`, `0.36.0-YYYYMMDD` |
 
