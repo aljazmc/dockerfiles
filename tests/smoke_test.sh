@@ -56,6 +56,17 @@ HAXE_MAIN='printf "class Main { static function main() trace(\"smoke ok\"); }\n"
 #   bypass   skip the entrypoint (it needs network to set up): sh -c CHECK
 smoke() {
     case "$1" in
+        actions-alpine|actions-debian)
+            RUN="exec"
+            CHECK='
+                need node npm corepack git shellcheck ruff
+                node -e "console.log(\"node\", process.version)"
+                echo "npm $(npm --version), corepack $(corepack --version)"
+                git --version
+                shellcheck --version
+                ruff version
+            '
+            ;;
         blender-alpine|blender-debian)
             RUN="exec"
             CHECK='

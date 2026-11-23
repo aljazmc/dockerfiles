@@ -19,6 +19,8 @@ image_name() {
 version() {
     # shellcheck disable=SC2016 # heaps-*: expanded inside the container
     case "$1" in
+        actions-alpine)  cmd='cat /etc/alpine-release' ;;
+        actions-debian)  cmd='cat /etc/debian_version' ;;
         blender-*)       cmd='blender --version' ;;
         corepack-*)      cmd='corepack --version' ;;
         fluidsynth-*)    cmd='fluidsynth --version' ;;
