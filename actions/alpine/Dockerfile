@@ -67,4 +67,4 @@ RUN doas npm install -g "corepack@$COREPACK_VERSION"
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD [ "node" ]
+CMD [ "bash" ]
