@@ -8,7 +8,7 @@ ARG COREPACK_VERSION="0.36.0" \
     RUFF_VERSION="0.17.6" \
     USER=actions
 
-ENV ACTIONS_ENABLE_DOWNLOAD_PROMPT=0 \
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     PATH="$PATH:/home/$USER:/home/$USER/.yarn/releases:/opt/hostedtoolcache/ruff/$RUFF_VERSION/x86_64"
 
 RUN <<'EOF'
