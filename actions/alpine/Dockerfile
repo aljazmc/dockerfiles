@@ -30,13 +30,18 @@ pythonDeps="
     py3-pytest
     py3-requests
 "
+dockerDeps="
+    docker
+    docker-cli-compose
+"
 apk upgrade --no-cache
-apk add --no-cache $runtimeDeps $pythonDeps
+apk add --no-cache $runtimeDeps $pythonDeps $dockerDeps
 pip3 install --no-cache-dir --break-system-packages "ruff==$RUFF_VERSION"
 
 addgroup -g 1000 "$USER"
 adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"
 echo "permit nopass :$USER as root" > /etc/doas.d/doas.conf
+addgroup "$USER" docker
 
 if [ -n "${SHA}" ]; then
     curl -fsSLO --compressed "https://unofficial-builds.nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64-musl.tar.xz"
@@ -49,6 +54,7 @@ fi
 
 rm -rf /tmp/*
 
+docker --version
 node --version
 npm --version
 EOF

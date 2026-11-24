@@ -12,7 +12,7 @@ Self-hosted runner image for GitHub Actions on Alpine Linux for running with gh 
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | Node.js 26.13.1 (unofficial musl build, sha256 checked) |
-| **Also included** | npm, git, ShellCheck, ruff, ffmpeg, findutils |
+| **Also included** | npm, git, ShellCheck, ruff, ffmpeg, findutils, docker |
 | **User** | `actions` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `3.24.4`, `3.24.4-YYYYMMDD` |
 
