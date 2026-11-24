@@ -9,7 +9,7 @@ ARG COREPACK_VERSION="0.36.0" \
     USER=actions
 
 ENV ACTIONS_ENABLE_DOWNLOAD_PROMPT=0 \
-    PATH="$PATH:/home/$USER:/home/$USER/.yarn/releases"
+    PATH="$PATH:/home/$USER:/home/$USER/.yarn/releases:/opt/hostedtoolcache/ruff/$RUFF_VERSION/x86_64"
 
 RUN <<'EOF'
 runtimeDeps=(
@@ -26,6 +26,7 @@ runtimeDeps=(
     xz-utils
 )
 pythonDeps=(
+    python-is-python3
     python3
     python3-mido
     python3-numpy
