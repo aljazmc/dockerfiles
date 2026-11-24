@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-19%20images-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-21%20images-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
 [![Docker pulls](https://img.shields.io/badge/pulls-9%2C000%2B-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
 [![Alpine 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://alpinelinux.org/)
 [![Debian 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://www.debian.org/)
@@ -15,9 +15,9 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 
 ## Features
 
-- **19 images, two families.** Blender, Inkscape, FluidSynth, Wine, X11 and
-  Corepack in Alpine and Debian flavours, Godot and Heaps build images for
-  Linux, Windows and macOS, and `image-spinner` for custom Alpine ISOs.
+- **21 images, two families.** Actions, Blender, Inkscape, FluidSynth, Wine,
+  X11 and Corepack in Alpine and Debian flavours, Godot and Heaps build images
+  for Linux, Windows and macOS, and `image-spinner` for custom Alpine ISOs.
 - **Pinned and tagged.** Every image starts from `debian:13.7` or
   `alpine:3.24.4` and is pushed as `latest`, with its software version and
   with that version plus the build date.
@@ -32,6 +32,8 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 
 | Image | Base | Software | Description |
 |---|---|---|---|
+| [actions-alpine](actions/alpine) | Alpine 3.24 | Shellcheck | Node.js 26 (unofficial musl build), Corepack, ruff and git. |
+| [actions-debian](actions/debian) | Debian 13 | Shellcheck | Node.js 26 (official build, GPG verified), Corepack, ruff and git. |
 | [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg and pytest. |
 | [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Official blender.org build with its own Python, with FFmpeg and pytest. |
 | [corepack-alpine](corepack/alpine) | Alpine 3.24 | Corepack 0.36 | Node.js 26 (unofficial musl build), Corepack and git. |
