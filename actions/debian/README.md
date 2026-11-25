@@ -12,8 +12,8 @@ Self-hosted runner for GitHub Actions on Debian Linux for running with gh act
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | Node.js 26.13.1 (official build, GPG verified) |
-| **Also included** | npm, git, ShellCheck, ruff, docker |
-| **User** | `node` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
+| **Also included** | npm, corepack, docker, ShellCheck, ruff and git |
+| **User** | `actions` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `13.7`, `13.7-YYYYMMDD` |
 
 ## Usage with Docker

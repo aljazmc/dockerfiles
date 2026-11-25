@@ -32,8 +32,8 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 
 | Image | Base | Software | Description |
 |---|---|---|---|
-| [actions-alpine](actions/alpine) | Alpine 3.24 | Shellcheck | Node.js 26 (unofficial musl build), Corepack, ruff and git. |
-| [actions-debian](actions/debian) | Debian 13 | Shellcheck | Node.js 26 (official build, GPG verified), Corepack, ruff and git. |
+| [actions-alpine](actions/alpine) | Alpine 3.24 | Shellcheck | Node.js 26 (unofficial musl build), Corepack, docker, ruff and git. |
+| [actions-debian](actions/debian) | Debian 13 | Shellcheck | Node.js 26 (official build, GPG verified), Corepack, docker, ruff and git. |
 | [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg and pytest. |
 | [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Official blender.org build with its own Python, with FFmpeg and pytest. |
 | [corepack-alpine](corepack/alpine) | Alpine 3.24 | Corepack 0.36 | Node.js 26 (unofficial musl build), Corepack and git. |
