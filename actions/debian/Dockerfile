@@ -2,7 +2,8 @@ FROM debian:13.7
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-ARG COREPACK_VERSION="0.36.0" \
+ARG TARGETARCH \
+    COREPACK_VERSION="0.36.0" \
     DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION="26.13.1" \
     RUFF_VERSION="0.17.6" \
@@ -42,6 +43,14 @@ dockerDeps=(
     docker-buildx-plugin
     docker-compose-plugin
 )
+
+ARCH=""
+case "${TARGETARCH}" in
+    amd64) ARCH='x64' ;;
+    arm64) ARCH='arm64' ;;
+    *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;;
+esac
+
 apt-get update
 apt-get upgrade -y
 apt-get install --no-install-recommends "${runtimeDeps[@]}" "${pythonDeps[@]}" -y
@@ -56,7 +65,11 @@ echo "Types: deb" > /etc/apt/sources.list.d/docker.sources
 echo "URIs: https://download.docker.com/linux/debian" >> /etc/apt/sources.list.d/docker.sources
 echo "Suites: trixie" >> /etc/apt/sources.list.d/docker.sources
 echo "Components: stable" >> /etc/apt/sources.list.d/docker.sources
+if [ "$ARCH" = "x64" ]; then
 echo "Architectures: amd64" >> /etc/apt/sources.list.d/docker.sources
+else
+echo "Architectures: arm64" >> /etc/apt/sources.list.d/docker.sources
+fi
 echo "Signed-By: /etc/apt/keyrings/docker.asc" >> /etc/apt/sources.list.d/docker.sources
 
 apt-get update
@@ -75,17 +88,19 @@ do
     { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ;
 done
 
-curl -fsSLO --compressed "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz"
+NODE_TARBALL="node-v${NODE_VERSION}-linux-${ARCH}.tar.xz"
+
+curl -fsSLO --compressed "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_TARBALL}"
 curl -fsSLO --compressed "https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt.asc"
 
 gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc
 gpgconf --kill all
 rm -rf ~/.gnupg
-grep " node-v${NODE_VERSION}-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c -
-tar -xJf "node-v${NODE_VERSION}-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner
+grep "${NODE_TARBALL}\$" SHASUMS256.txt | sha256sum -c -
+tar -xJf "${NODE_TARBALL}" -C /usr/local --strip-components=1 --no-same-owner
 ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-rm "node-v${NODE_VERSION}-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
+rm "${NODE_TARBALL}" SHASUMS256.txt.asc SHASUMS256.txt
 rm -rf /tmp/*
 
 docker --version

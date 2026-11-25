@@ -2,10 +2,10 @@ FROM alpine:3.24.4
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
 
-ARG COREPACK_VERSION="0.36.0" \
+ARG TARGETARCH \
+    COREPACK_VERSION="0.36.0" \
     NODE_VERSION="26.13.1" \
     RUFF_VERSION="0.17.6" \
-    SHA="1b8a8a393c7fa5b2f66eaf0314aaa23c2f3cd3a3be14d5c7bac011bf9de236ea" \
     USER=actions
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
@@ -43,13 +43,28 @@ adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"
 echo "permit nopass :$USER as root" > /etc/doas.d/doas.conf
 addgroup "$USER" docker
 
-if [ -n "${SHA}" ]; then
-    curl -fsSLO --compressed "https://unofficial-builds.nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64-musl.tar.xz"
-    echo "${SHA} node-v${NODE_VERSION}-linux-x64-musl.tar.xz" | sha256sum -c -
-    tar -xJf "node-v${NODE_VERSION}-linux-x64-musl.tar.xz" -C /usr/local --strip-components=1 --no-same-owner
-    ln -s /usr/local/bin/node /usr/local/bin/nodejs
-    rm -f "node-v${NODE_VERSION}-linux-x64-musl.tar.xz"
-    find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 | sed "/linux-x86_64/d" | xargs -I {} rm -rf {}
+ARCH=""
+case "${TARGETARCH}" in
+    amd64) ARCH='x64' ;;
+    arm64) ARCH='arm64' ;;
+    *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;;
+esac
+
+NODE_TARBALL="node-v${NODE_VERSION}-linux-${ARCH}-musl.tar.xz"
+
+curl -fsSLO --compressed "https://unofficial-builds.nodejs.org/download/release/v${NODE_VERSION}/${NODE_TARBALL}"
+curl -fsSLO --compressed "https://unofficial-builds.nodejs.org/download/release/v${NODE_VERSION}/SHASUMS256.txt"
+
+grep "${NODE_TARBALL}\$" SHASUMS256.txt | sha256sum -c -
+tar -xJf "${NODE_TARBALL}" -C /usr/local --strip-components=1 --no-same-owner
+ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+rm "${NODE_TARBALL}" SHASUMS256.txt
+
+if [ "$ARCH" = "x64" ]; then
+find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 | sed "/linux-x86_64/d" | xargs -I {} rm -rf {}
+else
+find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 | sed "/linux-arm64/d" | xargs -I {} rm -rf {}
 fi
 
 rm -rf /tmp/*
