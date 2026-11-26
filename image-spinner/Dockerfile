@@ -16,7 +16,6 @@ runtimeDeps="
     rsync
     shellcheck
     squashfs-tools
-    syslinux
     xorriso
 "
 apk upgrade --no-cache
