@@ -4,83 +4,66 @@ SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 ARG BLENDER_VERSION=5.2 \
     DEBIAN_FRONTEND=noninteractive \
+    DRACO_VERSION=2.2.0 \
     RUFF_VERSION=0.17.6 \
     USER=blender
 
 ENV LANG=C \
     LC_ALL=C \
-    PATH="$PATH:/home/$USER"
+    PATH="$PATH:/home/$USER:/home/$USER/.local/bin"
+
+RUN cat <<"EOF" | tee /etc/apt/sources.list.d/forky.sources
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: forky
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+
+RUN cat <<"EOF" | tee /etc/apt/preferences.d/99-pinning
+Package: *
+Pin: release n=trixie
+Pin-Priority: 900
+
+Package: *
+Pin: release n=forky
+Pin-Priority: 100
+EOF
 
 RUN <<'EOF'
-buildDeps=(
+runDeps=(
     ca-certificates
-    curl
-    xz-utils
-)
-runtimeDeps=(
-    ffmpeg
-    gtk2-engines-murrine
-    gtk2-engines-pixbuf
-    libpulse0
-    pipewire-alsa
-    shellcheck
     sudo
     xterm
 )
-libraries=(
-    libdecor-0-0
-    libegl1
-    libgl1
-    libgl1-mesa-dri
-    libglx-mesa0
-    libice6
-    libsm6
-    libvulkan1
-    libwayland-client0
-    libwayland-cursor0
-    libwayland-egl1
+blenderDeps=(
+    ffmpeg
+    python3-cattr
+    python3-requests
+    python3-pip
+    python3-pytest
+    python3-venv
+    pipewire
+    pipewire-pulse
+    shellcheck
     libx11-6
-    libxcursor1
-    libxext6
+    libxxf86vm1
     libxfixes3
     libxi6
-    libxinerama1
-    libxkbcommon-x11-0
-    libxkbcommon0
-    libxrandr2
     libxrender1
-    libxss1
-    libxxf86vm1
-    mesa-vulkan-drivers
+    libxkbcommon0
+    libgl1
+    libsm6
+    libice6
+    xz-utils
+    curl
+    wireplumber
 )
 apt-get update
-apt-get upgrade -y
-apt-get install --no-install-recommends "${buildDeps[@]}" "${runtimeDeps[@]}" "${libraries[@]}" -y
+apt-get install -y --no-install-recommends "${runDeps[@]}" "${blenderDeps[@]}"
+apt-get install -y --no-install-recommends -t forky "blender=$BLENDER_VERSION*"
+python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check pytest "ruff==$RUFF_VERSION" "DracoPy==$DRACO_VERSION"
 
-BLENDER_URL="https://download.blender.org/release/Blender${BLENDER_VERSION}"
-BLENDER_LATEST=$(curl -fsSL "${BLENDER_URL}/" \
-    | grep -oE "blender-${BLENDER_VERSION//./\\.}\.[0-9]+-linux-x64\.tar\.xz" \
-    | sed -E 's/^blender-(.*)-linux-x64\.tar\.xz$/\1/' \
-    | sort -uV | tail -n 1)
-BLENDER_ARCHIVE="blender-${BLENDER_LATEST}-linux-x64.tar.xz"
-curl -fsSLo "/tmp/${BLENDER_ARCHIVE}" "${BLENDER_URL}/${BLENDER_ARCHIVE}"
-curl -fsSL "${BLENDER_URL}/blender-${BLENDER_LATEST}.sha256" \
-    | grep " ${BLENDER_ARCHIVE}\$" \
-    | sed "s|  |  /tmp/|" \
-    | sha256sum -c -
-mkdir -p /opt/blender
-tar -xJf "/tmp/${BLENDER_ARCHIVE}" -C /opt/blender --strip-components=1
-rm "/tmp/${BLENDER_ARCHIVE}"
-ln -s /opt/blender/blender /usr/local/bin/blender
-
-# pytest in Blender's own Python, for tests that need bpy, which only works
-# inside Blender: blender -b --python-expr "import sys, pytest; sys.exit(pytest.main([]))"
-# and Ruff, linked onto the PATH, to lint the scripts
-/opt/blender/"$BLENDER_VERSION"/python/bin/python3.* -m pip install \
-    --no-cache-dir --root-user-action=ignore --disable-pip-version-check pytest "ruff==$RUFF_VERSION"
-ln -s /opt/blender/"$BLENDER_VERSION"/python/bin/ruff /usr/local/bin/ruff
-
-apt-get purge "${buildDeps[@]}" -y
 apt-get autoremove -y
 apt-get dist-clean
 
