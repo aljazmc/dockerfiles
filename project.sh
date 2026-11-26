@@ -52,6 +52,9 @@ publish() {
 
 failed=()
 
+## multiarch dependencies
+docker run --privileged --rm tonistiigi/binfmt --install all
+
 ## build date (UTC), the same for every image of this run, e.g. "20261122"
 date=$(date -u +%Y%m%d)
 
@@ -60,30 +63,36 @@ for dir in $DIRS; do
     image=$(image_name "$dir")
 
     ## only push images that build and pass their smoke test
-    if ! (cd "$dir" && docker build . -t "aljazmc/$image"); then
+    if ! (cd "$dir" && docker buildx build --platform linux/amd64,linux/arm64 -t "aljazmc/$image" . ); then
         echo "aljazmc/$image: build failed, not pushing"
         failed+=("$image")
     elif ! tests/smoke_test.sh --no-build "$image"; then
         echo "aljazmc/$image: smoke test failed, not pushing"
         failed+=("$image")
     else
-        docker tag "aljazmc/$image" "aljazmc/$image:latest"
+        docker buildx imagetools create -t "aljazmc/$image:latest" "aljazmc/$image"
         tag=$(version "$image")
         if [ -n "$tag" ]; then
-            docker tag "aljazmc/$image" "aljazmc/$image:$tag"
+            docker buildx imagetools create -t "aljazmc/$image:$tag" "aljazmc/$image"
             ## e.g. "5.2.4-20261122", a tag that always points to this build
-            docker tag "aljazmc/$image" "aljazmc/$image:$tag-$date"
+            docker buildx imagetools create -t "aljazmc/$image:$tag-$date" "aljazmc/$image"
         else
-            docker tag "aljazmc/$image" "aljazmc/$image:$date"
+            docker buildx imagetools create -t "aljazmc/$image:$date" "aljazmc/$image"
         fi
-        docker push -a "aljazmc/$image"
+	( \
+            cd "$dir" && \
+            docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --push \
+            -t "aljazmc/$image" \
+            -t "aljazmc/$image:$tag" \
+            -t "aljazmc/$image:$tag-$date" \
+            -t "aljazmc/$image:latest" \
+	    . \
+        )
     fi
 
     docker image ls "aljazmc/$image" -q | sort -u | xargs -r docker rmi -f
-
-    ## it's important to be nice
-    sleep 30
-
 done
 
 if [ "${#failed[@]}" -gt 0 ]; then
