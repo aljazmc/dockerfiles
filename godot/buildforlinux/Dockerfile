@@ -2,7 +2,8 @@ FROM debian:13.7
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-ARG DEBIAN_FRONTEND=noninteractive \
+ARG TARGETARCH \
+    DEBIAN_FRONTEND=noninteractive \
     GODOT_VERSION="4.7.2"
 
 ENV USER=godot \
@@ -46,11 +47,19 @@ apt-get update
 apt-get upgrade -y
 apt-get install --no-install-recommends "${commonDeps[@]}" "${linuxDeps[@]}" -y
 rm -rf /var/lib/apt/lists/*
+
+ARCH=""
+case "${TARGETARCH}" in
+    amd64) ARCH='x86_64' ;;
+    arm64) ARCH='arm64' ;;
+    *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;;
+esac
+
 GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
 cd /tmp
-curl -fsSLO "$GODOT_URL/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
-unzip -q "Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
-mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+curl -fsSLO "$GODOT_URL/Godot_v${GODOT_VERSION}-stable_linux.${ARCH}.zip"
+unzip -q "Godot_v${GODOT_VERSION}-stable_linux.${ARCH}.zip"
+mv "Godot_v${GODOT_VERSION}-stable_linux.${ARCH}" /usr/local/bin/godot
 curl -fsSLO "$GODOT_URL/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
 unzip -q "Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
     'templates/version.txt' \
