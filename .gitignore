@@ -42,6 +42,7 @@ wine/debian/*
 !blender/debian/Dockerfile
 !blender/debian/README.md
 !blender/debian/docker-entrypoint.sh
+!blender/debian/forky.sources
 !blender/debian/project.sh
 !corepack/alpine/Dockerfile
 !corepack/alpine/README.md

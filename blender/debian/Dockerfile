@@ -12,23 +12,7 @@ ENV LANG=C \
     LC_ALL=C \
     PATH="$PATH:/home/$USER:/home/$USER/.local/bin"
 
-RUN cat <<"EOF" | tee /etc/apt/sources.list.d/forky.sources
-Types: deb
-URIs: http://deb.debian.org/debian
-Suites: forky
-Components: main contrib non-free non-free-firmware
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-
-# RUN cat <<"EOF" | tee /etc/apt/preferences.d/99-pinning
-# Package: *
-# Pin: release n=trixie
-# Pin-Priority: 900
-# 
-# Package: *
-# Pin: release n=forky
-# Pin-Priority: 100
-# EOF
+COPY forky.sources /etc/apt/sources.list.d/
 
 RUN <<'EOF'
 runDeps=(
@@ -45,11 +29,12 @@ runDeps=(
 blenderDeps=(
     ffmpeg
     shellcheck
+    libegl1
+    libopengl0
 )
 apt-get update
 apt-get full-upgrade -y
-apt-get install -y --no-install-recommends "${runDeps[@]}" "${blenderDeps[@]}"
-apt-get install -y -t forky "blender=$BLENDER_VERSION*"
+apt-get install -y --no-install-recommends ${runDeps[@]} ${blenderDeps[@]} "blender=$BLENDER_VERSION*"
 python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check "ruff==$RUFF_VERSION"
 python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check --target=/usr/share/blender/scripts/modules "DracoPy==$DRACO_VERSION"
 
