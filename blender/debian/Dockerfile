@@ -20,49 +20,38 @@ Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
 
-RUN cat <<"EOF" | tee /etc/apt/preferences.d/99-pinning
-Package: *
-Pin: release n=trixie
-Pin-Priority: 900
-
-Package: *
-Pin: release n=forky
-Pin-Priority: 100
-EOF
+# RUN cat <<"EOF" | tee /etc/apt/preferences.d/99-pinning
+# Package: *
+# Pin: release n=trixie
+# Pin-Priority: 900
+# 
+# Package: *
+# Pin: release n=forky
+# Pin-Priority: 100
+# EOF
 
 RUN <<'EOF'
 runDeps=(
     ca-certificates
     sudo
     xterm
+    python3-all
+    python3-cattr
+    python3-numpy
+    python3-pip
+    python3-pytest
+    python3-requests
 )
 blenderDeps=(
     ffmpeg
-    python3-cattr
-    python3-requests
-    python3-pip
-    python3-pytest
-    python3-venv
-    pipewire
-    pipewire-pulse
     shellcheck
-    libx11-6
-    libxxf86vm1
-    libxfixes3
-    libxi6
-    libxrender1
-    libxkbcommon0
-    libgl1
-    libsm6
-    libice6
-    xz-utils
-    curl
-    wireplumber
 )
 apt-get update
+apt-get full-upgrade -y
 apt-get install -y --no-install-recommends "${runDeps[@]}" "${blenderDeps[@]}"
-apt-get install -y --no-install-recommends -t forky "blender=$BLENDER_VERSION*"
-python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check pytest "ruff==$RUFF_VERSION" "DracoPy==$DRACO_VERSION"
+apt-get install -y -t forky "blender=$BLENDER_VERSION*"
+python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check "ruff==$RUFF_VERSION"
+python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check --target=/usr/share/blender/scripts/modules "DracoPy==$DRACO_VERSION"
 
 apt-get autoremove -y
 apt-get dist-clean
