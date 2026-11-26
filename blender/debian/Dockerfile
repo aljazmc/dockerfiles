@@ -18,16 +18,19 @@ RUN <<'EOF'
 runDeps=(
     ca-certificates
     sudo
-    xterm
+)
+blenderDeps=(
+    ffmpeg
+    libegl1
+    libgbm1
+    libgl1-mesa-dri
+    libopengl0
     python3-all
     python3-cattr
     python3-numpy
     python3-pip
     python3-pytest
     python3-requests
-)
-blenderDeps=(
-    ffmpeg
     shellcheck
     libegl1
     libopengl0
