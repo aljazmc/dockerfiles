@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+#!/bin/bash
 #
 # Shared by the tests: the repository root, a temporary directory removed on
 # exit, the images, and PASS/FAIL reporting. Source it, then end the test

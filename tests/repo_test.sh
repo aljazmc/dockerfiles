@@ -8,6 +8,8 @@
 #     directory, and its Docker Hub badge counts them
 #   - project.sh reads a version for every image, so none is tagged by date
 #     alone
+#   - .gitignore ignores no tracked file, keeps the files of a new image and
+#     ignores what a container leaves in an image directory
 #
 # Usage: tests/repo_test.sh
 
@@ -76,5 +78,24 @@ for image in "${IMAGES[@]}"; do
 done
 check "project.sh reads a version for every image${unversioned[*]:+; not: ${unversioned[*]}}" \
     [ "${#unversioned[@]}" -eq 0 ]
+
+ignored=$(git ls-files -ci --exclude-standard | paste -sd' ')
+check ".gitignore ignores no tracked file${ignored:+; ignores: $ignored}" \
+    [ -z "$ignored" ]
+
+# ignored <path>: .gitignore ignores the path, tracked or not
+ignored() { git check-ignore -q --no-index "$1"; }
+wrong=()
+for path in newtool/alpine/Dockerfile newtool/debian/README.md \
+    newtool/buildforlinux/docker-entrypoint.sh newtool/debian/extra.sources \
+    tests/new_test.sh .github/workflows/new.yml; do
+    ignored "$path" && wrong+=("$path ignored")
+done
+for path in blender/debian/render_0001.png node/alpine/.cache/node \
+    godot/buildformac/game.dmg image-spinner/alpine.iso sbom/x11-alpine.cdx.json; do
+    ignored "$path" || wrong+=("$path kept")
+done
+check ".gitignore keeps a new image's files and ignores container output${wrong[*]:+; but: ${wrong[*]}}" \
+    [ "${#wrong[@]}" -eq 0 ]
 
 finish
