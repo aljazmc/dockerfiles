@@ -1,0 +1,44 @@
+# Dependabot opens pull requests that update
+#   - the base images in the FROM lines of every Dockerfile, e.g.
+#     debian:13.7 -> debian:13.8, one pull request for the Debian images and
+#     one for the Alpine ones, so all images keep the same base
+#   - the actions the workflows use, e.g. actions/checkout@v7 -> @v8
+# It doesn't update the versions of the software in ARG lines, such as
+# BLENDER_VERSION, or the Trivy image pinned in project.sh.
+#
+# CI builds and smoke-tests the images whose directory a pull request
+# changes, so a base image update is tested before it is merged.
+
+version: 2
+updates:
+  - package-ecosystem: docker
+    # every image directory; tests/repo_test.sh checks that these cover them
+    directories:
+      - "/*/alpine"
+      - "/*/debian"
+      - "/*/buildfor*"
+      - "/image-spinner"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      debian:
+        patterns:
+          - "debian"
+      alpine:
+        patterns:
+          - "alpine"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      actions:
+        patterns:
+          - "*"

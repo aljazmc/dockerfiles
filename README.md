@@ -73,6 +73,8 @@ Every image is published with three tags:
 
 These versions are pinned in the Dockerfiles (`BLENDER_VERSION`, `GODOT_VERSION`, ...), so a version tag always refers to the same version of the software. Two images are tagged differently: `image-spinner` with its Alpine Linux version and the `x11` images with their libX11 version. Use `<version>` to stay on a version of the software, and `<version>-<YYYYMMDD>` to stay on one exact build.
 
+[Dependabot](.github/dependabot.yml) proposes the updates of the pins it can read every week, as pull requests that CI builds and smoke-tests: the base images in the `FROM` lines, one pull request for the Debian images and one for the Alpine ones, and the GitHub Actions of the workflows. The versions of the software in `ARG` lines, such as `BLENDER_VERSION`, are updated by hand.
+
 The rest of the system isn't pinned. Every build first runs `apt-get upgrade` (Debian) or `apk upgrade` (Alpine), so it includes the latest bug and security fixes of the base distribution. A rebuild with the same version of the main software moves `latest` and `<version>` to the new image. The dated tag of the previous build keeps pointing to it, unless the rebuild happens on the same day, which overwrites it.
 
 A rebuild isn't bit-for-bit reproducible, because the upgraded packages change over time. To get exactly the same image again, use a dated tag or the image digest (`aljazmc/<image>@sha256:...`).

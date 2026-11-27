@@ -8,6 +8,8 @@
 #     directory, and its Docker Hub badge counts them
 #   - project.sh reads a version for every image, so none is tagged by date
 #     alone
+#   - Dependabot updates the base image of every image and the GitHub
+#     Actions
 #   - .gitignore ignores no tracked file, keeps the files of a new image and
 #     ignores what a container leaves in an image directory
 #
@@ -78,6 +80,25 @@ for image in "${IMAGES[@]}"; do
 done
 check "project.sh reads a version for every image${unversioned[*]:+; not: ${unversioned[*]}}" \
     [ "${#unversioned[@]}" -eq 0 ]
+
+# .github/dependabot.yml: the docker directories, globs like "/*/alpine",
+# where * stands for one path segment, cover every image directory
+mapfile -t GLOBS < <(sed -nE 's/^ +- "(\/[^"]*)"$/\1/p' .github/dependabot.yml)
+uncovered=()
+for dir in "${DIRS[@]}"; do
+    covered=no
+    for glob in "${GLOBS[@]}"; do
+        regex=${glob//./\\.}
+        regex=${regex//\*/[^/]*}
+        [[ "/$dir" =~ ^$regex$ ]] && covered=yes
+    done
+    [ "$covered" = yes ] || uncovered+=("$dir")
+done
+all_covered() { [ "${#GLOBS[@]}" -gt 0 ] && [ "${#uncovered[@]}" -eq 0 ]; }
+check "Dependabot updates the base image of every image (${GLOBS[*]})${uncovered[*]:+; not: ${uncovered[*]}}" \
+    all_covered
+check "Dependabot updates the GitHub Actions" \
+    grep -qE '^ +- package-ecosystem: github-actions$' .github/dependabot.yml
 
 ignored=$(git ls-files -ci --exclude-standard | paste -sd' ')
 check ".gitignore ignores no tracked file${ignored:+; ignores: $ignored}" \
