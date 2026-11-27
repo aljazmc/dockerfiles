@@ -108,6 +108,7 @@ The container user has uid 1000, so files it creates in a mounted directory belo
 ./project.sh publish            # build, smoke test, tag and push every image
 ./project.sh clean              # remove all local aljazmc/* images
 ./project.sh scan [image...]    # write SBOMs and list HIGH and CRITICAL vulnerabilities
+./project.sh changed main HEAD  # list the images whose directory changed between two commits
 
 tests/smoke_test.sh             # build every image and check that its tools run
 tests/smoke_test.sh x11-alpine  # build and check a single image
@@ -119,7 +120,7 @@ tests/repo_test.sh              # check pinned bases, READMEs and entrypoints
 tests/regression_test.sh        # check that no fixed bug has come back
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh`, which builds the real images, on every push to `main` and every pull request. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It also builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`, and pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
 
 ### SBOM and vulnerability scanning
 

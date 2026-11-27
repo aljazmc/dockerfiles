@@ -41,3 +41,31 @@ jobs:
             bash "$test" || status=1
           done
           exit "$status"
+
+  # Builds and smoke-tests only the images whose directory changed: in a
+  # push, between the commit before it and the one pushed; in a pull
+  # request, between its base and its head. Nothing is pushed.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # the whole history, so the commit before a push of several is here
+          fetch-depth: 0
+
+      - name: Find the changed images
+        id: changed
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          images=$(./project.sh changed "$BASE" HEAD | paste -sd' ')
+          echo "images=$images" >> "$GITHUB_OUTPUT"
+          echo "Changed images: ${images:-none}"
+
+      - name: Build and smoke-test the changed images
+        if: steps.changed.outputs.images != ''
+        env:
+          IMAGES: ${{ steps.changed.outputs.images }}
+        run: |
+          read -ra images <<< "$IMAGES"
+          tests/smoke_test.sh "${images[@]}"

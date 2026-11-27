@@ -48,6 +48,28 @@ done
 
 }
 
+## images whose directory has changes between two commits, one per line,
+## e.g. "./project.sh changed main HEAD" or, in CI, the commit before a push
+## and the one pushed; without arguments, the last commit. When the base is
+## missing or isn't a commit (the zeros of a new branch, or a commit a force
+## push removed), it compares with the commit before the head instead.
+changed() {
+
+local base=${1:-HEAD^} head=${2:-HEAD} dir
+
+if ! git rev-parse -q --verify "$base^{commit}" > /dev/null; then
+    echo "$base is not a commit, comparing $head with its parent" >&2
+    base="$head^"
+fi
+
+for dir in $DIRS; do
+    if ! git diff --quiet "$base" "$head" -- "$dir/"; then
+        image_name "$dir"
+    fi
+done
+
+}
+
 publish() {
 
 failed=()
@@ -155,9 +177,9 @@ done
 
 ## only the commands, not the helpers such as version or image_name
 case "${1:-}" in
-    clean|publish|scan) "$@" ;;
+    changed|clean|publish|scan) "$@" ;;
     *)
-        echo "Usage: $0 {clean|publish|scan [image...]}"
+        echo "Usage: $0 {changed [base [head]]|clean|publish|scan [image...]}"
         exit 1
         ;;
 esac
