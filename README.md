@@ -35,7 +35,7 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 | [actions-alpine](actions/alpine) | Alpine 3.24 | Node | Node.js 26 (unofficial musl build), Corepack, docker, shellcheck, ruff and git. |
 | [actions-debian](actions/debian) | Debian 13 | Node | Node.js 26 (official build, GPG verified), Corepack, docker, shellcheck, ruff and git. |
 | [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg and pytest. |
-| [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Official blender.org build with its own Python, with FFmpeg and pytest. |
+| [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Debian forky (testing) package of Blender using the system Python, with FFmpeg and pytest. |
 | [fluidsynth-alpine](fluidsynth/alpine) | Alpine 3.24 | FluidSynth 2.5 | Renders MIDI to audio. TimGM6mb soundfont, FFmpeg, Python 3 with NumPy and pytest. |
 | [fluidsynth-debian](fluidsynth/debian) | Debian 13 | FluidSynth 2.4 | Renders MIDI to audio. FluidR3 soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi and pytest. |
 | [godot-buildforlinux](godot/buildforlinux) | Debian 13 | Godot 4.7 | Exports and runs games for GNU/Linux. `makesh` packs a game into one self-extracting `.sh`. |
@@ -47,19 +47,19 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 | [image-spinner](image-spinner) | Alpine 3.24 | Alpine 3.24 | `abuild`, GRUB, syslinux, squashfs-tools and xorriso for building custom ISO images with `mkimage.sh`. |
 | [inkscape-alpine](inkscape/alpine) | Alpine 3.24 | Inkscape 1.4.2 | Inkscape with every Python extension and the import/export helpers. |
 | [inkscape-debian](inkscape/debian) | Debian 13 | Inkscape 1.4 | Inkscape with every Python extension and the import/export helpers. |
-| [node-alpine](corepack/alpine) | Alpine 3.24 | Node.js 26 | Node.js 26 (unofficial musl build), Corepack and git. |
-| [node-debian](corepack/debian) | Debian 13 | Node.js 26 | Node.js 26 (official build, GPG verified), Corepack and git. |
+| [node-alpine](node/alpine) | Alpine 3.24 | Node.js 26 | Node.js 26 (unofficial musl build), Corepack and git. |
+| [node-debian](node/debian) | Debian 13 | Node.js 26 | Node.js 26 (official build, GPG verified), Corepack and git. |
 | [wine-alpine](wine/alpine) | Alpine 3.24 | Wine 11.0 | Stable Wine release for 32-bit and 64-bit Windows applications. |
 | [wine-debian](wine/debian) | Debian 13 | Wine 11.22 | WineHQ development build for 32-bit and 64-bit Windows applications. |
 | [x11-alpine](x11/alpine) | Alpine 3.24 | libX11 1.8 | xterm, GTK 2, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
 | [x11-debian](x11/debian) | Debian 13 | libX11 1.8 | xterm, GTK 2 engines, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
 
-Every image includes [ShellCheck](https://www.shellcheck.net/) from its distribution's repository. The images whose work is Python scripts (blender-*, fluidsynth-* and inkscape-*) also include [Ruff](https://docs.astral.sh/ruff/), installed with pip at 0.17.6 (in Blender's own Python on blender-debian), the version the GitHub Actions of the profile's repositories use.
+Every image includes [ShellCheck](https://www.shellcheck.net/) from its distribution's repository. The images whose work is Python scripts (blender-*, fluidsynth-* and inkscape-*) also include [Ruff](https://docs.astral.sh/ruff/), installed with pip at 0.17.6, the version the GitHub Actions of the profile's repositories use.
 
 ### Alpine or Debian?
 
 - **Alpine** images are smaller, but they use musl instead of glibc, so binaries built on glibc distributions (Debian, Ubuntu, Fedora, ...) don't run in them.
-- **Debian** images are larger, but they run glibc binaries and, where Debian's package is too old, ship the upstream builds (for example Blender from blender.org and Wine from WineHQ).
+- **Debian** images are larger, but they run glibc binaries and, where Debian's package is too old, take the package from Debian testing or ship the upstream build (for example Blender from Debian forky and Wine from WineHQ).
 
 ## Tags
 
@@ -114,7 +114,7 @@ tests/smoke_test.sh x11-alpine  # build and check a single image
 tests/project_test.sh           # test project.sh with docker stubbed out
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC), and it waits 30 seconds between images. CI runs `shellcheck` on every shell script and `tests/project_test.sh` on every push and pull request.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and `tests/project_test.sh` on every push and pull request.
 
 ### SBOM and vulnerability scanning
 
