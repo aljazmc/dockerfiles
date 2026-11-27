@@ -166,6 +166,11 @@ check "image-spinner installs syslinux, with isohybrid, on amd64" \
 check "image-spinner makes the aports tree readable for every host user" \
     grep -qE '^[[:space:]]+chmod 755 "\$TMP_DIR"$' image-spinner/docker-entrypoint.sh
 
+# image-spinner's CI quick start: Alpine's GitLab refused GitHub's runner
+# with HTTP 418. image-spinner falls back to the GitHub mirror of aports.
+check "image-spinner clones aports from the GitHub mirror when GitLab refuses" \
+    grep -qF 'https://github.com/alpinelinux/aports.git' image-spinner/docker-entrypoint.sh
+
 # 698640c: COREPACK_ENABLE_DOWNLOAD_PROMPT renamed by mistake, so corepack
 # asked before every download. Every image with corepack turns it off.
 prompting=()

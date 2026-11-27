@@ -81,7 +81,7 @@ docker compose run --rm spinner "sh aports/scripts/mkimage.sh --tag edge --outdi
 
 ## Notes
 
-- If `aports/README.md` file doesn't exist, aports github repository is cloned into temporary folder and then moved into `aports` folder.
+- If `aports/README.md` doesn't exist, the aports repository is cloned into a temporary directory and then moved into `aports`. It comes from [Alpine's GitLab](https://gitlab.alpinelinux.org/alpine/aports), or, when GitLab refuses the machine, as it does GitHub's runners with HTTP 418, from [its mirror on GitHub](https://github.com/alpinelinux/aports). Set `APORTS_URL` to clone from other URLs, tried in turn: `docker run -e APORTS_URL="https://github.com/alpinelinux/aports.git" ...`.
 
 ## Tags
 
