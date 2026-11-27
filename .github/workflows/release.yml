@@ -1,0 +1,43 @@
+name: release
+
+# A GitHub release for every tag v*, e.g. v2026.11.28, with notes written by
+# ./project.sh notes from the commits since the previous tag: the message of
+# an annotated tag first, then the images that changed and the commits as
+# features, fixes, documentation and other changes.
+#
+#   git tag -a v2026.11.28 -m "What this release is about"
+#   git push origin v2026.11.28
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # every commit and tag, for the commits since the previous tag
+          fetch-depth: 0
+
+      # checkout can leave the pushed tag as a lightweight one; fetch the
+      # annotated tag again, with its message
+      - name: Fetch the tags
+        run: git fetch --force --tags
+
+      - name: Write the release notes
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          ./project.sh notes "" "$TAG" > notes.md
+          cat notes.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" --title "$TAG" --notes-file notes.md --verify-tag

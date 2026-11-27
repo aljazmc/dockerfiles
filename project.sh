@@ -208,6 +208,67 @@ docker run --rm \
 
 }
 
+## release notes in Markdown for the commits between base and head: the
+## message of head when it is an annotated tag, the images that changed, and
+## the conventional commits as features, fixes, documentation and other
+## changes; without a base, since the tag before head, or from the start
+##
+##   ./project.sh notes                        since the last tag
+##   ./project.sh notes "" v2026.11.28         what CI writes for that tag
+notes() {
+
+local base=${1:-} head=${2:-HEAD} range line type scope breaking subject
+local -A sections=()
+
+if [ -z "$base" ]; then
+    base=$(git describe --tags --abbrev=0 "$head^" 2> /dev/null)
+fi
+range=$head
+[ -n "$base" ] && range="$base..$head"
+
+## the summary written into an annotated tag
+if [ "$(git cat-file -t "$head" 2> /dev/null)" = tag ]; then
+    printf '%s\n\n' "$(git tag -l --format='%(contents)' "$head" |
+        sed -e '/^-----BEGIN PGP/,$d')"
+fi
+
+echo "## Images"
+echo
+# shellcheck disable=SC2016 # the backticks are Markdown, not a command
+if [ -n "$base" ]; then
+    changed "$base" "$head" 2> /dev/null
+else
+    for dir in $DIRS; do image_name "$dir"; done
+fi | sed 's|.*|- `aljazmc/&`|' | grep . || echo "No image changed."
+
+while read -r line; do
+    if [[ "$line" =~ ^([0-9a-f]+)\ ([a-z]+)(\(([^\)]+)\))?(!)?:\ (.*)$ ]]; then
+        type=${BASH_REMATCH[2]} scope=${BASH_REMATCH[4]}
+        breaking=${BASH_REMATCH[5]} subject=${BASH_REMATCH[6]}
+    else
+        type=other scope="" breaking="" subject=${line#* }
+    fi
+    [ -n "$scope" ] && subject="**$scope:** $subject"
+    [ -n "$breaking" ] && subject="$subject (breaking)"
+    case "$type" in
+        feat) type=Features ;;
+        fix) type=Fixes ;;
+        docs) type=Documentation ;;
+        *) type="Other changes" ;;
+    esac
+    sections[$type]+="- $subject (${line%% *})"$'\n'
+done < <(git log --no-merges --reverse --format='%h %s' "$range")
+
+for type in Features Fixes Documentation "Other changes"; do
+    [ -n "${sections[$type]:-}" ] || continue
+    echo
+    echo "## $type"
+    echo
+    printf '%s' "${sections[$type]}"
+done
+
+}
+
 ## how much of project.sh and tests/smoke_test.sh the tests that need no
 ## images run, measured with kcov from its Docker image, so nothing has to be
 ## installed; writes the report to coverage/index.html and prints a summary,
@@ -242,9 +303,9 @@ docker run --rm \
 
 ## only the commands, not the helpers such as version or image_name
 case "${1:-}" in
-    changed|clean|coverage|lint|publish|scan) "$@" ;;
+    changed|clean|coverage|lint|notes|publish|scan) "$@" ;;
     *)
-        echo "Usage: $0 {changed [base [head]]|clean|coverage|lint|publish|scan [image...]}"
+        echo "Usage: $0 {changed [base [head]]|clean|coverage|lint|notes [base [head]]|publish|scan [image...]}"
         exit 1
         ;;
 esac

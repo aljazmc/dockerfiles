@@ -238,6 +238,7 @@ uid=0(root) gid=0(root) groups=0(root),0(root),1(bin),2(daemon),3(sys),4(adm),6(
 ./project.sh changed main HEAD  # list the images whose directory changed between two commits
 ./project.sh lint               # check every Dockerfile for HIGH and CRITICAL misconfigurations
 ./project.sh coverage           # measure how much of project.sh the tests run, in coverage/
+./project.sh notes              # write release notes for the commits since the last tag
 
 tests/smoke_test.sh             # build every image and check that its tools run
 tests/smoke_test.sh x11-alpine  # build and check a single image
@@ -249,9 +250,22 @@ tests/repo_test.sh              # check pinned bases, READMEs and entrypoints
 tests/regression_test.sh        # check that no fixed bug has come back
 tests/changed_test.sh           # test project.sh changed in a throwaway git repository
 tests/coverage_test.sh          # test project.sh coverage with docker stubbed out
+tests/notes_test.sh             # test project.sh notes in a throwaway git repository
 ```
 
 `publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It measures the coverage of `project.sh` and `tests/smoke_test.sh` by those tests with `./project.sh coverage`, which runs them under [kcov](https://github.com/SimonKagstrom/kcov) from its Docker image, writes the table to the job summary and keeps the HTML report as an artifact. It checks every Dockerfile for misconfigurations with `./project.sh lint`, which needs no image and takes seconds, and builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`. It scans those images with `IGNORE_UNFIXED=1 FAIL_ON=CRITICAL ./project.sh scan`, so a `CRITICAL` vulnerability with a fix fails the job, and keeps their SBOMs as an artifact of the run. It pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
+
+### Releases
+
+Every tag `v*`, e.g. `v2026.11.28`, gets a GitHub release, made by the `release` workflow. Its notes come from `./project.sh notes`: the message of the tag when it is annotated, so a release can say in words what it brings, then the images whose directory changed since the previous tag and the commits, sorted by their [Conventional Commits](https://www.conventionalcommits.org/) type into features, fixes, documentation and other changes.
+
+```sh
+./project.sh notes                                  # preview the notes of the next release
+git tag -a v2026.11.28 -m "What this release brings"
+git push origin v2026.11.28
+```
+
+A release is a record of the repository, not of the images: they are still published with `./project.sh publish`.
 
 ### SBOM and vulnerability scanning
 
