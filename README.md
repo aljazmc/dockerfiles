@@ -198,6 +198,21 @@ Most images start a shell when they are given no command: `bash` on Debian and o
 docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-debian
 ```
 
+A session in `x11-alpine`, recorded on 27 November 2026: the shell runs as the image's user, with uid 1000 and the mounted directory as its home, and `doas sh` opens a root shell (`sudo -i` on Debian). The `~ $` prompt is the user's, `#` is root's.
+
+```console
+$ docker run --rm -it -v .:/home/x11 -w /home/x11 aljazmc/x11-alpine
+~ $ id
+uid=1000(x11) gid=1000(x11) groups=1000(x11),1000(x11)
+~ $ echo $HOME $PWD
+/home/x11 /home/x11
+~ $ doas sh
+/home/x11 # id
+uid=0(root) gid=0(root) groups=0(root),0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)
+/home/x11 # exit
+~ $ exit
+```
+
 | Image | How to get a shell |
 |---|---|
 | `node-*` | They start Node.js's REPL; give the shell as the command: `docker run --rm -it aljazmc/node-debian bash` (`sh` on `node-alpine`). |
