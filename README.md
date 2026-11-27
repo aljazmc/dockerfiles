@@ -100,6 +100,116 @@ The images don't contain an X server or an audio server. GUI apps use the host's
 
 The container user has uid 1000, so files it creates in a mounted directory belong to the first user on most hosts.
 
+## Troubleshooting
+
+The examples use `blender-debian`, whose user is `blender`. Every image has its own user, named after the software (`x11`, `wine`, `godot`, ...), with uid 1000 and the home directory `/home/<user>`.
+
+### Permissions on GNU/Linux
+
+**Files the container writes belong to someone else, or it can't write to the mounted directory.** The container user has uid 1000. If yours is different (`id -u`), run the container as you, and point `HOME` at the mounted directory:
+
+```sh
+docker run --rm -it --user "$(id -u):$(id -g)" -e HOME=/home/blender \
+    -v .:/home/blender -w /home/blender aljazmc/blender-debian bash
+```
+
+The prompt then shows `I have no name!`, and `sudo` or `doas` don't work, because your uid has no entry in the image's `/etc/passwd`; everything else does. The heaps images are the exception: their entrypoint gives the working directory to their user with `sudo chown -R heaps .` on every start, so they need uid 1000 and fail with `--user`. To take back files a container created, run `sudo chown -R "$(id -u):$(id -g)" .` on the host.
+
+In Docker Compose, the examples' `user: ${UID:-1000}:${GID:-1000}` reads `UID` and `GID` from the environment, but shells don't export them. Write them to a `.env` file next to `docker-compose.yml`, which Compose reads:
+
+```sh
+printf 'UID=%s\nGID=%s\n' "$(id -u)" "$(id -g)" > .env
+```
+
+**`Permission denied` on the mounted directory although the uids match.** SELinux, on Fedora, RHEL and their relatives, keeps containers out of directories that aren't labelled for them. Add `:z` to the mount: `-v .:/home/blender:z`.
+
+**Files belong to an unknown uid such as `100999`, with rootless Docker or Podman.** They map the uids of a container to a range of your own. With rootless Docker, root in the container is you, so run with `--user root`. With Podman, `--userns=keep-id` keeps your uid inside the container.
+
+**`permission denied while trying to connect to the Docker daemon socket`.** Your user is not in the `docker` group. Add it with `sudo usermod -aG docker "$USER"`, then log out and in again. The `docker` group is as powerful as root; rootless Docker avoids it.
+
+**`Permission denied` on `/dev/dri/renderD128` or `/dev/snd/...`, or apps render in software.** The container user needs the host's `render`, `video` and `audio` groups, by number, as [Running GUI applications](#running-gui-applications) shows. `--group-add` works together with `--user`.
+
+**`Authorization required, but no authorization protocol specified` or `cannot open display`.** The X server refuses the container. On Wayland desktops, XWayland often keeps its cookie in the file named by `$XAUTHORITY` rather than `~/.Xauthority`, so mount that one: `-v "${XAUTHORITY:-$HOME/.Xauthority}:/home/blender/.Xauthority:ro"`. With `--user`, also pass `-e HOME=/home/blender`: for a uid the image doesn't know, Docker sets `HOME` to `/`, where X looks for the cookie in vain. Or let your own user in without a cookie, which works when the container runs with your uid: `xhost +SI:localuser:"$(id -un)"`.
+
+**No sound although `$XDG_RUNTIME_DIR` is mounted.** The PipeWire and PulseAudio sockets in it are only open to your uid. Run the container with your uid, as above, and pass `-e XDG_RUNTIME_DIR=/run/user/1000`.
+
+### Sharing audio and video devices
+
+#### GNU/Linux
+
+Containers use the host's devices and servers directly:
+
+| What | Flags |
+|---|---|
+| Display (X11, or XWayland on Wayland) | `-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY`, and the X cookie, see above |
+| Sound through PipeWire or PulseAudio, the usual way | `-v "$XDG_RUNTIME_DIR:/run/user/1000" -e XDG_RUNTIME_DIR=/run/user/1000` |
+| Sound card directly, through ALSA | `--device /dev/snd --group-add <audio gid>`; without a sound server only one program at a time can use the card |
+| GPU: Intel, AMD, or NVIDIA with nouveau | `--device /dev/dri --group-add <render gid> --group-add <video gid>` |
+| GPU: NVIDIA with its own driver | `--gpus all`, with the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) installed on the host |
+| Webcam or capture card | `--device /dev/video0 --group-add <video gid>` |
+
+The group ids come from `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`. Put together:
+
+```sh
+docker run --rm -it --user "$(id -u):$(id -g)" -e HOME=/home/x11 \
+    -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY \
+    -v "${XAUTHORITY:-$HOME/.Xauthority}:/home/x11/.Xauthority:ro" \
+    -v "$XDG_RUNTIME_DIR:/run/user/1000" -e XDG_RUNTIME_DIR=/run/user/1000 \
+    --device /dev/dri --group-add "$(stat -c %g /dev/dri/renderD128)" \
+    --group-add "$(stat -c %g /dev/dri/card0)" \
+    aljazmc/x11-debian xterm
+```
+
+#### macOS
+
+Docker Desktop runs containers in a Linux virtual machine, so it can't pass the Mac's GPU, sound card, camera or USB devices to a container. Display and sound go over the network instead, to `host.docker.internal`, the name of the Mac inside the containers. The images are built for `linux/arm64` too, so they run natively on Apple silicon.
+
+- **Display:** install [XQuartz](https://www.xquartz.org), enable *Allow connections from network clients* in its settings (Security), and restart it. Then allow local clients with `xhost +localhost` in an XQuartz terminal, and run the container with `-e DISPLAY=host.docker.internal:0`. Apps render in software, with the Mesa of the image.
+- **Sound:** run a PulseAudio server on the Mac, for example from Homebrew (`brew install pulseaudio`), that accepts connections over TCP: `pulseaudio --load="module-native-protocol-tcp auth-anonymous=1" --exit-idle-time=-1 --daemon`. Then run the container with `-e PULSE_SERVER=tcp:host.docker.internal:4713`. Anonymous access lets anything that reaches port 4713 play sound, so keep the macOS firewall on.
+- **Camera and USB devices:** not possible with Docker Desktop. Run Linux in a virtual machine that passes the device through, and Docker inside it as on GNU/Linux.
+
+```sh
+docker run --rm -it -e DISPLAY=host.docker.internal:0 \
+    -e PULSE_SERVER=tcp:host.docker.internal:4713 aljazmc/x11-debian xterm
+```
+
+#### Windows
+
+Use WSL 2: its WSLg gives every WSL distribution a display (X11 and Wayland) and a PulseAudio server. Run Docker from the shell of a WSL distribution, such as Ubuntu, not from PowerShell; Microsoft's [WSLg container sample](https://github.com/microsoft/wslg/blob/main/samples/container/Containers.md) installs Docker Engine in the distribution itself.
+
+- **Display and sound:** mount WSLg's sockets and pass its variables:
+
+  ```sh
+  docker run --rm -it \
+      -v /tmp/.X11-unix:/tmp/.X11-unix -v /mnt/wslg:/mnt/wslg \
+      -e DISPLAY -e WAYLAND_DISPLAY -e XDG_RUNTIME_DIR -e PULSE_SERVER \
+      aljazmc/x11-debian xterm
+  ```
+
+- **GPU:** add `--device /dev/dxg -v /usr/lib/wsl:/usr/lib/wsl -e LD_LIBRARY_PATH=/usr/lib/wsl/lib`. Mesa then renders on the Windows GPU through its D3D12 driver, if the image's Mesa includes it; otherwise apps render in software.
+- **Camera and USB devices:** attach them to WSL with [usbipd-win](https://learn.microsoft.com/en-us/windows/wsl/connect-usb). In PowerShell, `usbipd list` and `usbipd bind --busid <busid>` as administrator, then `usbipd attach --wsl --busid <busid>`. The device then appears in WSL, e.g. as `/dev/video0`, and goes to the container with `--device` as on GNU/Linux. While attached, Windows can't use it.
+- **Files:** keep projects in the WSL file system (`~`), not under `/mnt/c`, where mounts are much slower.
+
+### Interactive shell
+
+Most images start a shell when they are given no command: `bash` on Debian and on `actions-alpine`, `sh` on the other Alpine images.
+
+```sh
+docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-debian
+```
+
+| Image | How to get a shell |
+|---|---|
+| `node-*` | They start Node.js's REPL; give the shell as the command: `docker run --rm -it aljazmc/node-debian bash` (`sh` on `node-alpine`). |
+| `godot-*`, `heaps-*` | They have no default command and stop at once without one; give `bash`. They run their arguments as one shell string, so `"godot --headless --version && ls"` works as well. |
+| `heaps-*` | Their entrypoint first installs Heaps and its libraries with haxelib, which needs the network; `--entrypoint bash` skips it. |
+| `image-spinner` | Its default command sets up the aports tree, cloning it the first time; give `sh` for a shell instead. |
+
+- **A root shell:** `sudo -i` in the Debian images, `doas sh` in the Alpine ones, or run the container with `--user root`.
+- **A shell in a running container:** `docker exec -it <container> bash`, or `sh` on Alpine. A detached container needs a command that keeps running, e.g. `docker run -d --name blender aljazmc/blender-debian sleep infinity`.
+- **Docker Compose:** `docker compose run --rm <service> bash` starts a new container, `docker compose exec <service> bash` opens a shell in a running one.
+- **`the input device is not a TTY`:** `-t` needs a terminal. In scripts, CI or with piped input, drop `-t` and keep `-i`. In Git Bash on Windows, run the command through `winpty`, and set `MSYS_NO_PATHCONV=1` so it doesn't turn `/home/blender` into a Windows path.
+
 ## Building and testing
 
 `project.sh` builds every directory that contains a `Dockerfile`. The image name is the directory path with `/` replaced by `-`, e.g. `godot/buildforlinux` becomes `aljazmc/godot-buildforlinux`.
