@@ -40,7 +40,7 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 | Image | Base | Software | Description |
 |---|---|---|---|
 | [actions-alpine](actions/alpine) | Alpine 3.24 | Node.js 26 | For running GitHub Actions workflows with act: Node.js 26 (unofficial musl build), Corepack, the Docker CLI, git, FFmpeg, ShellCheck and Ruff. |
-| [actions-debian](actions/debian) | Debian 13 | Node.js 26 | For running GitHub Actions workflows with act: Node.js 26 (official build, GPG verified), Corepack, the Docker CLI, git, ShellCheck and Ruff, and FFmpeg from the next build. |
+| [actions-debian](actions/debian) | Debian 13 | Node.js 26 | For running GitHub Actions workflows with act: Node.js 26 (official build, GPG verified), Corepack, the Docker CLI, git, FFmpeg, ShellCheck and Ruff. |
 | [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg and pytest. |
 | [blender-debian](blender/debian) | Debian forky | Blender 5.2 | Debian forky (testing) package of Blender using the system Python, with FFmpeg and pytest. |
 | [fluidsynth-alpine](fluidsynth/alpine) | Alpine 3.24 | FluidSynth 2.5 | Renders MIDI to audio. TimGM6mb soundfont, FFmpeg, Python 3 with NumPy and pytest. |

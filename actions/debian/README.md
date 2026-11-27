@@ -1,6 +1,6 @@
 # aljazmc/actions-debian
 
-A Debian image for running GitHub Actions workflows locally with [act](https://github.com/nektos/act), or as a CI job container: Node.js, Corepack, the Docker CLI, git, ShellCheck and Ruff, and FFmpeg from the next build.
+A Debian image for running GitHub Actions workflows locally with [act](https://github.com/nektos/act), or as a CI job container: Node.js, Corepack, the Docker CLI, git, FFmpeg, ShellCheck and Ruff.
 
 [![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/actions-debian?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/actions-debian)
 [![Image size](https://img.shields.io/docker/image-size/aljazmc/actions-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/actions-debian/tags)
@@ -20,7 +20,7 @@ A Debian image for running GitHub Actions workflows locally with [act](https://g
 |---|---|
 | **Base image** | `debian:13.7`, upgraded to 13.8 when it is built |
 | **Software** | Node.js 26.13.1 (official build, GPG verified) with Corepack 0.36.0 |
-| **Also included** | npm, Yarn (through Corepack), git, Docker CE CLI with buildx and compose, FFmpeg (from the next build, added on 27 November 2026), Python 3 with NumPy, mido, rtmidi and pytest, ShellCheck, Ruff 0.17.6 (pip) |
+| **Also included** | npm, Yarn (through Corepack), git, Docker CE CLI with buildx and compose, FFmpeg, Python 3 with NumPy, mido, rtmidi and pytest, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `actions` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `13.8`, `13.8-YYYYMMDD` (the Debian version) |
 
