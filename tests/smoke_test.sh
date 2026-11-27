@@ -70,18 +70,29 @@ smoke() {
         blender-alpine|blender-debian)
             RUN="exec"
             CHECK='
-                need blender ffmpeg xterm
+                need blender ffmpeg
                 blender -b --factory-startup --python-expr "import bpy; print(\"BPY\", bpy.app.version_string)" | grep BPY
                 ffmpeg -hide_banner -version | head -n1
             '
             if [ "$1" = blender-alpine ]; then
-                CHECK+='python3 -c "import bpy, numpy, pytest; print(\"bpy, numpy and pytest\", pytest.__version__)"'
+                CHECK+='need xterm
+                python3 -c "import bpy, numpy, pytest; print(\"bpy, numpy and pytest\", pytest.__version__)"'
             fi
             if [ "$1" = blender-debian ]; then
-                CHECK+='blender -b --factory-startup --python-exit-code 1 --python-expr "import numpy, pytest; print(\"PYTEST\", pytest.__version__)" | grep PYTEST'
+                # AVIF needs a libheif encoder plugin, which Debian packages separately
+                CHECK+='blender -b --factory-startup --python-exit-code 1 --python-expr "import numpy, pytest; print(\"PYTEST\", pytest.__version__)" | grep PYTEST
+                blender -b --factory-startup --python-exit-code 1 --python-expr "
+import bpy
+scene = bpy.context.scene
+scene.render.resolution_x = scene.render.resolution_y = 16
+scene.render.image_settings.file_format = \"AVIF\"
+scene.render.filepath = \"$PWD/out.avif\"
+bpy.ops.render.render(write_still=True)
+" > /dev/null 2>&1
+                test -s out.avif && echo "rendered out.avif"'
             fi
             ;;
-        corepack-alpine|corepack-debian)
+        node-alpine|node-debian)
             RUN="exec"
             CHECK='
                 need node npm corepack git

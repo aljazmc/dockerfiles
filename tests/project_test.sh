@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# Test for project.sh: runs `publish` with docker and sleep stubbed out and
-# checks that
-#   - exactly one image is built per Dockerfile directory, from the right
-#     directory, under the right image name
+# Test for project.sh: runs `publish` with docker stubbed out and checks that
+#   - exactly one multiarch image is built per Dockerfile directory, from the
+#     right directory, under the right image name
 #   - every image is pushed, except one whose smoke test fails
-#   - every pushed image is tagged latest, <version> and <version>-<date>
+#   - every pushed image is tagged latest, <version> and <version>-<date>,
+#     or latest and <date> when its version can't be read
 #   - publish exits non-zero when an image was not pushed
 #
 # Usage: tests/project_test.sh
@@ -18,22 +18,38 @@ trap 'rm -rf "$TMP"' EXIT
 
 # The image whose smoke test is made to fail.
 FAIL_SMOKE=x11-alpine
+# The image whose version can't be read.
+NO_VERSION="image-spinner"
 
-# Stub docker: record "<cwd> <args>" for every build, the new tag for every
-# tag and the image for every push, make `docker run` report version 1.2.3 and
-# fail for $FAIL_SMOKE, ignore everything else.
+# Stub docker: record "<cwd> <args>" for every `buildx build`, and for every
+# `buildx build --push` the image it pushes and each of its tags instead; make
+# `docker run` report version 1.2.3 (nothing for the version of $NO_VERSION)
+# and fail for $FAIL_SMOKE, ignore everything else.
 mkdir -p "$TMP/bin"
 cat > "$TMP/bin/docker" <<STUB
 #!/bin/bash
+if [ "\$1 \$2" = "buildx build" ]; then
+    if [[ " \$* " != *" --push "* ]]; then
+        echo "\${PWD#$ROOT/} \$*" >> "$TMP/builds"
+        exit 0
+    fi
+    args=("\$@")
+    for i in "\${!args[@]}"; do
+        [ "\${args[i]}" = -t ] && echo "\${args[i + 1]}" >> "$TMP/tags"
+    done
+    for i in "\${!args[@]}"; do
+        [ "\${args[i]}" = -t ] && { echo "\${args[i + 1]%%:*}" >> "$TMP/pushes"; break; }
+    done
+    exit 0
+fi
 case "\$1" in
-    build) echo "\${PWD#$ROOT/} \$*" >> "$TMP/builds" ;;
-    tag)   echo "\${@: -1}" >> "$TMP/tags" ;;
-    push)  echo "\${@: -1}" >> "$TMP/pushes" ;;
-    run)   echo "version 1.2.3"; [[ " \$* " != *" aljazmc/$FAIL_SMOKE "* ]] ;;
+    run)
+        [[ " \$* " == *" --entrypoint sh aljazmc/$NO_VERSION "* ]] && exit 0
+        echo "version 1.2.3"
+        [[ " \$* " != *" aljazmc/$FAIL_SMOKE "* ]] ;;
 esac
 STUB
-printf '#!/bin/sh\n' > "$TMP/bin/sleep"
-chmod +x "$TMP/bin/docker" "$TMP/bin/sleep"
+chmod +x "$TMP/bin/docker"
 touch "$TMP/builds" "$TMP/tags" "$TMP/pushes"
 
 cd "$ROOT"
@@ -46,7 +62,7 @@ failures=0
 
 # Every directory with a Dockerfile, built as aljazmc/<dir with / -> ->.
 for dir in "${DIRS[@]}"; do
-    echo "$dir build . -t aljazmc/${dir//\//-}"
+    echo "$dir buildx build --platform linux/amd64,linux/arm64 -t aljazmc/${dir//\//-} ."
 done > "$TMP/expected"
 sort "$TMP/builds" > "$TMP/actual"
 if diff -u "$TMP/expected" "$TMP/actual"; then
@@ -68,13 +84,18 @@ else
     failures=$((failures + 1))
 fi
 
-# Every pushed image tagged latest, with its version and with version-date.
+# Every pushed image tagged latest, with its version and with version-date,
+# or with the date alone when there is no version.
 while read -r image; do
-    printf '%s\n' "$image:latest" "$image:1.2.3" "$image:1.2.3-$DATE"
+    if [ "$image" = "aljazmc/$NO_VERSION" ]; then
+        printf '%s\n' "$image:latest" "$image:$DATE"
+    else
+        printf '%s\n' "$image:latest" "$image:1.2.3" "$image:1.2.3-$DATE"
+    fi
 done < "$TMP/expected" | sort > "$TMP/expected-tags"
 sort "$TMP/tags" > "$TMP/actual"
 if diff -u "$TMP/expected-tags" "$TMP/actual"; then
-    echo "PASS: tags every pushed image latest, 1.2.3 and 1.2.3-$DATE"
+    echo "PASS: tags every pushed image latest, 1.2.3 and 1.2.3-$DATE, $NO_VERSION latest and $DATE"
 else
     echo "FAIL: tags differ from expected (see diff above)"
     failures=$((failures + 1))

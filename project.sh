@@ -70,26 +70,19 @@ for dir in $DIRS; do
         echo "aljazmc/$image: smoke test failed, not pushing"
         failed+=("$image")
     else
-        docker buildx imagetools create -t "aljazmc/$image:latest" "aljazmc/$image"
+        tags=(-t "aljazmc/$image:latest")
         tag=$(version "$image")
         if [ -n "$tag" ]; then
-            docker buildx imagetools create -t "aljazmc/$image:$tag" "aljazmc/$image"
             ## e.g. "5.2.4-20261122", a tag that always points to this build
-            docker buildx imagetools create -t "aljazmc/$image:$tag-$date" "aljazmc/$image"
+            tags+=(-t "aljazmc/$image:$tag" -t "aljazmc/$image:$tag-$date")
         else
-            docker buildx imagetools create -t "aljazmc/$image:$date" "aljazmc/$image"
+            tags+=(-t "aljazmc/$image:$date")
         fi
-	( \
-            cd "$dir" && \
-            docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            --push \
-            -t "aljazmc/$image" \
-            -t "aljazmc/$image:$tag" \
-            -t "aljazmc/$image:$tag-$date" \
-            -t "aljazmc/$image:latest" \
-	    . \
-        )
+        ## same build as above, from the cache, pushed with all its tags
+        if ! (cd "$dir" && docker buildx build --platform linux/amd64,linux/arm64 --push "${tags[@]}" .); then
+            echo "aljazmc/$image: push failed"
+            failed+=("$image")
+        fi
     fi
 
     docker image ls "aljazmc/$image" -q | sort -u | xargs -r docker rmi -f
