@@ -6,7 +6,7 @@
 [![Docker pulls](https://img.shields.io/badge/pulls-18%2C000%2B-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
 [![Platforms: amd64 and arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](#building-and-testing)
 [![Alpine 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://alpinelinux.org/)
-[![Debian 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://www.debian.org/)
+[![Debian 13.8](https://img.shields.io/badge/Debian-13.8-a81d33?logo=debian&logoColor=white)](https://www.debian.org/)
 [![Trivy: scanned in CI](https://img.shields.io/badge/Trivy-scanned%20in%20CI-1904da?logo=trivy&logoColor=white)](#sbom-and-vulnerability-scanning)
 [![SBOM: CycloneDX](https://img.shields.io/badge/SBOM-CycloneDX-1a4d7a?logo=owasp&logoColor=white)](#sbom-and-vulnerability-scanning)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025e8c?logo=dependabot&logoColor=white)](.github/dependabot.yml)
@@ -23,7 +23,7 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 - **21 images, two families.** Actions, Blender, Inkscape, FluidSynth, Wine,
   X11 and Node in Alpine and Debian flavours, Godot and Heaps build images
   for Linux, Windows and macOS, and `image-spinner` for custom Alpine ISOs.
-- **Pinned and tagged.** Every image starts from `debian:13.7` or
+- **Pinned and tagged.** Every image starts from `debian:13.8` or
   `alpine:3.24.4` and is pushed as `latest`, with its software version and
   with that version plus the build date.
 - **Tested before it is pushed, from CI.** `project.sh publish` pushes an

@@ -6,7 +6,7 @@ A base image for GUI applications on Debian that use the host's X server, GPU an
 [![Image size](https://img.shields.io/docker/image-size/aljazmc/x11-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/x11-debian/tags)
 [![Version](https://img.shields.io/docker/v/aljazmc/x11-debian?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/x11-debian/tags)
 [![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
-[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Debian: 13.8](https://img.shields.io/badge/Debian-13.8-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
 [![libX11: 1.8.12](https://img.shields.io/badge/libX11-1.8.12-f28834?logo=xdotorg&logoColor=white)](https://gitlab.freedesktop.org/xorg/lib/libx11/-/blob/master/COPYING)
 [![libX11 license: X11 (MIT)](https://img.shields.io/badge/libX11%20license-X11%20(MIT)-blue)](#license)
 [![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
@@ -18,7 +18,7 @@ A base image for GUI applications on Debian that use the host's X server, GPU an
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7` |
+| **Base image** | `debian:13.8` |
 | **Software** | libX11 1.8.12 |
 | **Also included** | xterm, GTK 2 engines, Mesa, Vulkan, Wayland client libraries, PipeWire ALSA plugin, PulseAudio client, ShellCheck |
 | **User** | `x11` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |

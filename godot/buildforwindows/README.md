@@ -6,7 +6,7 @@ Godot with its Windows export templates, for exporting Godot games as a single W
 [![Image size](https://img.shields.io/docker/image-size/aljazmc/godot-buildforwindows/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/godot-buildforwindows/tags)
 [![Version](https://img.shields.io/docker/v/aljazmc/godot-buildforwindows?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/godot-buildforwindows/tags)
 [![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
-[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Debian: 13.8](https://img.shields.io/badge/Debian-13.8-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
 [![Godot: 4.7.2](https://img.shields.io/badge/Godot-4.7.2-478cbf?logo=godotengine&logoColor=white)](https://godotengine.org/license/)
 [![Godot license: MIT](https://img.shields.io/badge/Godot%20license-MIT-blue)](#license)
 [![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
@@ -18,7 +18,7 @@ Godot with its Windows export templates, for exporting Godot games as a single W
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7` |
+| **Base image** | `debian:13.8` |
 | **Software** | Godot 4.7.2 (official build) with export templates |
 | **Also included** | zip, ShellCheck |
 | **User** | `godot` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |

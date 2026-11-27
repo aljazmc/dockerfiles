@@ -6,7 +6,7 @@ Haxe, Neko, the macOS build of HashLink and the Heaps game engine, for compiling
 [![Image size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildformac/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildformac/tags)
 [![Version](https://img.shields.io/docker/v/aljazmc/heaps-buildformac?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildformac/tags)
 [![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
-[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Debian: 13.8](https://img.shields.io/badge/Debian-13.8-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
 [![Heaps: 2.1.0](https://img.shields.io/badge/Heaps-2.1.0-f68712?logo=haxe&logoColor=white)](https://github.com/HeapsIO/heaps/blob/master/LICENSE)
 [![Heaps license: MIT](https://img.shields.io/badge/Heaps%20license-MIT-blue)](#license)
 [![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
@@ -18,7 +18,7 @@ Haxe, Neko, the macOS build of HashLink and the Heaps game engine, for compiling
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7` |
+| **Base image** | `debian:13.8` |
 | **Software** | Heaps 2.1.0 (installed from haxelib on the first start) |
 | **Also included** | Haxe, Neko, HashLink for macOS (x86_64), `bundle` and `makedmg`, xorriso, zip, ShellCheck |
 | **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |

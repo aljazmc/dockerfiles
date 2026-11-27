@@ -6,7 +6,7 @@ Node.js with Corepack for Yarn Berry and pnpm on Debian, for JavaScript projects
 [![Image size](https://img.shields.io/docker/image-size/aljazmc/node-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/node-debian/tags)
 [![Version](https://img.shields.io/docker/v/aljazmc/node-debian?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/node-debian/tags)
 [![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
-[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Debian: 13.8](https://img.shields.io/badge/Debian-13.8-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
 [![Node.js: 26.13.1](https://img.shields.io/badge/Node.js-26.13.1-5fa04e?logo=nodedotjs&logoColor=white)](https://github.com/nodejs/node/blob/main/LICENSE)
 [![Node.js license: MIT](https://img.shields.io/badge/Node.js%20license-MIT-blue)](#license)
 [![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
@@ -18,7 +18,7 @@ Node.js with Corepack for Yarn Berry and pnpm on Debian, for JavaScript projects
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7` |
+| **Base image** | `debian:13.8` |
 | **Software** | Node.js 26.13.1 (official build, GPG verified) with Corepack 0.36.0 |
 | **Also included** | npm, Yarn (through Corepack), git, bash, ShellCheck |
 | **User** | `node` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |

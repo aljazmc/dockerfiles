@@ -1,6 +1,6 @@
 # Dependabot opens pull requests that update
 #   - the base images in the FROM lines of every Dockerfile, e.g.
-#     debian:13.7 -> debian:13.8, one pull request for the Debian images and
+#     debian:13.8 -> debian:13.9, one pull request for the Debian images and
 #     one for the Alpine ones, so all images keep the same base
 #   - the actions the workflows use, e.g. actions/checkout@v7 -> @v8
 # It doesn't update the versions of the software in ARG lines, such as

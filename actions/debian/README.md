@@ -6,7 +6,7 @@ A Debian image for running GitHub Actions workflows locally with [act](https://g
 [![Image size](https://img.shields.io/docker/image-size/aljazmc/actions-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/actions-debian/tags)
 [![Version](https://img.shields.io/docker/v/aljazmc/actions-debian?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/actions-debian/tags)
 [![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
-[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Debian: 13.8](https://img.shields.io/badge/Debian-13.8-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
 [![Node.js: 26.13.1](https://img.shields.io/badge/Node.js-26.13.1-5fa04e?logo=nodedotjs&logoColor=white)](https://github.com/nodejs/node/blob/main/LICENSE)
 [![Node.js license: MIT](https://img.shields.io/badge/Node.js%20license-MIT-blue)](#license)
 [![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
@@ -18,7 +18,7 @@ A Debian image for running GitHub Actions workflows locally with [act](https://g
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7`, upgraded to 13.8 when it is built |
+| **Base image** | `debian:13.8` |
 | **Software** | Node.js 26.13.1 (official build, GPG verified) with Corepack 0.36.0 |
 | **Also included** | npm, Yarn (through Corepack), git, Docker CE CLI with buildx and compose, FFmpeg, Python 3 with NumPy, mido, rtmidi and pytest, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `actions` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
@@ -79,8 +79,8 @@ docker-compose run --rm node sh -c "printenv"
 ## Tags
 
 - `latest`: the newest build.
-- `13.8`: the Debian Linux version in the image, e.g. `aljazmc/actions-debian:13.7`. Use it to stay on a known version.
-- `13.8-YYYYMMDD`: the same version, built on that date (UTC), e.g. `13.7-20261124`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
+- `13.8`: the Debian Linux version in the image, e.g. `aljazmc/actions-debian:13.8`. Use it to stay on a known version.
+- `13.8-YYYYMMDD`: the same version, built on that date (UTC), e.g. `13.8-20261127`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Corepack is pinned with `COREPACK_VERSION` in the Dockerfile (`npm install -g corepack@0.36.0`). Node.js is pinned to 26.13.1 with `NODE_VERSION`.
 
 ## License

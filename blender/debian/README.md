@@ -18,7 +18,7 @@ Blender and FFmpeg from Debian forky (testing), for rendering scenes and running
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7`, upgraded to Debian forky (testing) for Blender 5.2 |
+| **Base image** | `debian:13.8`, upgraded to Debian forky (testing) for Blender 5.2 |
 | **Software** | Blender 5.2.3 (Debian forky package, with the system Python) |
 | **Also included** | FFmpeg, Python 3 with NumPy, pytest, cattrs and Requests, DracoPy, xterm, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `blender` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |

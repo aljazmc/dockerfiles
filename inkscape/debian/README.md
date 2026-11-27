@@ -6,7 +6,7 @@ Inkscape with its Python extensions and import and export helpers on Debian, for
 [![Image size](https://img.shields.io/docker/image-size/aljazmc/inkscape-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/inkscape-debian/tags)
 [![Version](https://img.shields.io/docker/v/aljazmc/inkscape-debian?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/inkscape-debian/tags)
 [![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
-[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Debian: 13.8](https://img.shields.io/badge/Debian-13.8-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
 [![Inkscape: 1.4](https://img.shields.io/badge/Inkscape-1.4-000000?logo=inkscape&logoColor=white)](https://inkscape.org/about/license/)
 [![Inkscape license: GPL-2.0-or-later](https://img.shields.io/badge/Inkscape%20license-GPL--2.0--or--later-blue)](#license)
 [![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
@@ -18,7 +18,7 @@ Inkscape with its Python extensions and import and export helpers on Debian, for
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7` |
+| **Base image** | `debian:13.8` |
 | **Software** | Inkscape 1.4 (Debian package) |
 | **Also included** | Python 3 extension modules, ImageMagick, Ghostscript, fig2dev, rsvg-convert, libwmf, aspell, Ruby, xterm, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `inkscape` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
