@@ -24,6 +24,7 @@ blenderDeps=(
     libegl1
     libgbm1
     libgl1-mesa-dri
+    libheif-plugin-aomenc
     libopengl0
     python3-all
     python3-cattr
@@ -32,8 +33,6 @@ blenderDeps=(
     python3-pytest
     python3-requests
     shellcheck
-    libegl1
-    libopengl0
 )
 apt-get update
 apt-get full-upgrade -y
