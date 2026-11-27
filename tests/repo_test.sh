@@ -8,6 +8,7 @@
 #     directory, and its Docker Hub badge counts them
 #   - project.sh reads a version for every image, so none is tagged by date
 #     alone
+#   - the actions, Blender and FluidSynth images install FFmpeg
 #   - Dependabot updates the base image of every image and the GitHub
 #     Actions
 #   - .gitignore ignores no tracked file, keeps the files of a new image and
@@ -80,6 +81,19 @@ for image in "${IMAGES[@]}"; do
 done
 check "project.sh reads a version for every image${unversioned[*]:+; not: ${unversioned[*]}}" \
     [ "${#unversioned[@]}" -eq 0 ]
+
+# FFmpeg, in the images that render audio or video and in the actions
+# images, which run the CI of the repositories that do
+noffmpeg=()
+for dir in "${DIRS[@]}"; do
+    case "$dir" in
+        actions/*|blender/*|fluidsynth/*)
+            grep -qE '^[[:space:]]+ffmpeg[[:space:]]*\\?$' "$dir/Dockerfile" ||
+                noffmpeg+=("$dir") ;;
+    esac
+done
+check "the actions, Blender and FluidSynth images install FFmpeg${noffmpeg[*]:+; not: ${noffmpeg[*]}}" \
+    [ "${#noffmpeg[@]}" -eq 0 ]
 
 # .github/dependabot.yml: the docker directories, globs like "/*/alpine",
 # where * stands for one path segment, cover every image directory

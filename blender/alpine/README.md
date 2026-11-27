@@ -1,8 +1,16 @@
 # aljazmc/blender-alpine
 
-Blender and FFmpeg on Alpine Linux, for headless rendering and Python scripting.
+Blender and FFmpeg on Alpine Linux, for rendering scenes and running Python scripts in Blender without a window.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-alpine)](https://hub.docker.com/r/aljazmc/blender-alpine) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-alpine)](https://hub.docker.com/r/aljazmc/blender-alpine) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-alpine)](https://hub.docker.com/r/aljazmc/blender-alpine)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/blender-alpine?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/blender-alpine)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/blender-alpine/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/blender-alpine/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/blender-alpine?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/blender-alpine/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Alpine: 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://hub.docker.com/_/alpine)
+[![Blender: 5.1.2](https://img.shields.io/badge/Blender-5.1.2-e87d0d?logo=blender&logoColor=white)](https://www.blender.org/about/license/)
+[![Blender license: GPL-2.0-or-later](https://img.shields.io/badge/Blender%20license-GPL--2.0--or--later-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/blender-alpine) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/blender/alpine) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -11,20 +19,34 @@ Blender and FFmpeg on Alpine Linux, for headless rendering and Python scripting.
 | | |
 |---|---|
 | **Base image** | `alpine:3.24.4` |
-| **Software** | Blender 5.1.x (Alpine package) |
-| **Also included** | FFmpeg, Python 3 with `bpy`, NumPy, pytest and Requests, xterm, bash, GNU findutils, ShellCheck, Ruff 0.17.6 (pip) |
+| **Software** | Blender 5.1.2 (Alpine package, with Alpine's system Python) |
+| **Also included** | FFmpeg, Python 3 with `bpy`, NumPy, pytest and Requests, xterm, bash, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `blender` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `5.1.2`, `5.1.2-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
-```
-## start container shell
-docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-alpine sh -c "sh"
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
 
-## render frame 1 of scene.blend to render_0001.png
-docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-alpine sh -c "blender -b scene.blend -o //render_#### -f 1"
+<!-- quickstart setup
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-alpine blender -b --factory-startup --python-expr "import bpy; bpy.context.scene.render.resolution_percentage = 25; bpy.ops.wm.save_as_mainfile(filepath='scene.blend')"
+-->
+
+```sh
+# open a shell, with the current directory as the home directory
+docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-alpine
+
+# render frame 1 of scene.blend to render_0001.png
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-alpine blender -b scene.blend -o //render_#### -f 1
+
+# encode the rendered frames to render.mp4 with FFmpeg
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-alpine ffmpeg -framerate 24 -i render_%04d.png render.mp4
 ```
+
+<!-- quickstart check
+test -s render_0001.png
+test -s render.mp4
+-->
 
 ## Usage with Docker Compose
 
@@ -79,4 +101,12 @@ docker compose run --rm blender sh -c "blender -b scene.blend -o //render_#### -
 
 ## License
 
-Blender is free and open-source software released primarily under the GNU General Public License (GPL) v2+ (or v3+ for binaries): [COPYING](https://github.com/blender/blender/blob/main/COPYING), [GPL v2](https://github.com/blender/blender/blob/main/doc/license/GPL-license.txt), [GPL v3](https://github.com/blender/blender/blob/main/doc/license/GPL3-license.txt). The licenses of bundled third-party code are in [doc/license](https://github.com/blender/blender/tree/main/doc/license).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [Blender](https://www.blender.org/about/license/) | GPL-2.0-or-later | `apk info --license blender` |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

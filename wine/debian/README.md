@@ -1,8 +1,16 @@
 # aljazmc/wine-debian
 
-The WineHQ development build of Wine on Debian, for running and testing Windows applications.
+The WineHQ development build on Debian, for running 32-bit and 64-bit Windows applications.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-debian)](https://hub.docker.com/r/aljazmc/wine-debian) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-debian)](https://hub.docker.com/r/aljazmc/wine-debian) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-debian)](https://hub.docker.com/r/aljazmc/wine-debian)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/wine-debian?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/wine-debian)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/wine-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/wine-debian/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/wine-debian?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/wine-debian/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Wine: 11.22](https://img.shields.io/badge/Wine-11.22-800000?logo=wine&logoColor=white)](https://www.winehq.org/license)
+[![Wine license: LGPL-2.1-or-later](https://img.shields.io/badge/Wine%20license-LGPL--2.1--or--later-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/wine-debian) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/wine/debian) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -16,14 +24,19 @@ The WineHQ development build of Wine on Debian, for running and testing Windows 
 | **User** | `wine` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `11.22`, `11.22-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
-```
-## start container shell
-docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-debian sh -c "bash"
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
 
-## use shell inside the container to print environment variables
-docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-debian sh -c "printenv"
+```sh
+# open a shell, with the current directory as the home directory
+docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-debian
+
+# the Wine version
+docker run --rm aljazmc/wine-debian wine --version
+
+# run a Windows command, without a display
+docker run --rm aljazmc/wine-debian wine cmd /c "echo Hello from cmd.exe"
 ```
 
 ## Usage with Docker Compose
@@ -62,6 +75,7 @@ docker compose run --rm wine sh -c "printenv"
 ```
 
 ## Notes
+
 - The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 - There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
 - On the first start of a new prefix Wine asks to install Wine Mono (needed for .NET applications) and Wine Gecko (needed for applications with an embedded browser). To skip both, set `WINEDLLOVERRIDES="mscoree,mshtml="`, e.g. `docker compose run --rm -e WINEDLLOVERRIDES="mscoree,mshtml=" wine sh -c "wineboot -i"`.
@@ -76,4 +90,12 @@ docker compose run --rm wine sh -c "printenv"
 
 ## License
 
-Wine is free and open-source software released under the GNU Lesser General Public License (LGPL) v2.1+: [LICENSE](https://github.com/wine-mirror/wine/blob/master/LICENSE), [COPYING.LIB](https://github.com/wine-mirror/wine/blob/master/COPYING.LIB) (GitHub mirror of [gitlab.winehq.org/wine/wine](https://gitlab.winehq.org/wine/wine)).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [Wine](https://www.winehq.org/license) | LGPL-2.1-or-later | `/usr/share/doc/winehq-devel/copyright` |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

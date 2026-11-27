@@ -59,12 +59,13 @@ smoke() {
         actions-alpine|actions-debian)
             RUN="exec"
             CHECK='
-                need node npm corepack git shellcheck ruff
+                need node npm corepack git shellcheck ruff ffmpeg
                 node -e "console.log(\"node\", process.version)"
                 echo "npm $(npm --version), corepack $(corepack --version)"
                 git --version
                 shellcheck --version
                 ruff version
+                ffmpeg -hide_banner -version | head -n1
             '
             ;;
         blender-alpine|blender-debian)

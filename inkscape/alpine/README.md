@@ -1,8 +1,16 @@
 # aljazmc/inkscape-alpine
 
-Inkscape with full Python 3 extension support on Alpine Linux, for converting and exporting SVG files.
+Inkscape with its Python extensions and import and export helpers on Alpine Linux, for converting and exporting drawings from the command line.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-alpine)](https://hub.docker.com/r/aljazmc/inkscape-alpine) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/inkscape-alpine)](https://hub.docker.com/r/aljazmc/inkscape-alpine) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/inkscape-alpine)](https://hub.docker.com/r/aljazmc/inkscape-alpine)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/inkscape-alpine?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/inkscape-alpine)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/inkscape-alpine/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/inkscape-alpine/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/inkscape-alpine?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/inkscape-alpine/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Alpine: 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://hub.docker.com/_/alpine)
+[![Inkscape: 1.4.2](https://img.shields.io/badge/Inkscape-1.4.2-000000?logo=inkscape&logoColor=white)](https://inkscape.org/about/license/)
+[![Inkscape license: GPL-2.0-or-later](https://img.shields.io/badge/Inkscape%20license-GPL--2.0--or--later-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/inkscape-alpine) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/inkscape/alpine) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -16,15 +24,29 @@ Inkscape with full Python 3 extension support on Alpine Linux, for converting an
 | **User** | `inkscape` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `1.4.2`, `1.4.2-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
-```
-## start container shell
-docker run --rm -it -v .:/home/inkscape -w /home/inkscape aljazmc/inkscape-alpine sh -c "sh"
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
 
-## export drawing.svg to drawing.pdf
-docker run --rm -it -v .:/home/inkscape -w /home/inkscape aljazmc/inkscape-alpine sh -c "inkscape drawing.svg --export-type=pdf"
+<!-- quickstart setup
+printf '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100"><rect width="200" height="100" fill="#2496ed"/></svg>\n' > drawing.svg
+-->
+
+```sh
+# open a shell, with the current directory as the home directory
+docker run --rm -it -v .:/home/inkscape -w /home/inkscape aljazmc/inkscape-alpine
+
+# export drawing.svg to drawing.pdf
+docker run --rm -v .:/home/inkscape -w /home/inkscape aljazmc/inkscape-alpine inkscape drawing.svg -o drawing.pdf
+
+# and to a 400 pixels wide drawing.png
+docker run --rm -v .:/home/inkscape -w /home/inkscape aljazmc/inkscape-alpine inkscape drawing.svg -w 400 -o drawing.png
 ```
+
+<!-- quickstart check
+test -s drawing.pdf
+test -s drawing.png
+-->
 
 ## Usage with Docker Compose
 
@@ -62,6 +84,7 @@ docker compose run --rm inkscape sh -c "inkscape drawing.svg --export-type=pdf"
 ```
 
 ## Notes
+
 - Not intended for production use.
 - The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 - There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
@@ -79,4 +102,12 @@ docker compose run --rm inkscape sh -c "inkscape drawing.svg --export-type=pdf"
 
 ## License
 
-Inkscape is free and open-source software released primarily under the GNU General Public License (GPL) v2+ (or v3+ for binaries): [COPYING](https://gitlab.com/inkscape/inkscape/-/blob/master/COPYING), [LICENSES](https://gitlab.com/inkscape/inkscape/-/tree/master/LICENSES).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [Inkscape](https://inkscape.org/about/license/) | GPL-2.0-or-later | `apk info --license inkscape`: GPL-2.0-or-later AND LGPL-2.1-or-later |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

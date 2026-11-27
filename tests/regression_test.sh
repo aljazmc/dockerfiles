@@ -102,6 +102,8 @@ check "every entrypoint execs its arguments quoted${unquoted[*]:+; not: ${unquot
 mapfile -t IMAGES < <(images)
 unknown=()
 while read -r name; do
+    # aljazmc/dockerfiles is this repository, not an image
+    [ "$name" = dockerfiles ] && continue
     [[ " ${IMAGES[*]} " == *" $name "* ]] || unknown+=("$name")
 done < <(git ls-files '*README.md' |
     xargs grep -ohE '(github\.com/|hub\.docker\.com/u/)?aljazmc/[a-z0-9][a-z0-9-]*' |

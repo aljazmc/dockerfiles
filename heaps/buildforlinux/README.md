@@ -1,8 +1,16 @@
 # aljazmc/heaps-buildforlinux
 
-Heaps, Haxe, Neko and HashLink on Debian, for building Heaps games for GNU/Linux.
+Haxe, Neko, HashLink and the Heaps game engine, for compiling Heaps games and bundling them with their libraries for GNU/Linux.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforlinux)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforlinux)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforlinux)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforlinux?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforlinux/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/heaps-buildforlinux?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildforlinux/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Heaps: 2.1.0](https://img.shields.io/badge/Heaps-2.1.0-f68712?logo=haxe&logoColor=white)](https://github.com/HeapsIO/heaps/blob/master/LICENSE)
+[![Heaps license: MIT](https://img.shields.io/badge/Heaps%20license-MIT-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/heaps-buildforlinux) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforlinux) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -16,55 +24,55 @@ Heaps, Haxe, Neko and HashLink on Debian, for building Heaps games for GNU/Linux
 | **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `2.1.0`, `2.1.0-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
-```
-## prepare a directory for development:
-docker run \
---device /dev/dri:/dev/dri \
---device /dev/snd:/dev/snd \
---group-add "$(stat -c %g /dev/dri/renderD128)" \
---group-add "$(stat -c %g /dev/dri/card0)" \
---group-add "$(stat -c %g /dev/snd/controlC0)" \
---network=host \
---user heaps \
--e DISPLAY="$DISPLAY" \
--e XDG_RUNTIME_DIR=/run/user/1000 \
--v .:/home/heaps \
--v /home/$USER/.Xauthority:/home/heaps/.Xauthority \
--v $XDG_RUNTIME_DIR:/run/user/1000 \
--v /tmp/.X11-unix:/tmp/.X11-unix \
--v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
--w /home/heaps \
-aljazmc/heaps-buildforlinux:latest
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
 
-## afterwards append shell commands in the end:
-docker run \
---device /dev/dri:/dev/dri \
---device /dev/snd:/dev/snd \
---group-add "$(stat -c %g /dev/dri/renderD128)" \
---group-add "$(stat -c %g /dev/dri/card0)" \
---group-add "$(stat -c %g /dev/snd/controlC0)" \
---network=host \
---user heaps \
--e DISPLAY="$DISPLAY" \
--e XDG_RUNTIME_DIR=/run/user/1000 \
--v .:/home/heaps \
--v /home/$USER/.Xauthority:/home/heaps/.Xauthority \
--v $XDG_RUNTIME_DIR:/run/user/1000 \
--v /tmp/.X11-unix:/tmp/.X11-unix \
--v /var/lib/dbus/machine-id:/var/lib/dbus/machine-id \
--w /home/heaps \
-aljazmc/heaps-buildforlinux:latest "haxe compile.hxml && hl hello.hl"
+<!-- quickstart setup
+mkdir -p src
+cat > compile.hxml <<'EOF'
+-cp src
+-lib format
+-lib heaps
+-lib hlsdl
+-hl hello.hl
+-main Main
+EOF
+cat > src/Main.hx <<'EOF'
+class Main extends hxd.App {
+    override function init() {
+        new h2d.Text(hxd.res.DefaultFont.get(), s2d).text = "Hello Heaps!";
+    }
+    static function main() {
+        new Main();
+    }
+}
+EOF
+-->
+
+```sh
+# the first start installs Heaps and its libraries with haxelib, into ~/haxelib
+docker run --rm -v .:/home/heaps -w /home/heaps aljazmc/heaps-buildforlinux "haxe --version && haxelib list heaps"
+
+# compile the project of the current directory to hello.hl
+docker run --rm -v .:/home/heaps -w /home/heaps aljazmc/heaps-buildforlinux "haxe compile.hxml"
+
+# bundle it with HashLink and its libraries: dist/hello and dist/hello.tar.gz
+docker run --rm -v .:/home/heaps -w /home/heaps aljazmc/heaps-buildforlinux "bundle hello.hl"
 ```
+
+<!-- quickstart check
+test -x dist/hello/hello
+test -s dist/hello.tar.gz
+-->
 
 ## GPU access
+
 The container user needs the host's `render`, `video` and `audio` groups to use the GPU and the sound card. Without them the game falls back to software rendering. The group ids differ between distributions, so look them up with `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 
 ## Usage with Docker Compose
 
 ```
-## prepare a directory for development:
 ## docker-compose.yml example for GNU/Linux host
 services:
     heaps:
@@ -89,16 +97,25 @@ services:
             - "29"  # audio group: stat -c %g /dev/snd/controlC0
         network_mode: host
 
-## command
+## the first start installs Heaps and its libraries with haxelib
 docker compose run --rm heaps
 
-## afterwards append shell commands in the end:
+## run commands in the container:
 docker compose run --rm heaps "haxe compile.hxml && hl hello.hl"
 ```
 
 ## How to bundle the game with its libraries
 
-The first run creates a small project, unless the files already exist: `compile.hxml`, `src/Main.hx`, which sets up the window and a 960x540 scene that is scaled to fit the window (so the layout doesn't depend on the window size), `src/Hello.hx` with a centered greeting, and an empty `res` directory for resources, which `Main` embeds into the compiled game with `hxd.Res.initEmbed()`. Add further parts of the game as classes of their own.
+The commands expect a Heaps project in the current directory with a `compile.hxml` that compiles it to `hello.hl`, like this one, and the sources in `src`:
+
+```hxml
+-cp src
+-lib format
+-lib heaps
+-lib hlsdl
+-hl hello.hl
+-main Main
+```
 
 A compiled `.hl` file needs the HashLink runtime (`hl`, `libhl.so`, `*.hdll`) and the libraries the `.hdll` files depend on (SDL3, OpenAL, libpng, libturbojpeg, libvorbis, libuv, ...). To run the game on a machine without Haxe and HashLink installed, copy all of them next to the `.hl` file together with a small launcher script.
 
@@ -204,4 +221,12 @@ The result is `dist/hello.sh`. Copy it to the target machine and start it with `
 
 ## License
 
-Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [Heaps](https://github.com/HeapsIO/heaps/blob/master/LICENSE) | MIT | `~/haxelib/heaps/*/LICENSE` after the first start |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

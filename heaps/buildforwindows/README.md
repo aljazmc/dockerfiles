@@ -1,8 +1,16 @@
 # aljazmc/heaps-buildforwindows
 
-Heaps, Haxe, Neko, the Windows build of HashLink and mingw-w64, for building Heaps games for Windows from Linux.
+Haxe, Neko, the Windows build of HashLink, mingw-w64, NSIS and the Heaps game engine, for compiling Heaps games into a single Windows `.exe`.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforwindows)](https://hub.docker.com/r/aljazmc/heaps-buildforwindows) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforwindows)](https://hub.docker.com/r/aljazmc/heaps-buildforwindows) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/heaps-buildforwindows)](https://hub.docker.com/r/aljazmc/heaps-buildforwindows)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/heaps-buildforwindows?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildforwindows)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/heaps-buildforwindows/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildforwindows/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/heaps-buildforwindows?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/heaps-buildforwindows/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Heaps: 2.1.0](https://img.shields.io/badge/Heaps-2.1.0-f68712?logo=haxe&logoColor=white)](https://github.com/HeapsIO/heaps/blob/master/LICENSE)
+[![Heaps license: MIT](https://img.shields.io/badge/Heaps%20license-MIT-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/heaps-buildforwindows) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/heaps/buildforwindows) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -16,28 +24,50 @@ Heaps, Haxe, Neko, the Windows build of HashLink and mingw-w64, for building Hea
 | **User** | `heaps` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `2.1.0`, `2.1.0-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
-```
-## prepare a directory for development:
-docker run \
---user heaps \
--v .:/home/heaps \
--w /home/heaps \
-aljazmc/heaps-buildforwindows:latest
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
 
-## afterwards append shell commands in the end:
-docker run \
---user heaps \
--v .:/home/heaps \
--w /home/heaps \
-aljazmc/heaps-buildforwindows:latest "haxe compile.hxml"
+<!-- quickstart setup
+mkdir -p src
+cat > compile.hxml <<'EOF'
+-cp src
+-lib format
+-lib heaps
+-lib hlsdl
+-hl hello.hl
+-main Main
+EOF
+cat > src/Main.hx <<'EOF'
+class Main extends hxd.App {
+    override function init() {
+        new h2d.Text(hxd.res.DefaultFont.get(), s2d).text = "Hello Heaps!";
+    }
+    static function main() {
+        new Main();
+    }
+}
+EOF
+-->
+
+```sh
+# the first start installs Heaps and its libraries with haxelib, into ~/haxelib
+docker run --rm -v .:/home/heaps -w /home/heaps aljazmc/heaps-buildforwindows "haxe --version && haxelib list heaps"
+
+# compile the project of the current directory to hello.hl
+docker run --rm -v .:/home/heaps -w /home/heaps aljazmc/heaps-buildforwindows "haxe compile.hxml"
+
+# bundle it with hl.exe and make one dist/hello.exe
+docker run --rm -v .:/home/heaps -w /home/heaps aljazmc/heaps-buildforwindows "bundle hello.hl && makeexe dist/hello-win64 hello.exe dist/hello.exe"
 ```
+
+<!-- quickstart check
+test -s dist/hello.exe
+-->
 
 ## Usage with Docker Compose
 
 ```
-## prepare a directory for development:
 ## docker-compose.yml example
 services:
     heaps:
@@ -47,16 +77,25 @@ services:
         volumes:
             - .:/home/heaps
 
-## command
+## the first start installs Heaps and its libraries with haxelib
 docker compose run --rm heaps
 
-## afterwards append shell commands in the end:
+## run commands in the container:
 docker compose run --rm heaps "haxe compile.hxml"
 ```
 
 ## How to bundle the game with its libraries
 
-The first run creates a small project, unless the files already exist: `compile.hxml`, `src/Main.hx`, which sets up the window and a 960x540 scene that is scaled to fit the window (so the layout doesn't depend on the window size), `src/Hello.hx` with a centered greeting, and an empty `res` directory for resources, which `Main` embeds into the compiled game with `hxd.Res.initEmbed()`. Add further parts of the game as classes of their own.
+The commands expect a Heaps project in the current directory with a `compile.hxml` that compiles it to `hello.hl`, like this one, and the sources in `src`:
+
+```hxml
+-cp src
+-lib format
+-lib heaps
+-lib hlsdl
+-hl hello.hl
+-main Main
+```
 
 The image contains the Windows build of HashLink (`hl.exe`, `libhl.dll`, `*.hdll`, `SDL3.dll`, `OpenAL32.dll`, `vcruntime140.dll`, import libraries and headers) in `$HASHLINK_WIN64` (`/usr/local/hashlink-win64`). It is the same HashLink version as the Haxe libraries (`hlsdl`, `hldx`, ...) installed in the container, so a project compiled in the container runs on Windows when all of these files are copied next to it.
 
@@ -201,4 +240,12 @@ The result is `dist/hello.exe`, a single file that runs on 64-bit Windows. It wo
 
 ## License
 
-Heaps is free and open-source software released under the [MIT License](https://github.com/HeapsIO/heaps/blob/master/LICENSE).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [Heaps](https://github.com/HeapsIO/heaps/blob/master/LICENSE) | MIT | `~/haxelib/heaps/*/LICENSE` after the first start |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

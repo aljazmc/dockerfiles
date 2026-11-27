@@ -1,8 +1,16 @@
 # aljazmc/wine-alpine
 
-Wine on Alpine Linux, for running and testing Windows applications.
+The stable Wine release on Alpine Linux, for running 32-bit and 64-bit Windows applications.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/wine-alpine)](https://hub.docker.com/r/aljazmc/wine-alpine) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/wine-alpine)](https://hub.docker.com/r/aljazmc/wine-alpine) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/wine-alpine)](https://hub.docker.com/r/aljazmc/wine-alpine)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/wine-alpine?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/wine-alpine)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/wine-alpine/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/wine-alpine/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/wine-alpine?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/wine-alpine/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Alpine: 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://hub.docker.com/_/alpine)
+[![Wine: 11.0](https://img.shields.io/badge/Wine-11.0-800000?logo=wine&logoColor=white)](https://www.winehq.org/license)
+[![Wine license: LGPL-2.1-or-later](https://img.shields.io/badge/Wine%20license-LGPL--2.1--or--later-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/wine-alpine) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/wine/alpine) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -16,14 +24,19 @@ Wine on Alpine Linux, for running and testing Windows applications.
 | **User** | `wine` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `11.0`, `11.0-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
-```
-## start container shell
-docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-alpine sh -c "sh"
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
 
-## use shell inside the container to print environment variables
-docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-alpine sh -c "printenv"
+```sh
+# open a shell, with the current directory as the home directory
+docker run --rm -it -v .:/home/wine -w /home/wine aljazmc/wine-alpine
+
+# the Wine version
+docker run --rm aljazmc/wine-alpine wine --version
+
+# run a Windows command, without a display
+docker run --rm aljazmc/wine-alpine wine cmd /c "echo Hello from cmd.exe"
 ```
 
 ## Usage with Docker Compose
@@ -62,6 +75,7 @@ docker compose run --rm wine sh -c "printenv"
 ```
 
 ## Notes
+
 - Not intended for production use.
 - The container user needs the host's `render`, `video` and `audio` groups (`group_add`) to use the GPU and the sound card. Without them, apps fall back to software rendering. The group ids differ between distributions: `stat -c %g /dev/dri/renderD128 /dev/dri/card0 /dev/snd/controlC0`.
 - There is no X server or audio server inside the container. Apps use the host's X server (`DISPLAY`, `/tmp/.X11-unix`) and the host's PipeWire/PulseAudio (`XDG_RUNTIME_DIR`).
@@ -77,4 +91,12 @@ docker compose run --rm wine sh -c "printenv"
 
 ## License
 
-Wine is free and open-source software released under the GNU Lesser General Public License (LGPL) v2.1+: [LICENSE](https://github.com/wine-mirror/wine/blob/master/LICENSE), [COPYING.LIB](https://github.com/wine-mirror/wine/blob/master/COPYING.LIB) (GitHub mirror of [gitlab.winehq.org/wine/wine](https://gitlab.winehq.org/wine/wine)).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [Wine](https://www.winehq.org/license) | LGPL-2.1-or-later | `apk info --license wine` |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

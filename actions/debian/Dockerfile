@@ -17,6 +17,7 @@ runtimeDeps=(
     ca-certificates
     curl
     dirmngr
+    ffmpeg
     git
     gpg
     gpg-agent

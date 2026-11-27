@@ -37,10 +37,10 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 
 | Image | Base | Software | Description |
 |---|---|---|---|
-| [actions-alpine](actions/alpine) | Alpine 3.24 | Node | Node.js 26 (unofficial musl build), Corepack, docker, shellcheck, ruff and git. |
-| [actions-debian](actions/debian) | Debian 13 | Node | Node.js 26 (official build, GPG verified), Corepack, docker, shellcheck, ruff and git. |
+| [actions-alpine](actions/alpine) | Alpine 3.24 | Node.js 26 | For running GitHub Actions workflows with act: Node.js 26 (unofficial musl build), Corepack, the Docker CLI, git, FFmpeg, ShellCheck and Ruff. |
+| [actions-debian](actions/debian) | Debian 13 | Node.js 26 | For running GitHub Actions workflows with act: Node.js 26 (official build, GPG verified), Corepack, the Docker CLI, git, ShellCheck and Ruff, and FFmpeg from the next build. |
 | [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg and pytest. |
-| [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Debian forky (testing) package of Blender using the system Python, with FFmpeg and pytest. |
+| [blender-debian](blender/debian) | Debian forky | Blender 5.2 | Debian forky (testing) package of Blender using the system Python, with FFmpeg and pytest. |
 | [fluidsynth-alpine](fluidsynth/alpine) | Alpine 3.24 | FluidSynth 2.5 | Renders MIDI to audio. TimGM6mb soundfont, FFmpeg, Python 3 with NumPy and pytest. |
 | [fluidsynth-debian](fluidsynth/debian) | Debian 13 | FluidSynth 2.4 | Renders MIDI to audio. FluidR3 soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi and pytest. |
 | [godot-buildforlinux](godot/buildforlinux) | Debian 13 | Godot 4.7 | Exports and runs games for GNU/Linux. `makesh` packs a game into one self-extracting `.sh`. |
@@ -59,7 +59,7 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 | [x11-alpine](x11/alpine) | Alpine 3.24 | libX11 1.8 | xterm, GTK 2, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
 | [x11-debian](x11/debian) | Debian 13 | libX11 1.8 | xterm, GTK 2 engines, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
 
-Every image includes [ShellCheck](https://www.shellcheck.net/) from its distribution's repository. The images whose work is Python scripts (blender-*, fluidsynth-* and inkscape-*) also include [Ruff](https://docs.astral.sh/ruff/), installed with pip at 0.17.6, the version the GitHub Actions of the profile's repositories use.
+Every image includes [ShellCheck](https://www.shellcheck.net/) from its distribution's repository. The images whose work is Python scripts (blender-*, fluidsynth-* and inkscape-*) and the actions images also include [Ruff](https://docs.astral.sh/ruff/), installed with pip at 0.17.6, the version the GitHub Actions of the profile's repositories use.
 
 ### Alpine or Debian?
 
@@ -73,10 +73,10 @@ Every image is published with three tags:
 | Tag | Meaning |
 |---|---|
 | `latest` | The newest build. |
-| `<version>` | The version of the software the image is named after, e.g. `aljazmc/blender-debian:5.2.4` or `aljazmc/godot-buildforlinux:4.7.2`. |
-| `<version>-<YYYYMMDD>` | The same version, built on that date (UTC), e.g. `aljazmc/blender-debian:5.2.4-20261122`. Every build gets its own tag that never moves. |
+| `<version>` | The version of the software the image is named after, e.g. `aljazmc/blender-debian:5.2.3` or `aljazmc/godot-buildforlinux:4.7.2`. |
+| `<version>-<YYYYMMDD>` | The same version, built on that date (UTC), e.g. `aljazmc/blender-debian:5.2.3-20261126`. Every build gets its own tag that never moves. |
 
-These versions are pinned in the Dockerfiles (`BLENDER_VERSION`, `GODOT_VERSION`, ...), so a version tag always refers to the same version of the software. Two images are tagged differently: `image-spinner` with its Alpine Linux version and the `x11` images with their libX11 version. Use `<version>` to stay on a version of the software, and `<version>-<YYYYMMDD>` to stay on one exact build.
+These versions are pinned in the Dockerfiles (`BLENDER_VERSION`, `GODOT_VERSION`, ...), so a version tag always refers to the same version of the software. Some images are tagged differently: `image-spinner` and `actions-alpine` with their Alpine Linux version, `actions-debian` with its Debian version and the `x11` images with their libX11 version. Use `<version>` to stay on a version of the software, and `<version>-<YYYYMMDD>` to stay on one exact build.
 
 [Dependabot](.github/dependabot.yml) proposes the updates of the pins it can read every week, as pull requests that CI builds and smoke-tests: the base images in the `FROM` lines, one pull request for the Debian images and one for the Alpine ones, and the GitHub Actions of the workflows. The versions of the software in `ARG` lines, such as `BLENDER_VERSION`, are updated by hand.
 
@@ -85,6 +85,12 @@ The rest of the system isn't pinned. Every build first runs `apt-get upgrade` (D
 A rebuild isn't bit-for-bit reproducible, because the upgraded packages change over time. To get exactly the same image again, use a dated tag or the image digest (`aljazmc/<image>@sha256:...`).
 
 ## Quick start
+
+Run in an empty directory with a Blender file, `scene.blend`. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands, with a small sample scene, to check that they work.
+
+<!-- quickstart setup
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-alpine blender -b --factory-startup --python-expr "import bpy; bpy.context.scene.render.resolution_percentage = 25; bpy.ops.wm.save_as_mainfile(filepath='scene.blend')"
+-->
 
 ```sh
 # open a shell in a container, with the current directory mounted as the home directory
@@ -95,7 +101,11 @@ docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-alpine:5.1.2
     sh -c "blender -b scene.blend -o //render_#### -f 1"
 ```
 
-Each image's README has examples for `docker run` and Docker Compose.
+<!-- quickstart check
+test -s render_0001.png
+-->
+
+Each image's README has a quick start of its own, which CI runs too, and examples for Docker Compose.
 
 ## Running GUI applications
 
@@ -256,9 +266,12 @@ tests/regression_test.sh        # check that no fixed bug has come back
 tests/changed_test.sh           # test project.sh changed in a throwaway git repository
 tests/coverage_test.sh          # test project.sh coverage with docker stubbed out
 tests/notes_test.sh             # test project.sh notes in a throwaway git repository
+tests/quickstart_test.sh        # test tests/quickstart.sh with docker stubbed out
+tests/quickstart.sh             # run the quick start of README.md with the images from Docker Hub
+tests/quickstart.sh x11-alpine  # run the quick start of an image's README
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It measures the coverage of `project.sh` and `tests/smoke_test.sh` by those tests with `./project.sh coverage`, which runs them under [kcov](https://github.com/SimonKagstrom/kcov) from its Docker image, writes the table to the job summary and keeps the HTML report as an artifact. It checks every Dockerfile for misconfigurations with `./project.sh lint`, which needs no image and takes seconds, and builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`. It scans those images with `IGNORE_UNFIXED=1 FAIL_ON=CRITICAL ./project.sh scan`, so a `CRITICAL` vulnerability with a fix fails the job, and keeps their SBOMs as an artifact of the run. It pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It measures the coverage of `project.sh` and `tests/smoke_test.sh` by those tests with `./project.sh coverage`, which runs them under [kcov](https://github.com/SimonKagstrom/kcov) from its Docker image, writes the table to the job summary and keeps the HTML report as an artifact. It checks every Dockerfile for misconfigurations with `./project.sh lint`, which needs no image and takes seconds, and builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`. It scans those images with `IGNORE_UNFIXED=1 FAIL_ON=CRITICAL ./project.sh scan`, so a `CRITICAL` vulnerability with a fix fails the job, and keeps their SBOMs as an artifact of the run. It runs the quick starts of the READMEs of those images, with the images it just built, and the quick start of this README with the images from Docker Hub, with `tests/quickstart.sh`, so the documented commands keep working. It pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
 
 ### Releases
 

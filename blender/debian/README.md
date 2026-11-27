@@ -1,8 +1,16 @@
 # aljazmc/blender-debian
 
-Blender from Debian forky (testing) and FFmpeg on Debian, for headless rendering and Python scripting.
+Blender and FFmpeg from Debian forky (testing), for rendering scenes and running Python scripts in Blender without a window.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/blender-debian)](https://hub.docker.com/r/aljazmc/blender-debian) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/blender-debian)](https://hub.docker.com/r/aljazmc/blender-debian) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/blender-debian)](https://hub.docker.com/r/aljazmc/blender-debian)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/blender-debian?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/blender-debian)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/blender-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/blender-debian/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/blender-debian?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/blender-debian/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Debian: forky](https://img.shields.io/badge/Debian-forky-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![Blender: 5.2.3](https://img.shields.io/badge/Blender-5.2.3-e87d0d?logo=blender&logoColor=white)](https://www.blender.org/about/license/)
+[![Blender license: GPL-2.0-or-later](https://img.shields.io/badge/Blender%20license-GPL--2.0--or--later-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/blender-debian) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/blender/debian) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -10,21 +18,35 @@ Blender from Debian forky (testing) and FFmpeg on Debian, for headless rendering
 
 | | |
 |---|---|
-| **Base image** | `debian:13.7` |
-| **Software** | Blender 5.2.x (Debian forky package, using the system Python) |
-| **Also included** | FFmpeg, NumPy, pytest, Ruff 0.17.6, ShellCheck |
+| **Base image** | `debian:13.7`, upgraded to Debian forky (testing) for Blender 5.2 |
+| **Software** | Blender 5.2.3 (Debian forky package, with the system Python) |
+| **Also included** | FFmpeg, Python 3 with NumPy, pytest, cattrs and Requests, DracoPy, xterm, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `blender` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
-| **Tags** | `latest`, `5.2.4`, `5.2.4-YYYYMMDD` |
+| **Tags** | `latest`, `5.2.3`, `5.2.3-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
+
+<!-- quickstart setup
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-debian blender -b --factory-startup --python-expr "import bpy; bpy.context.scene.render.resolution_percentage = 25; bpy.ops.wm.save_as_mainfile(filepath='scene.blend')"
+-->
+
+```sh
+# open a shell, with the current directory as the home directory
+docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-debian
+
+# render frame 1 of scene.blend to render_0001.png
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-debian blender -b scene.blend -o //render_#### -f 1
+
+# encode the rendered frames to render.mp4 with FFmpeg
+docker run --rm -v .:/home/blender -w /home/blender aljazmc/blender-debian ffmpeg -framerate 24 -i render_%04d.png render.mp4
 ```
-## start container shell
-docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-debian sh -c "bash"
 
-## render frame 1 of scene.blend to render_0001.png
-docker run --rm -it -v .:/home/blender -w /home/blender aljazmc/blender-debian sh -c "blender -b scene.blend -o //render_#### -f 1"
-```
+<!-- quickstart check
+test -s render_0001.png
+test -s render.mp4
+-->
 
 ## Usage with Docker Compose
 
@@ -73,10 +95,18 @@ docker compose run --rm blender sh -c "blender -b scene.blend -o //render_#### -
 ## Tags
 
 - `latest`: the newest build.
-- `5.2.4`: the Blender version in the image, e.g. `aljazmc/blender-debian:5.2.4`. Use it to stay on a known version.
-- `5.2.4-YYYYMMDD`: the same version, built on that date (UTC), e.g. `5.2.4-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
+- `5.2.3`: the Blender version in the image, e.g. `aljazmc/blender-debian:5.2.3`. Use it to stay on a known version.
+- `5.2.3-YYYYMMDD`: the same version, built on that date (UTC), e.g. `5.2.3-20261122`. Every build gets its own tag that never moves, so use it where you need exactly the same image again.
 - Blender is the Debian forky package, pinned to the 5.2 series with `BLENDER_VERSION` in the Dockerfile, so the newest 5.2.x package in forky is installed.
 
 ## License
 
-Blender is free and open-source software released primarily under the GNU General Public License (GPL) v2+ (or v3+ for binaries): [COPYING](https://github.com/blender/blender/blob/main/COPYING), [GPL v2](https://github.com/blender/blender/blob/main/doc/license/GPL-license.txt), [GPL v3](https://github.com/blender/blender/blob/main/doc/license/GPL3-license.txt). The licenses of bundled third-party code are in [doc/license](https://github.com/blender/blender/tree/main/doc/license).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [Blender](https://www.blender.org/about/license/) | GPL-2.0-or-later | `/usr/share/doc/blender/copyright` |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

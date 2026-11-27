@@ -1,8 +1,16 @@
 # aljazmc/image-spinner
 
-Everything needed to build custom Alpine Linux ISO images with `mkimage.sh` from aports.
+The Alpine Linux build tools, for building custom Alpine ISO images with `mkimage.sh` from the aports tree.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/image-spinner)](https://hub.docker.com/r/aljazmc/image-spinner) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/image-spinner)](https://hub.docker.com/r/aljazmc/image-spinner) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/image-spinner)](https://hub.docker.com/r/aljazmc/image-spinner)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/image-spinner?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/image-spinner)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/image-spinner/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/image-spinner/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/image-spinner?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/image-spinner/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Alpine: 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://hub.docker.com/_/alpine)
+[![Alpine: 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://gitlab.alpinelinux.org/alpine/abuild)
+[![Alpine license: GPL-2.0-only](https://img.shields.io/badge/Alpine%20license-GPL--2.0--only-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/image-spinner) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/image-spinner) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -11,10 +19,27 @@ Everything needed to build custom Alpine Linux ISO images with `mkimage.sh` from
 | | |
 |---|---|
 | **Base image** | `alpine:3.24.4` |
-| **Software** | Alpine Linux 3.24.4 build tools |
+| **Software** | Alpine Linux 3.24.4 build tools: abuild, alpine-conf, `mkimage.sh` of the aports tree |
 | **Also included** | abuild, alpine-conf, git, GRUB, syslinux, mtools, squashfs-tools, xorriso, rsync, ShellCheck |
 | **User** | `aljazmc` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `3.24.4`, `3.24.4-YYYYMMDD` |
+
+## Quick start
+
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
+
+```sh
+# prepare the current directory: a signing key, and the aports tree cloned the first time
+docker run --rm -v .:/home/aljazmc -w /home/aljazmc aljazmc/image-spinner
+
+# the options of mkimage.sh, which builds the ISO
+docker run --rm -v .:/home/aljazmc -w /home/aljazmc aljazmc/image-spinner "sh aports/scripts/mkimage.sh --help"
+```
+
+<!-- quickstart check
+test -f aports/scripts/mkimage.sh
+test -f aports/scripts/mkimg.test.sh
+-->
 
 ## Workflow with Docker
 
@@ -67,4 +92,13 @@ docker compose run --rm spinner "sh aports/scripts/mkimage.sh --tag edge --outdi
 
 ## License
 
-Alpine Linux [aports](https://github.com/alpinelinux/aports) (GitHub mirror of [gitlab.alpinelinux.org/alpine/aports](https://gitlab.alpinelinux.org/alpine/aports)) has no single license: every package is released under its own free and open-source license, declared in the `license` field of its `APKBUILD`.
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [abuild](https://gitlab.alpinelinux.org/alpine/abuild) | GPL-2.0-only | `apk info --license abuild` |
+| [alpine-conf](https://gitlab.alpinelinux.org/alpine/alpine-conf) | MIT | `apk info --license alpine-conf` |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

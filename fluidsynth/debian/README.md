@@ -1,8 +1,16 @@
 # aljazmc/fluidsynth-debian
 
-FluidSynth, FFmpeg and Python 3 on Debian, for rendering MIDI to audio.
+FluidSynth with a General MIDI soundfont and FFmpeg on Debian, for rendering MIDI files to audio.
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-debian)](https://hub.docker.com/r/aljazmc/fluidsynth-debian) [![Docker Image Size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-debian)](https://hub.docker.com/r/aljazmc/fluidsynth-debian) [![Docker Stars](https://img.shields.io/docker/stars/aljazmc/fluidsynth-debian)](https://hub.docker.com/r/aljazmc/fluidsynth-debian)
+[![Docker pulls](https://img.shields.io/docker/pulls/aljazmc/fluidsynth-debian?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/fluidsynth-debian)
+[![Image size](https://img.shields.io/docker/image-size/aljazmc/fluidsynth-debian/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/fluidsynth-debian/tags)
+[![Version](https://img.shields.io/docker/v/aljazmc/fluidsynth-debian?sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/aljazmc/fluidsynth-debian/tags)
+[![platforms: amd64 | arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](https://github.com/aljazmc/dockerfiles#building-and-testing)
+[![Debian: 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://hub.docker.com/_/debian)
+[![FluidSynth: 2.4.4](https://img.shields.io/badge/FluidSynth-2.4.4-2f6db5)](https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE)
+[![FluidSynth license: LGPL-2.1-or-later](https://img.shields.io/badge/FluidSynth%20license-LGPL--2.1--or--later-blue)](#license)
+[![CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
+[![Dockerfile license: MIT](https://img.shields.io/badge/Dockerfile%20license-MIT-blue)](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE)
 
 [Docker Hub](https://hub.docker.com/r/aljazmc/fluidsynth-debian) · [Source](https://github.com/aljazmc/dockerfiles/tree/main/fluidsynth/debian) · [All images](https://github.com/aljazmc/dockerfiles)
 
@@ -12,19 +20,33 @@ FluidSynth, FFmpeg and Python 3 on Debian, for rendering MIDI to audio.
 |---|---|
 | **Base image** | `debian:13.7` |
 | **Software** | FluidSynth 2.4.4 (Debian package) |
-| **Also included** | FluidR3 General MIDI soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi, pytest, pip and venv, ShellCheck, Ruff 0.17.6 (pip) |
+| **Also included** | FluidR3 General MIDI soundfont (`/usr/share/sounds/sf2/FluidR3_GM.sf2`), FFmpeg, Python 3 with NumPy, mido, rtmidi, pytest, pip and venv, ShellCheck, Ruff 0.17.6 (pip) |
 | **User** | `fluidsynth` (uid 1000) with passwordless `sudo` (`sudo apt-get install ...`) |
 | **Tags** | `latest`, `2.4.4`, `2.4.4-YYYYMMDD` |
 
-## Usage with Docker
+## Quick start
 
-```
-## start container shell
-docker run --rm -it -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-debian sh -c "bash"
+Run in an empty directory; the commands work on the files of the current directory, mounted as the home directory of the container. [CI](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml) runs these commands to check that they work.
 
-## render song.mid to song.mp3
-docker run --rm -it -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-debian sh -c "fluidsynth -ni -F song.wav /usr/share/sounds/sf2/default-GM.sf2 song.mid && ffmpeg -i song.wav song.mp3"
+<!-- quickstart setup
+printf "MThd\000\000\000\006\000\000\000\001\000\140MTrk\000\000\000\014\000\220\074\100\140\200\074\100\000\377\057\000" > song.mid
+-->
+
+```sh
+# open a shell, with the current directory as the home directory
+docker run --rm -it -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-debian
+
+# render song.mid to song.wav with the bundled soundfont
+docker run --rm -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-debian fluidsynth -ni -F song.wav /usr/share/sounds/sf2/FluidR3_GM.sf2 song.mid
+
+# encode it to song.mp3 with FFmpeg
+docker run --rm -v .:/home/fluidsynth -w /home/fluidsynth aljazmc/fluidsynth-debian ffmpeg -i song.wav song.mp3
 ```
+
+<!-- quickstart check
+test -s song.wav
+test -s song.mp3
+-->
 
 ## Usage with Docker Compose
 
@@ -76,4 +98,12 @@ docker compose run --rm fluidsynth sh -c "fluidsynth -ni -F song.wav /usr/share/
 
 ## License
 
-FluidSynth is free and open-source software released under the [GNU Lesser General Public License (LGPL) v2.1+](https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE).
+The Dockerfile, the scripts and this README are part of [aljazmc/dockerfiles](https://github.com/aljazmc/dockerfiles), released under the [MIT License](https://github.com/aljazmc/dockerfiles/blob/main/LICENSE).
+
+The software in the image keeps its own license:
+
+| Software | License | In the image |
+|---|---|---|
+| [FluidSynth](https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE) | LGPL-2.1-or-later | `/usr/share/doc/fluidsynth/copyright` |
+
+Every other package keeps its license too: `apk info --license <package>` shows it on Alpine, `/usr/share/doc/<package>/copyright` on Debian.

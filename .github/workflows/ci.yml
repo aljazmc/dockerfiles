@@ -61,6 +61,17 @@ jobs:
           path: coverage/
           if-no-files-found: ignore
 
+  # Runs the quick start of README.md, with the images from Docker Hub, to
+  # check that it works as written; the build job does the same for the
+  # README of every image it builds.
+  quickstart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run the quick start of README.md
+        run: tests/quickstart.sh README.md
+
   # Checks every Dockerfile for misconfigurations with Trivy, without
   # building an image, so it takes seconds; fails on HIGH or CRITICAL.
   scan:
@@ -112,6 +123,15 @@ jobs:
         run: |
           read -ra images <<< "$IMAGES"
           ./project.sh scan "${images[@]}"
+
+      # the READMEs of the images just built, with those images
+      - name: Run the quick starts of the changed images
+        if: steps.changed.outputs.images != ''
+        env:
+          IMAGES: ${{ steps.changed.outputs.images }}
+        run: |
+          read -ra images <<< "$IMAGES"
+          tests/quickstart.sh "${images[@]}"
 
       - name: Keep the SBOMs
         if: always() && steps.changed.outputs.images != ''
