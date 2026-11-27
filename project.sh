@@ -22,12 +22,12 @@ version() {
         actions-alpine)  cmd='cat /etc/alpine-release' ;;
         actions-debian)  cmd='cat /etc/debian_version' ;;
         blender-*)       cmd='blender --version' ;;
-        corepack-*)      cmd='corepack --version' ;;
         fluidsynth-*)    cmd='fluidsynth --version' ;;
         godot-*)         cmd='godot --headless --version' ;;
         heaps-*)         cmd='echo "$HEAPS_VERSION"' ;;
         image-spinner)   cmd='cat /etc/alpine-release' ;;
         inkscape-*)      cmd='inkscape --version' ;;
+        node-*)          cmd='node --version | sed "s/v//g"' ;;
         wine-*)          cmd='wine --version' ;;
         x11-*)           cmd='apk list -I libx11 || dpkg-query -W libx11-6' ;;
         *)               return ;;

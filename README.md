@@ -16,7 +16,7 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 ## Features
 
 - **21 images, two families.** Actions, Blender, Inkscape, FluidSynth, Wine,
-  X11 and Corepack in Alpine and Debian flavours, Godot and Heaps build images
+  X11 and Node in Alpine and Debian flavours, Godot and Heaps build images
   for Linux, Windows and macOS, and `image-spinner` for custom Alpine ISOs.
 - **Pinned and tagged.** Every image starts from `debian:13.7` or
   `alpine:3.24.4` and is pushed as `latest`, with its software version and
@@ -32,12 +32,10 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 
 | Image | Base | Software | Description |
 |---|---|---|---|
-| [actions-alpine](actions/alpine) | Alpine 3.24 | Shellcheck | Node.js 26 (unofficial musl build), Corepack, docker, ruff and git. |
-| [actions-debian](actions/debian) | Debian 13 | Shellcheck | Node.js 26 (official build, GPG verified), Corepack, docker, ruff and git. |
+| [actions-alpine](actions/alpine) | Alpine 3.24 | Node | Node.js 26 (unofficial musl build), Corepack, docker, shellcheck, ruff and git. |
+| [actions-debian](actions/debian) | Debian 13 | Node | Node.js 26 (official build, GPG verified), Corepack, docker, shellcheck, ruff and git. |
 | [blender-alpine](blender/alpine) | Alpine 3.24 | Blender 5.1 | Alpine package of Blender using Alpine's system Python, with FFmpeg and pytest. |
 | [blender-debian](blender/debian) | Debian 13 | Blender 5.2 | Official blender.org build with its own Python, with FFmpeg and pytest. |
-| [corepack-alpine](corepack/alpine) | Alpine 3.24 | Corepack 0.36 | Node.js 26 (unofficial musl build), Corepack and git. |
-| [corepack-debian](corepack/debian) | Debian 13 | Corepack 0.36 | Node.js 26 (official build, GPG verified), Corepack and git. |
 | [fluidsynth-alpine](fluidsynth/alpine) | Alpine 3.24 | FluidSynth 2.5 | Renders MIDI to audio. TimGM6mb soundfont, FFmpeg, Python 3 with NumPy and pytest. |
 | [fluidsynth-debian](fluidsynth/debian) | Debian 13 | FluidSynth 2.4 | Renders MIDI to audio. FluidR3 soundfont, FFmpeg, Python 3 with NumPy, mido, rtmidi and pytest. |
 | [godot-buildforlinux](godot/buildforlinux) | Debian 13 | Godot 4.7 | Exports and runs games for GNU/Linux. `makesh` packs a game into one self-extracting `.sh`. |
@@ -49,6 +47,8 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 | [image-spinner](image-spinner) | Alpine 3.24 | Alpine 3.24 | `abuild`, GRUB, syslinux, squashfs-tools and xorriso for building custom ISO images with `mkimage.sh`. |
 | [inkscape-alpine](inkscape/alpine) | Alpine 3.24 | Inkscape 1.4.2 | Inkscape with every Python extension and the import/export helpers. |
 | [inkscape-debian](inkscape/debian) | Debian 13 | Inkscape 1.4 | Inkscape with every Python extension and the import/export helpers. |
+| [node-alpine](corepack/alpine) | Alpine 3.24 | Node.js 26 | Node.js 26 (unofficial musl build), Corepack and git. |
+| [node-debian](corepack/debian) | Debian 13 | Node.js 26 | Node.js 26 (official build, GPG verified), Corepack and git. |
 | [wine-alpine](wine/alpine) | Alpine 3.24 | Wine 11.0 | Stable Wine release for 32-bit and 64-bit Windows applications. |
 | [wine-debian](wine/debian) | Debian 13 | Wine 11.22 | WineHQ development build for 32-bit and 64-bit Windows applications. |
 | [x11-alpine](x11/alpine) | Alpine 3.24 | libX11 1.8 | xterm, GTK 2, Mesa, Vulkan and audio libraries. A base for GUI apps that use the host's X server. |
