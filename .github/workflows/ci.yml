@@ -24,10 +24,19 @@ jobs:
             done |
             xargs -0 -t shellcheck
 
-  project-test:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
-      - name: Run project test
-        run: tests/project_test.sh
+      # every test with docker stubbed out; smoke_test.sh builds the real
+      # images, so it runs before publishing instead
+      - name: Run tests
+        run: |
+          status=0
+          for test in tests/*_test.sh; do
+            [ "$test" = tests/smoke_test.sh ] && continue
+            echo "==> $test"
+            bash "$test" || status=1
+          done
+          exit "$status"

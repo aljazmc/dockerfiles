@@ -153,9 +153,11 @@ done
 
 }
 
-if declare -F "$1" > /dev/null; then
-    "$@"
-else
-    echo "Usage: $0 {clean|publish|scan [image...]}"
-    exit 1
-fi
+## only the commands, not the helpers such as version or image_name
+case "${1:-}" in
+    clean|publish|scan) "$@" ;;
+    *)
+        echo "Usage: $0 {clean|publish|scan [image...]}"
+        exit 1
+        ;;
+esac

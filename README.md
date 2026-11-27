@@ -111,10 +111,14 @@ The container user has uid 1000, so files it creates in a mounted directory belo
 
 tests/smoke_test.sh             # build every image and check that its tools run
 tests/smoke_test.sh x11-alpine  # build and check a single image
-tests/project_test.sh           # test project.sh with docker stubbed out
+tests/project_test.sh           # test publish with docker stubbed out
+tests/arguments_test.sh         # test that bad input is rejected, and clean
+tests/scan_test.sh              # test scan with docker and Trivy stubbed out
+tests/smoke_cases_test.sh       # test that every image has a smoke case
+tests/repo_test.sh              # check pinned bases, READMEs and entrypoints
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and `tests/project_test.sh` on every push and pull request.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh`, which builds the real images, on every push to `main` and every pull request. The tests need only bash and git.
 
 ### SBOM and vulnerability scanning
 
