@@ -4,8 +4,13 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-21%20images-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
 [![Docker pulls](https://img.shields.io/badge/pulls-18%2C000%2B-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
+[![Platforms: amd64 and arm64](https://img.shields.io/badge/platforms-amd64%20%7C%20arm64-2496ed?logo=docker&logoColor=white)](#building-and-testing)
 [![Alpine 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://alpinelinux.org/)
 [![Debian 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://www.debian.org/)
+[![Trivy: scanned in CI](https://img.shields.io/badge/Trivy-scanned%20in%20CI-1904da?logo=trivy&logoColor=white)](#sbom-and-vulnerability-scanning)
+[![SBOM: CycloneDX](https://img.shields.io/badge/SBOM-CycloneDX-1a4d7a?logo=owasp&logoColor=white)](#sbom-and-vulnerability-scanning)
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025e8c?logo=dependabot&logoColor=white)](.github/dependabot.yml)
+[![Coverage: kcov in CI](https://img.shields.io/badge/coverage-kcov%20in%20CI-2088ff?logo=githubactions&logoColor=white)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
 [![ShellCheck](https://img.shields.io/badge/ShellCheck-checked-4eaa25?logo=gnubash&logoColor=white)](https://www.shellcheck.net/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-fe5196?logo=conventionalcommits&logoColor=white)](https://www.conventionalcommits.org/)
 
