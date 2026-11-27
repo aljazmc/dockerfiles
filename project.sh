@@ -20,6 +20,15 @@ image_name() {
     echo "${1//\//-}"
 }
 
+## directory of an image, e.g. "godot/buildforlinux" for godot-buildforlinux;
+## prints nothing for an unknown image
+image_dir() {
+    local dir
+    for dir in $DIRS; do
+        [ "$(image_name "$dir")" = "$1" ] && echo "$dir"
+    done
+}
+
 ## version of the software the image is named after, read from the built
 ## image, e.g. "5.2.3" for blender-alpine; prints nothing if it can't tell
 version() {
@@ -76,9 +85,18 @@ done
 
 }
 
+## build, smoke-test, tag and push every image, or only the images given,
+## e.g. "./project.sh publish x11-alpine"; CI runs it for one image per job
 publish() {
 
+local images=() image dir tag tags date
 failed=()
+
+if [ "$#" -gt 0 ]; then
+    images=("$@")
+else
+    for dir in $DIRS; do images+=("$(image_name "$dir")"); done
+fi
 
 ## multiarch dependencies
 docker run --privileged --rm tonistiigi/binfmt --install all
@@ -86,13 +104,22 @@ docker run --privileged --rm tonistiigi/binfmt --install all
 ## build date (UTC), the same for every image of this run, e.g. "20261122"
 date=$(date -u +%Y%m%d)
 
-for dir in $DIRS; do
+for image in "${images[@]}"; do
 
-    image=$(image_name "$dir")
+    dir=$(image_dir "$image")
 
-    ## only push images that build and pass their smoke test
-    if ! (cd "$dir" && docker buildx build --platform linux/amd64,linux/arm64 -t "aljazmc/$image" . ); then
+    ## only push images that build and pass their smoke test; the native
+    ## build is loaded, so the smoke test checks it and not an older image
+    ## from Docker Hub, whatever the builder keeps a multiarch build in
+    if [ -z "$dir" ]; then
+        echo "aljazmc/$image: no directory with a Dockerfile, not pushing"
+        failed+=("$image")
+        continue
+    elif ! (cd "$dir" && docker buildx build --platform linux/amd64,linux/arm64 -t "aljazmc/$image" . ); then
         echo "aljazmc/$image: build failed, not pushing"
+        failed+=("$image")
+    elif ! (cd "$dir" && docker buildx build --load -t "aljazmc/$image" . ); then
+        echo "aljazmc/$image: loading the build failed, not pushing"
         failed+=("$image")
     elif ! tests/smoke_test.sh --no-build "$image"; then
         echo "aljazmc/$image: smoke test failed, not pushing"
@@ -305,7 +332,7 @@ docker run --rm \
 case "${1:-}" in
     changed|clean|coverage|lint|notes|publish|scan) "$@" ;;
     *)
-        echo "Usage: $0 {changed [base [head]]|clean|coverage|lint|notes [base [head]]|publish|scan [image...]}"
+        echo "Usage: $0 {changed [base [head]]|clean|coverage|lint|notes [base [head]]|publish [image...]|scan [image...]}"
         exit 1
         ;;
 esac

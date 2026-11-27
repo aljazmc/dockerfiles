@@ -1,0 +1,131 @@
+name: publish
+
+# Builds, smoke-tests and pushes images to Docker Hub with ./project.sh
+# publish, one job per image, and updates each image's Docker Hub page from
+# its README.md:
+#   - on a push to main: the images whose directory the push changed; when
+#     only the README changed, just the Docker Hub page
+#   - every Monday: every image, so each gets the latest security updates of
+#     its base distribution
+#   - by hand, Actions → publish → Run workflow: the images given, or all
+#
+# Needs two repository secrets: DOCKER_USERNAME, and DOCKER_TOKEN, a Docker
+# Hub access token with the Read, Write, Delete scope, which updating the
+# Docker Hub page needs.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      images:
+        description: "Images to publish, separated by spaces, e.g. x11-alpine wine-debian; empty for all"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# one publish at a time; a newer run waits rather than cancel a push midway
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.images.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # the whole history, so the commit before a push of several is here
+          fetch-depth: 0
+
+      # [{"image": "x11-alpine", "dir": "x11/alpine", "build": true}, ...]
+      - name: Choose the images
+        id: images
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          INPUT: ${{ inputs.images }}
+        run: |
+          base=""
+          case "$EVENT" in
+            push)
+              base=$BEFORE
+              git rev-parse -q --verify "$base^{commit}" > /dev/null || base=HEAD^
+              images=$(./project.sh changed "$base" HEAD) ;;
+            workflow_dispatch)
+              images=$(tr -s ' ' '\n' <<< "$INPUT" | grep . || true) ;;
+            *)
+              images="" ;;
+          esac
+          # the weekly run, or a run by hand without images: every image
+          if [ "$EVENT" != push ] && [ -z "$images" ]; then
+            images=$(git ls-files '*Dockerfile' | xargs -n1 dirname | tr / - | sort)
+          fi
+          matrix="[]"
+          for image in $images; do
+            dir=$(git ls-files '*Dockerfile' | xargs -n1 dirname |
+              while read -r d; do [ "${d//\//-}" != "$image" ] || echo "$d"; done)
+            build=true
+            # a push that changed only the README: just the Docker Hub page
+            if [ -n "$base" ] && [ -n "$dir" ] &&
+              ! git diff --name-only "$base" HEAD -- "$dir" | grep -qvx "$dir/README.md"; then
+              build=false
+            fi
+            matrix=$(jq -c --arg image "$image" --arg dir "$dir" --argjson build "$build" \
+              '. + [{image: $image, dir: $dir, build: $build}]' <<< "$matrix")
+          done
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "Images: $(jq -r 'map(.image + (if .build then "" else " (README only)" end)) | join(", ")' <<< "$matrix")"
+
+  publish:
+    needs: images
+    if: needs.images.outputs.matrix != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      # one image failing doesn't stop the others
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.images.outputs.matrix) }}
+    name: publish ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v7
+
+      # the runner keeps about 14 GB free; a multiarch build of the larger
+      # images needs more, so remove toolchains the build doesn't use
+      - name: Make room for the build
+        if: matrix.build
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+
+      # a builder that can build for linux/amd64 and linux/arm64;
+      # ./project.sh publish installs the emulators itself
+      - name: Set up buildx
+        if: matrix.build
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to Docker Hub
+        if: matrix.build
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build, smoke-test and push
+        if: matrix.build
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: ./project.sh publish "$IMAGE"
+
+      - name: Update the Docker Hub page from the README
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+          repository: aljazmc/${{ matrix.image }}
+          readme-filepath: ${{ matrix.dir }}/README.md

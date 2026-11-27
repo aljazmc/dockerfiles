@@ -3,12 +3,15 @@
 # Test for project.sh: runs `publish` with docker stubbed out and checks that
 #   - exactly one multiarch image is built per Dockerfile directory, from the
 #     right directory, under the right image name
+#   - every image that builds is loaded for its smoke test, after the build
+#     and before the smoke test, so it tests what was just built
 #   - every image is pushed, except one that fails to build, which isn't
 #     smoke-tested either, and one whose smoke test fails
 #   - the version of every pushed image is read from the image
 #   - every pushed image is tagged latest, <version> and <version>-<date>,
 #     or latest and <date> when its version can't be read
 #   - publish exits non-zero when an image was not pushed
+#   - publish with image names publishes only those, and fails an unknown one
 #
 # Usage: tests/project_test.sh
 
@@ -37,6 +40,7 @@ cat > "$TMP/bin/docker" <<STUB
 if [ "\$1 \$2" = "buildx build" ]; then
     if [[ " \$* " != *" --push "* ]]; then
         echo "\${PWD#$ROOT/} \$*" >> "$TMP/builds"
+        echo "\$*" >> "$TMP/events"
         [[ " \$* " != *" -t aljazmc/$FAIL_BUILD "* ]]
         exit
     fi
@@ -57,6 +61,7 @@ case "\$1" in
         # the smoke test's check starts with its helpers, a version query not
         if [[ "\${*: -1}" == *"need()"* ]]; then
             echo "\$image" >> "$TMP/smoked"
+            echo "smoke \$image" >> "$TMP/events"
         elif [[ " \$* " == *" --entrypoint sh "* ]]; then
             echo "aljazmc/\$image" >> "$TMP/versions"
         fi
@@ -66,7 +71,7 @@ case "\$1" in
 esac
 STUB
 chmod +x "$TMP/bin/docker"
-touch "$TMP/builds" "$TMP/tags" "$TMP/pushes" "$TMP/smoked" "$TMP/versions"
+touch "$TMP/builds" "$TMP/tags" "$TMP/pushes" "$TMP/smoked" "$TMP/versions" "$TMP/events"
 
 cd "$ROOT"
 status=0
@@ -80,11 +85,39 @@ failures=0
 for dir in "${DIRS[@]}"; do
     echo "$dir buildx build --platform linux/amd64,linux/arm64 -t aljazmc/${dir//\//-} ."
 done > "$TMP/expected"
-sort "$TMP/builds" > "$TMP/actual"
+{ grep -- "--platform" "$TMP/builds" || true; } | sort > "$TMP/actual"
 if diff -u "$TMP/expected" "$TMP/actual"; then
     echo "PASS: builds all ${#DIRS[@]} images from the right directories"
 else
     echo "FAIL: builds differ from expected (see diff above)"
+    failures=$((failures + 1))
+fi
+
+# Every image that built loaded from its own directory, except the one that
+# failed to build, between its build and its smoke test.
+for dir in "${DIRS[@]}"; do
+    [ "${dir//\//-}" = "$FAIL_BUILD" ] && continue
+    echo "$dir buildx build --load -t aljazmc/${dir//\//-} ."
+done > "$TMP/expected"
+{ grep -- "--load" "$TMP/builds" || true; } | sort > "$TMP/actual"
+if diff -u "$TMP/expected" "$TMP/actual"; then
+    echo "PASS: loads every image that built, for its smoke test"
+else
+    echo "FAIL: loads differ from expected (see diff above)"
+    failures=$((failures + 1))
+fi
+ordered=yes
+while read -r image; do
+    built=$(grep -n -- "--platform .* -t aljazmc/$image \.\$" "$TMP/events" | head -n1 | cut -d: -f1 || true)
+    loaded=$(grep -n -- "--load -t aljazmc/$image \.\$" "$TMP/events" | head -n1 | cut -d: -f1 || true)
+    smoked=$(grep -nx "smoke $image" "$TMP/events" | head -n1 | cut -d: -f1 || true)
+    [ -n "$built" ] && [ -n "$loaded" ] && [ -n "$smoked" ] &&
+        [ "$built" -lt "$loaded" ] && [ "$loaded" -lt "$smoked" ] || ordered="no: $image"
+done < <(sed -n 's/^smoke //p' "$TMP/events")
+if [ "$ordered" = yes ]; then
+    echo "PASS: smoke-tests every image after building and loading it"
+else
+    echo "FAIL: smoke-tests an image before building and loading it ($ordered)"
     failures=$((failures + 1))
 fi
 
@@ -139,6 +172,21 @@ if [ "$status" -ne 0 ] && grep -qx "not pushed: $FAIL_BUILD $FAIL_SMOKE" "$TMP/o
     echo "PASS: exits $status and reports $FAIL_BUILD and $FAIL_SMOKE as not pushed"
 else
     echo "FAIL: expected a non-zero exit and 'not pushed: $FAIL_BUILD $FAIL_SMOKE', got exit $status:"
+    tail -n 5 "$TMP/output"
+    failures=$((failures + 1))
+fi
+
+# publish with image names: only those, and an unknown one fails
+: > "$TMP/builds"
+: > "$TMP/pushes"
+status=0
+PATH="$TMP/bin:$PATH" ./project.sh publish node-alpine no-such-image > "$TMP/output" 2>&1 || status=$?
+if [ "$(sort -u "$TMP/pushes")" = "aljazmc/node-alpine" ] &&
+    ! grep -qv "aljazmc/node-alpine \.\$" "$TMP/builds" &&
+    [ "$status" -ne 0 ] && grep -qx "not pushed: no-such-image" "$TMP/output"; then
+    echo "PASS: publishes only the images given, and fails an unknown one"
+else
+    echo "FAIL: publish node-alpine no-such-image: exit $status, pushes $(paste -sd' ' "$TMP/pushes")"
     tail -n 5 "$TMP/output"
     failures=$((failures + 1))
 fi
