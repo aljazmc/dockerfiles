@@ -109,6 +109,7 @@ The container user has uid 1000, so files it creates in a mounted directory belo
 ./project.sh clean              # remove all local aljazmc/* images
 ./project.sh scan [image...]    # write SBOMs and list HIGH and CRITICAL vulnerabilities
 ./project.sh changed main HEAD  # list the images whose directory changed between two commits
+./project.sh lint               # check every Dockerfile for HIGH and CRITICAL misconfigurations
 
 tests/smoke_test.sh             # build every image and check that its tools run
 tests/smoke_test.sh x11-alpine  # build and check a single image
@@ -120,7 +121,7 @@ tests/repo_test.sh              # check pinned bases, READMEs and entrypoints
 tests/regression_test.sh        # check that no fixed bug has come back
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It also builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`, and pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It checks every Dockerfile for misconfigurations with `./project.sh lint`, which needs no image and takes seconds, and builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`. It scans those images with `IGNORE_UNFIXED=1 FAIL_ON=CRITICAL ./project.sh scan`, so a `CRITICAL` vulnerability with a fix fails the job, and keeps their SBOMs as an artifact of the run. It pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
 
 ### SBOM and vulnerability scanning
 
@@ -135,8 +136,11 @@ It scans the local image, or pulls it from Docker Hub when there is none. The vu
 |---|---|---|
 | `SEVERITY` | `HIGH,CRITICAL` | Severities to report, e.g. `SEVERITY=CRITICAL` or `SEVERITY=LOW,MEDIUM,HIGH,CRITICAL`. |
 | `IGNORE_UNFIXED` | unset | Set to `1` to hide vulnerabilities that have no fixed version yet. |
+| `FAIL_ON` | `SEVERITY` | Severities that make the command exit with 1, e.g. `FAIL_ON=CRITICAL` to list `HIGH` and `CRITICAL` vulnerabilities but fail only on `CRITICAL` ones. |
 
 The SBOM covers what is installed in the image at build time. The heaps images install Heaps and its haxelib libraries on the first start, and HashLink is built from source, so these don't show up in their SBOMs.
+
+`./project.sh lint` runs Trivy's misconfiguration checks on the Dockerfiles themselves, such as `sudo` in a `RUN` or an `apt-get install` that could stop for a prompt. It needs no image, so it takes seconds, and CI runs it on every push. It reports `HIGH` and `CRITICAL` findings and exits with 1 if there are any; `SEVERITY` works as for `scan`. With `SEVERITY=LOW` it also lists the missing `HEALTHCHECK` of every image, which these tool images, not services, don't need.
 
 To build a single image locally:
 

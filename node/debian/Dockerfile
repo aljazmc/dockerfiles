@@ -27,7 +27,7 @@ runtimeDeps=(
 )
 apt-get update
 apt-get upgrade -y
-apt-get install --no-install-recommends "${runtimeDeps[@]}" -y
+apt-get install -y --no-install-recommends "${runtimeDeps[@]}"
 apt-get dist-clean
 
 groupadd --gid 1000 "$USER"
@@ -67,10 +67,10 @@ node --version
 npm --version
 EOF
 
+RUN npm install -g "corepack@$COREPACK_VERSION"
+
 USER $USER
 WORKDIR /home/$USER
-
-RUN sudo npm install -g "corepack@$COREPACK_VERSION"
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]

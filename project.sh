@@ -9,6 +9,9 @@ DIRS=$(
     sort
 )
 
+## the Trivy image of scan and lint, pinned
+TRIVY=aquasec/trivy:0.76.2
+
 ## image name is the directory path with "/" replaced by "-"
 image_name() {
     echo "${1//\//-}"
@@ -124,10 +127,12 @@ fi
 ##
 ##   SEVERITY=CRITICAL ./project.sh scan       only list CRITICAL vulnerabilities
 ##   IGNORE_UNFIXED=1 ./project.sh scan        skip vulnerabilities without a fix
+##   FAIL_ON=CRITICAL ./project.sh scan        list HIGH and CRITICAL ones, but
+##                                             exit 1 only for CRITICAL ones
 scan() {
 
-TRIVY=aquasec/trivy:0.76.2
 SEVERITY=${SEVERITY:-HIGH,CRITICAL}
+FAIL_ON=${FAIL_ON:-$SEVERITY}
 unfixed=()
 [ -n "${IGNORE_UNFIXED:-}" ] && unfixed=(--ignore-unfixed)
 CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/trivy
@@ -163,23 +168,48 @@ for image in "${images[@]}"; do
     fi
     echo "SBOM: sbom/$image.cdx.json"
 
-    if ! trivy sbom --scanners vuln --severity "$SEVERITY" "${unfixed[@]}" --exit-code 1 "/sbom/$image.cdx.json"; then
-        vulnerable+=("$image")
+    if [ "$FAIL_ON" = "$SEVERITY" ]; then
+        trivy sbom --scanners vuln --severity "$SEVERITY" "${unfixed[@]}" --exit-code 1 "/sbom/$image.cdx.json" ||
+            vulnerable+=("$image")
+    else
+        ## list at SEVERITY, then check the same SBOM again at FAIL_ON
+        trivy sbom --scanners vuln --severity "$SEVERITY" "${unfixed[@]}" "/sbom/$image.cdx.json"
+        trivy sbom --scanners vuln --severity "$FAIL_ON" "${unfixed[@]}" --exit-code 1 "/sbom/$image.cdx.json" > /dev/null ||
+            vulnerable+=("$image")
     fi
 
 done
 
-[ "${#vulnerable[@]}" -gt 0 ] && echo "$SEVERITY vulnerabilities in: ${vulnerable[*]}"
+[ "${#vulnerable[@]}" -gt 0 ] && echo "$FAIL_ON vulnerabilities in: ${vulnerable[*]}"
 [ "${#failed[@]}" -gt 0 ] && echo "not scanned: ${failed[*]}"
 [ "${#vulnerable[@]}" -eq 0 ] && [ "${#failed[@]}" -eq 0 ]
 
 }
 
+## check every Dockerfile for misconfigurations with Trivy, such as sudo in a
+## RUN or apt-get without -y; needs no image, so it is quick; exits 1 if any
+## Dockerfile has a finding of the selected severity
+##
+##   SEVERITY=LOW,MEDIUM,HIGH,CRITICAL ./project.sh lint    list every finding
+lint() {
+
+local cache=${XDG_CACHE_HOME:-$HOME/.cache}/trivy
+mkdir -p "$cache"
+
+docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    -v "$cache:/cache" \
+    -v "$PWD:/src:ro" \
+    "$TRIVY" --cache-dir /cache --quiet \
+    config --severity "${SEVERITY:-HIGH,CRITICAL}" --exit-code 1 /src
+
+}
+
 ## only the commands, not the helpers such as version or image_name
 case "${1:-}" in
-    changed|clean|publish|scan) "$@" ;;
+    changed|clean|lint|publish|scan) "$@" ;;
     *)
-        echo "Usage: $0 {changed [base [head]]|clean|publish|scan [image...]}"
+        echo "Usage: $0 {changed [base [head]]|clean|lint|publish|scan [image...]}"
         exit 1
         ;;
 esac

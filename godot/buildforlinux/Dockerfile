@@ -45,7 +45,7 @@ linuxDeps=(
 )
 apt-get update
 apt-get upgrade -y
-apt-get install --no-install-recommends "${commonDeps[@]}" "${linuxDeps[@]}" -y
+apt-get install -y --no-install-recommends "${commonDeps[@]}" "${linuxDeps[@]}"
 rm -rf /var/lib/apt/lists/*
 
 ARCH=""

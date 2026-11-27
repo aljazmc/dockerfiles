@@ -63,7 +63,7 @@ wine=(
 )
 apt-get update
 apt-get upgrade -y
-apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y
+apt-get install -y --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}"
 
 dpkg --add-architecture i386
 wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources
@@ -72,8 +72,8 @@ install -d -m 755 /etc/apt/keyrings
 wget -O - https://dl.winehq.org/wine-builds/winehq.key | gpg --dearmor -o /etc/apt/keyrings/winehq-archive.key -
 
 apt-get update
-apt-get install --no-install-recommends "${libraries[@]}" "${wine[@]}" -y
-apt-get purge --auto-remove "${buildDeps[@]}" -y
+apt-get install -y --no-install-recommends "${libraries[@]}" "${wine[@]}"
+apt-get purge -y --auto-remove "${buildDeps[@]}"
 apt-get dist-clean
 
 groupadd --gid 1000 "$USER"

@@ -69,7 +69,7 @@ libraries=(
 )
 apt-get update
 apt-get upgrade -y
-apt-get install --no-install-recommends "${runtimeDeps[@]}" "${python[@]}" "${libraries[@]}" -y
+apt-get install -y --no-install-recommends "${runtimeDeps[@]}" "${python[@]}" "${libraries[@]}"
 pip3 install --no-cache-dir --break-system-packages --root-user-action=ignore "ruff==$RUFF_VERSION"
 apt-get dist-clean
 

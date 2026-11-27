@@ -50,10 +50,10 @@ node --version
 npm --version
 EOF
 
+RUN npm install -g "corepack@$COREPACK_VERSION"
+
 USER $USER
 WORKDIR /home/$USER
-
-RUN doas npm install -g "corepack@$COREPACK_VERSION"
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]

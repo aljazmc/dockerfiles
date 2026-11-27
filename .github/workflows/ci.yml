@@ -42,6 +42,16 @@ jobs:
           done
           exit "$status"
 
+  # Checks every Dockerfile for misconfigurations with Trivy, without
+  # building an image, so it takes seconds; fails on HIGH or CRITICAL.
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the Dockerfiles for misconfigurations
+        run: ./project.sh lint
+
   # Builds and smoke-tests only the images whose directory changed: in a
   # push, between the commit before it and the one pushed; in a pull
   # request, between its base and its head. Nothing is pushed.
@@ -69,3 +79,25 @@ jobs:
         run: |
           read -ra images <<< "$IMAGES"
           tests/smoke_test.sh "${images[@]}"
+
+      # The images the step above built: an SBOM of each, and every HIGH and
+      # CRITICAL vulnerability with a fix listed, but only CRITICAL ones fail
+      # the job; HIGH ones in upstream builds, like the packages bundled with
+      # npm, wait for a release that no push here can make.
+      - name: Scan the changed images
+        if: steps.changed.outputs.images != ''
+        env:
+          IMAGES: ${{ steps.changed.outputs.images }}
+          IGNORE_UNFIXED: "1"
+          FAIL_ON: CRITICAL
+        run: |
+          read -ra images <<< "$IMAGES"
+          ./project.sh scan "${images[@]}"
+
+      - name: Keep the SBOMs
+        if: always() && steps.changed.outputs.images != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom/
+          if-no-files-found: ignore

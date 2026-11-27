@@ -39,7 +39,7 @@ windowsDeps=(
 )
 apt-get update
 apt-get upgrade -y
-apt-get install --no-install-recommends "${commonDeps[@]}" "${windowsDeps[@]}" -y
+apt-get install -y --no-install-recommends "${commonDeps[@]}" "${windowsDeps[@]}"
 rm -rf /var/lib/apt/lists/*
 mkdir -p /usr/src/hashlink
 cd /usr/src/hashlink

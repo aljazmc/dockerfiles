@@ -37,7 +37,7 @@ macDeps=(
 )
 apt-get update
 apt-get upgrade -y
-apt-get install --no-install-recommends "${commonDeps[@]}" "${macDeps[@]}" -y
+apt-get install -y --no-install-recommends "${commonDeps[@]}" "${macDeps[@]}"
 rm -rf /var/lib/apt/lists/*
 mkdir -p /usr/src/hashlink
 cd /usr/src/hashlink
