@@ -113,7 +113,8 @@ for path in newtool/alpine/Dockerfile newtool/debian/README.md \
     ignored "$path" && wrong+=("$path ignored")
 done
 for path in blender/debian/render_0001.png node/alpine/.cache/node \
-    godot/buildformac/game.dmg image-spinner/alpine.iso sbom/x11-alpine.cdx.json; do
+    godot/buildformac/game.dmg image-spinner/alpine.iso sbom/x11-alpine.cdx.json \
+    coverage/index.html; do
     ignored "$path" || wrong+=("$path kept")
 done
 check ".gitignore keeps a new image's files and ignores container output${wrong[*]:+; but: ${wrong[*]}}" \

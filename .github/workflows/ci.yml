@@ -42,6 +42,25 @@ jobs:
           done
           exit "$status"
 
+  # Runs the same tests under kcov and reports how much of project.sh and
+  # tests/smoke_test.sh they run, in the job summary, with the HTML report
+  # kept as an artifact. A failing test fails it too.
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Measure the coverage of the core scripts
+        run: ./project.sh coverage
+
+      - name: Keep the coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: ignore
+
   # Checks every Dockerfile for misconfigurations with Trivy, without
   # building an image, so it takes seconds; fails on HIGH or CRITICAL.
   scan:

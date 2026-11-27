@@ -3,7 +3,7 @@
 [![ci](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/dockerfiles/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-21%20images-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
-[![Docker pulls](https://img.shields.io/badge/pulls-9%2C000%2B-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
+[![Docker pulls](https://img.shields.io/badge/pulls-18%2C000%2B-2496ed?logo=docker&logoColor=white)](https://hub.docker.com/u/aljazmc)
 [![Alpine 3.24.4](https://img.shields.io/badge/Alpine-3.24.4-0d597f?logo=alpinelinux&logoColor=white)](https://alpinelinux.org/)
 [![Debian 13.7](https://img.shields.io/badge/Debian-13.7-a81d33?logo=debian&logoColor=white)](https://www.debian.org/)
 [![ShellCheck](https://img.shields.io/badge/ShellCheck-checked-4eaa25?logo=gnubash&logoColor=white)](https://www.shellcheck.net/)
@@ -237,6 +237,7 @@ uid=0(root) gid=0(root) groups=0(root),0(root),1(bin),2(daemon),3(sys),4(adm),6(
 ./project.sh scan [image...]    # write SBOMs and list HIGH and CRITICAL vulnerabilities
 ./project.sh changed main HEAD  # list the images whose directory changed between two commits
 ./project.sh lint               # check every Dockerfile for HIGH and CRITICAL misconfigurations
+./project.sh coverage           # measure how much of project.sh the tests run, in coverage/
 
 tests/smoke_test.sh             # build every image and check that its tools run
 tests/smoke_test.sh x11-alpine  # build and check a single image
@@ -246,9 +247,11 @@ tests/scan_test.sh              # test scan with docker and Trivy stubbed out
 tests/smoke_cases_test.sh       # test that every image has a smoke case
 tests/repo_test.sh              # check pinned bases, READMEs and entrypoints
 tests/regression_test.sh        # check that no fixed bug has come back
+tests/changed_test.sh           # test project.sh changed in a throwaway git repository
+tests/coverage_test.sh          # test project.sh coverage with docker stubbed out
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It checks every Dockerfile for misconfigurations with `./project.sh lint`, which needs no image and takes seconds, and builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`. It scans those images with `IGNORE_UNFIXED=1 FAIL_ON=CRITICAL ./project.sh scan`, so a `CRITICAL` vulnerability with a fix fails the job, and keeps their SBOMs as an artifact of the run. It pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh` on every push to `main` and every pull request. It measures the coverage of `project.sh` and `tests/smoke_test.sh` by those tests with `./project.sh coverage`, which runs them under [kcov](https://github.com/SimonKagstrom/kcov) from its Docker image, writes the table to the job summary and keeps the HTML report as an artifact. It checks every Dockerfile for misconfigurations with `./project.sh lint`, which needs no image and takes seconds, and builds and smoke-tests the images whose directory the push or pull request changed, found with `./project.sh changed`. It scans those images with `IGNORE_UNFIXED=1 FAIL_ON=CRITICAL ./project.sh scan`, so a `CRITICAL` vulnerability with a fix fails the job, and keeps their SBOMs as an artifact of the run. It pushes nothing; a change outside the image directories builds no image. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
 
 ### SBOM and vulnerability scanning
 

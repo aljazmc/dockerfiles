@@ -1,6 +1,9 @@
 # written by ./project.sh scan
 sbom/
 
+# written by ./project.sh coverage
+coverage/
+
 # Images are tried out in their own directory, mounted as the container's
 # home, which fills it with caches, renders and exports. So everything in an
 # image directory is ignored, except the files that build and describe the

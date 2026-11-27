@@ -12,6 +12,9 @@ DIRS=$(
 ## the Trivy image of scan and lint, pinned
 TRIVY=aquasec/trivy:0.76.2
 
+## the kcov image of coverage, pinned by digest: kcov v44 on Debian 12
+KCOV=kcov/kcov@sha256:481289ae32e55e5b733019515acd10948a4f76dfed381765577db909664fc603
+
 ## image name is the directory path with "/" replaced by "-"
 image_name() {
     echo "${1//\//-}"
@@ -205,11 +208,43 @@ docker run --rm \
 
 }
 
+## how much of project.sh and tests/smoke_test.sh the tests that need no
+## images run, measured with kcov from its Docker image, so nothing has to be
+## installed; writes the report to coverage/index.html and prints a summary,
+## and exits 1 if a test fails; see tests/coverage.sh
+coverage() {
+
+local summary=()
+mkdir -p coverage
+## in GitHub Actions, the table goes to the job summary too
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    summary=(-v "$GITHUB_STEP_SUMMARY:/summary.md" -e GITHUB_STEP_SUMMARY=/summary.md)
+fi
+
+docker run --rm \
+    -v "$PWD:/src:ro" \
+    -v "$PWD/coverage:/coverage" \
+    -e REPORT=coverage/index.html \
+    "${summary[@]}" \
+    -w /src \
+    --entrypoint bash \
+    "$KCOV" -c '
+        apt-get update -qq > /dev/null &&
+            apt-get install -y -qq --no-install-recommends git shellcheck > /dev/null 2>&1
+        git config --global --add safe.directory /src
+        tests/coverage.sh /coverage
+        status=$?
+        chown -R "$0" /coverage
+        exit "$status"
+    ' "$(id -u):$(id -g)"
+
+}
+
 ## only the commands, not the helpers such as version or image_name
 case "${1:-}" in
-    changed|clean|lint|publish|scan) "$@" ;;
+    changed|clean|coverage|lint|publish|scan) "$@" ;;
     *)
-        echo "Usage: $0 {changed [base [head]]|clean|lint|publish|scan [image...]}"
+        echo "Usage: $0 {changed [base [head]]|clean|coverage|lint|publish|scan [image...]}"
         exit 1
         ;;
 esac
