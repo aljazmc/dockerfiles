@@ -1,43 +1,111 @@
 name: release
 
-# A GitHub release for every tag v*, e.g. v2026.11.28, with notes written by
-# ./project.sh notes from the commits since the previous tag: the message of
-# an annotated tag first, then the images that changed and the commits as
-# features, fixes, documentation and other changes.
-#
-#   git tag -a v2026.11.28 -m "What this release is about"
-#   git push origin v2026.11.28
+# A GitHub release, with notes written by ./project.sh notes from the commits
+# since the previous tag: the message of the annotated tag first, then the
+# images that changed and the commits as features, fixes, documentation and
+# other changes. A release comes:
+#   - every week, after the Monday publish succeeds: CI tags the commit it
+#     published v<year>.<month>.<day>, e.g. v2026.11.30, but only when there
+#     are commits since the previous tag
+#   - by hand, Actions → release → Run workflow: the same, for the head of
+#     main, with a message of your own if you like
+#   - for a tag v* pushed by hand, with its own message:
+#       git tag -a v2026.11.28 -m "What this release is about"
+#       git push origin v2026.11.28
 
 on:
+  workflow_run:
+    workflows: [publish]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "What this release brings; empty for the default"
+        required: false
+        default: ""
   push:
     tags: ["v*"]
 
 permissions:
   contents: write
 
+# one release at a time, so two runs can't take the same tag
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
+    # after publish: only a successful weekly run, not every push
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'schedule')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
+          # the commit publish built, the head of main, or the tag
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
           # every commit and tag, for the commits since the previous tag
           fetch-depth: 0
 
-      # checkout can leave the pushed tag as a lightweight one; fetch the
+      # checkout can leave a pushed tag as a lightweight one; fetch the
       # annotated tag again, with its message
       - name: Fetch the tags
         run: git fetch --force --tags
 
-      - name: Write the release notes
+      # a pushed tag is released as it is; otherwise tag the commit with the
+      # date, unless nothing was committed since the previous tag
+      - name: Choose the tag
+        id: tag
         env:
-          TAG: ${{ github.ref_name }}
+          EVENT: ${{ github.event_name }}
+          PUSHED: ${{ github.ref_name }}
+          MESSAGE: ${{ inputs.message }}
+        run: |
+          if [ "$EVENT" = push ]; then
+            echo "tag=$PUSHED" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          previous=$(git describe --tags --abbrev=0 HEAD 2> /dev/null || true)
+          if [ -n "$previous" ] && [ -z "$(git rev-list "$previous..HEAD")" ]; then
+            echo "Nothing was committed since $previous, so there is no release"
+            exit 0
+          fi
+          tag=v$(date -u +%Y.%m.%d)
+          n=1
+          while git rev-parse -q --verify "refs/tags/$tag" > /dev/null; do
+            n=$((n + 1))
+            tag=v$(date -u +%Y.%m.%d).$n
+          done
+          if [ -z "$MESSAGE" ]; then
+            if [ "$EVENT" = workflow_run ]; then
+              MESSAGE="The weekly release: the repository as the images on Docker Hub were built from this week, with the latest security updates of their base distributions."
+            else
+              MESSAGE="The repository as of $(date -u +%Y-%m-%d)."
+            fi
+          fi
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            tag -a "$tag" -m "$MESSAGE"
+          git push origin "refs/tags/$tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Write the release notes
+        if: steps.tag.outputs.tag != ''
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
         run: |
           ./project.sh notes "" "$TAG" > notes.md
           cat notes.md >> "$GITHUB_STEP_SUMMARY"
 
+      # a tag pushed with the workflow's own token starts no workflow, this
+      # one included, so the release is made here
       - name: Publish the release
+        if: steps.tag.outputs.tag != ''
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ steps.tag.outputs.tag }}
         run: gh release create "$TAG" --title "$TAG" --notes-file notes.md --verify-tag

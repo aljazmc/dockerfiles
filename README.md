@@ -297,10 +297,17 @@ Runs don't overlap: a new one waits until the previous one has finished. An imag
 
 ### Releases
 
-Every tag `v*`, e.g. `v2026.11.28`, gets a GitHub release, made by the `release` workflow. Its notes come from `./project.sh notes`: the message of the tag when it is annotated, so a release can say in words what it brings, then the images whose directory changed since the previous tag and the commits, sorted by their [Conventional Commits](https://www.conventionalcommits.org/) type into features, fixes, documentation and other changes.
+The `release` workflow makes a GitHub release:
+
+- **every week**, after the Monday `publish` succeeds: it tags the commit it published with the date, e.g. `v2026.11.30`, and releases it, but only when something was committed since the previous release;
+- **by hand**, from Actions → release → Run workflow: the same for the head of `main`, with a message of your own if you like; a second release on one day gets `.2`, e.g. `v2026.11.30.2`;
+- **for a tag `v*` you push**, with the message you gave it.
+
+Its notes come from `./project.sh notes`: the message of the tag when it is annotated, so a release can say in words what it brings, then the images whose directory changed since the previous tag and the commits, sorted by their [Conventional Commits](https://www.conventionalcommits.org/) type into features, fixes, documentation and other changes.
 
 ```sh
 ./project.sh notes                                  # preview the notes of the next release
+# a release of your own, rather than the weekly one
 git tag -a v2026.11.28 -m "What this release brings"
 git push origin v2026.11.28
 ```
