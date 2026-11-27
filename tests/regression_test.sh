@@ -155,6 +155,11 @@ done
 check "the packages added by fixes are still installed${dropped[*]:+; dropped: ${dropped[*]}}" \
     [ "${#dropped[@]}" -eq 0 ]
 
+# bb4b99f: syslinux removed from image-spinner, since Alpine has it only for
+# x86, and isohybrid with it. It is installed on amd64.
+check "image-spinner installs syslinux, with isohybrid, on amd64" \
+    grep -qE '^[[:space:]]+apk add --no-cache syslinux$' image-spinner/Dockerfile
+
 # 698640c: COREPACK_ENABLE_DOWNLOAD_PROMPT renamed by mistake, so corepack
 # asked before every download. Every image with corepack turns it off.
 prompting=()

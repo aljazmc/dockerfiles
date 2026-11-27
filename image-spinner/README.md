@@ -20,7 +20,7 @@ The Alpine Linux build tools, for building custom Alpine ISO images with `mkimag
 |---|---|
 | **Base image** | `alpine:3.24.4` |
 | **Software** | Alpine Linux 3.24.4 build tools: abuild, alpine-conf, `mkimage.sh` of the aports tree |
-| **Also included** | abuild, alpine-conf, git, GRUB, syslinux, mtools, squashfs-tools, xorriso, rsync, ShellCheck |
+| **Also included** | abuild, alpine-conf, git, GRUB, syslinux with `isohybrid` (amd64 only, Alpine has no other), mtools, squashfs-tools, xorriso, rsync, ShellCheck |
 | **User** | `aljazmc` (uid 1000) with passwordless `doas` (`doas apk add ...`) |
 | **Tags** | `latest`, `3.24.4`, `3.24.4-YYYYMMDD` |
 

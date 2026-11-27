@@ -1,5 +1,7 @@
 FROM alpine:3.24.4
 
+ARG TARGETARCH
+
 ENV USER=aljazmc
 
 SHELL ["/bin/sh", "-euxo", "pipefail", "-c"]
@@ -20,6 +22,10 @@ runtimeDeps="
 "
 apk upgrade --no-cache
 apk add --no-cache ${runtimeDeps}
+# syslinux, with isohybrid, boots PCs from the ISO; Alpine has it only for x86
+if [ "$TARGETARCH" = amd64 ]; then
+    apk add --no-cache syslinux
+fi
 addgroup -g 1000 "$USER"
 adduser -u 1000 -G "$USER" -s /bin/sh -D "$USER"
 addgroup "$USER" abuild

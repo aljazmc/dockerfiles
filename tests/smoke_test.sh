@@ -151,7 +151,9 @@ bpy.ops.render.render(write_still=True)
         image-spinner)
             RUN="string"
             CHECK='
-                need abuild abuild-keygen git grub-mkimage mcopy mksquashfs rsync xorriso isohybrid
+                need abuild abuild-keygen git grub-mkimage mcopy mksquashfs rsync xorriso
+                # syslinux, with isohybrid, exists only for x86
+                if [ "$(uname -m)" = x86_64 ]; then need isohybrid; fi
                 id -nG | grep -qw abuild && echo "user is in the abuild group"
                 xorriso -version 2>&1 | head -n1
             '

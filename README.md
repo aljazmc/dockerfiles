@@ -51,7 +51,7 @@ All images are published on Docker Hub under [aljazmc](https://hub.docker.com/u/
 | [heaps-buildforlinux](heaps/buildforlinux) | Debian 13 | Heaps 2.1 | Haxe, Neko and HashLink. `bundle` ships the game with its libraries, `makesh` packs it into one `.sh`. |
 | [heaps-buildformac](heaps/buildformac) | Debian 13 | Heaps 2.1 | Haxe, Neko and the macOS build of HashLink. `bundle` creates an `.app`, `makedmg` a `.dmg`. |
 | [heaps-buildforwindows](heaps/buildforwindows) | Debian 13 | Heaps 2.1 | Haxe, Neko, the Windows build of HashLink, mingw-w64 and NSIS. `makeexe` creates a single `.exe`. |
-| [image-spinner](image-spinner) | Alpine 3.24 | Alpine 3.24 | `abuild`, GRUB, syslinux, squashfs-tools and xorriso for building custom ISO images with `mkimage.sh`. |
+| [image-spinner](image-spinner) | Alpine 3.24 | Alpine 3.24 | `abuild`, GRUB, syslinux (amd64), squashfs-tools and xorriso for building custom ISO images with `mkimage.sh`. |
 | [inkscape-alpine](inkscape/alpine) | Alpine 3.24 | Inkscape 1.4.2 | Inkscape with every Python extension and the import/export helpers. |
 | [inkscape-debian](inkscape/debian) | Debian 13 | Inkscape 1.4 | Inkscape with every Python extension and the import/export helpers. |
 | [node-alpine](node/alpine) | Alpine 3.24 | Node.js 26 | Node.js 26 (unofficial musl build), Corepack and git. |
