@@ -1,8 +1,9 @@
 #!/bin/bash
 #
 # Test for `project.sh changed`, which CI uses to build only the images
-# whose directory a push or pull request changed. It runs a copy of
-# project.sh in a throwaway git repository of a few image directories and
+# whose directory a push or pull request changed. It runs project.sh
+# on a throwaway git repository of a few image directories, with
+# DOCKERFILES_DIR, and
 # checks that
 #   - a change to an image directory lists that image, and only it
 #   - a range of commits lists every image changed in any of them
@@ -20,7 +21,6 @@
 
 REPO="$TMP/repo"
 mkdir -p "$REPO"
-cp "$ROOT/project.sh" "$REPO/"
 cd "$REPO" || exit 1
 git init -q
 git() { command git -c user.name=test -c user.email=test@example.invalid "$@"; }
@@ -60,7 +60,7 @@ c5=$(commit "change alpha/alpine-edge")
 expect() {
     local description=$1 expected=$2 actual
     shift 2
-    actual=$(./project.sh changed "$@" 2> "$TMP/stderr" | paste -sd' ')
+    actual=$(DOCKERFILES_DIR="$REPO" "$ROOT/project.sh" changed "$@" 2> "$TMP/stderr" | paste -sd' ')
     if [ "$actual" = "$expected" ]; then
         pass "$description"
     else
@@ -84,7 +84,7 @@ expect "a base that doesn't exist compares the head with its parent" "solo" \
 
 # and the command is still rejected with a wrong name
 status=0
-./project.sh change > /dev/null 2>&1 || status=$?
+DOCKERFILES_DIR="$REPO" "$ROOT/project.sh" change > /dev/null 2>&1 || status=$?
 check "an unknown command near changed is rejected" [ "$status" -eq 1 ]
 
 finish

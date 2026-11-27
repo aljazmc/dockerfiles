@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Test for `project.sh notes`, which CI uses to write the notes of a GitHub
-# release. It runs a copy of project.sh in a throwaway git repository with
+# release. It runs project.sh on a throwaway git repository, with DOCKERFILES_DIR, with
 # conventional commits and tags, and checks that
 #   - the commits since the previous tag are sorted into features, fixes,
 #     documentation and other changes, in order, each with its short hash
@@ -18,7 +18,6 @@
 
 REPO="$TMP/repo"
 mkdir -p "$REPO"
-cp "$ROOT/project.sh" "$REPO/"
 cd "$REPO" || exit 1
 git init -q
 git() { command git -c user.name=test -c user.email=test@example.invalid "$@"; }
@@ -50,7 +49,7 @@ commit "docs: one more line"
 git tag v3
 
 # notes <arguments...>: the notes, in $TMP/notes
-notes() { ./project.sh notes "$@" > "$TMP/notes" 2> "$TMP/stderr"; }
+notes() { DOCKERFILES_DIR="$REPO" "$ROOT/project.sh" notes "$@" > "$TMP/notes" 2> "$TMP/stderr"; }
 has() { grep -qxF -- "$1" "$TMP/notes"; }
 lacks() { ! grep -q -- "$1" "$TMP/notes"; }
 hash_of() { git log --format=%h --grep="^$1\$" -n1; }

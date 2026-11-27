@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Test for `project.sh coverage`, with docker stubbed out. It runs a copy of
-# project.sh in a temporary directory and checks that
+# Test for `project.sh coverage`, with docker stubbed out. It runs project.sh
+# on a temporary directory, with DOCKERFILES_DIR, and checks that
 #   - it runs tests/coverage.sh once, in the kcov image pinned by digest
 #   - the repository is mounted read-only, and coverage/ next to project.sh
 #     writable, where the report goes
@@ -14,8 +14,8 @@
 # shellcheck source=tests/lib.sh
 . "$(dirname "$0")/lib.sh"
 
-# Stub docker: record every call, starting with "CALL" since the script it
-# passes spans several lines; fail when COVERAGE_FAILS is set.
+# Stub docker: record every call, starting with "CALL"; fail when
+# COVERAGE_FAILS is set.
 mkdir -p "$TMP/bin" "$TMP/work"
 cat > "$TMP/bin/docker" <<STUB
 #!/bin/bash
@@ -23,14 +23,13 @@ echo "CALL \$*" >> "$TMP/calls"
 [ -z "\${COVERAGE_FAILS:-}" ]
 STUB
 chmod +x "$TMP/bin/docker"
-cp "$ROOT/project.sh" "$TMP/work/"
 
 # coverage <env...>: run coverage with a fresh record, set $status
 coverage() {
     : > "$TMP/calls"
     status=0
     env -u GITHUB_STEP_SUMMARY PATH="$TMP/bin:$PATH" "$@" \
-        "$TMP/work/project.sh" coverage > "$TMP/output" 2>&1 || status=$?
+        DOCKERFILES_DIR="$TMP/work" "$ROOT/project.sh" coverage > "$TMP/output" 2>&1 || status=$?
 }
 
 kcov=$(sed -nE 's/^KCOV=(.*)$/\1/p' "$ROOT/project.sh")
@@ -38,8 +37,8 @@ kcov=$(sed -nE 's/^KCOV=(.*)$/\1/p' "$ROOT/project.sh")
 coverage
 runs_once() {
     [ "$(grep -c '^CALL ' "$TMP/calls")" -eq 1 ] &&
-        grep -qF -- "--entrypoint bash $kcov -c" "$TMP/calls" &&
-        grep -qF "tests/coverage.sh /coverage" "$TMP/calls"
+        grep -qF -- "--entrypoint bash $kcov tests/coverage.sh --in-container /coverage" "$TMP/calls" &&
+        grep -qF -- "-e OWNER=$(id -u):$(id -g)" "$TMP/calls"
 }
 check "runs tests/coverage.sh once in the pinned kcov image" runs_once
 pinned_by_digest() { [[ "$kcov" == kcov/kcov@sha256:* ]]; }

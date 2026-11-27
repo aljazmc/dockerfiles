@@ -160,6 +160,12 @@ check "the packages added by fixes are still installed${dropped[*]:+; dropped: $
 check "image-spinner installs syslinux, with isohybrid, on amd64" \
     grep -qE '^[[:space:]]+apk add --no-cache syslinux$' image-spinner/Dockerfile
 
+# 52230ef's CI run: image-spinner left aports/ with mktemp's mode 700, so
+# a host user other than uid 1000 couldn't read it. The clone is opened first.
+# shellcheck disable=SC2016 # $TMP_DIR is the text to find, not a variable
+check "image-spinner makes the aports tree readable for every host user" \
+    grep -qE '^[[:space:]]+chmod 755 "\$TMP_DIR"$' image-spinner/docker-entrypoint.sh
+
 # 698640c: COREPACK_ENABLE_DOWNLOAD_PROMPT renamed by mistake, so corepack
 # asked before every download. Every image with corepack turns it off.
 prompting=()

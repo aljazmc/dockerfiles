@@ -19,7 +19,9 @@
 
 set -uo pipefail
 
-ROOT=$(cd "$(dirname "$0")/.." && pwd)
+# the repository: the parent of tests/, or DOCKERFILES_DIR, which the tests
+# set to run this on a throwaway directory
+ROOT=$(cd "${DOCKERFILES_DIR:-$(dirname "$0")/..}" && pwd)
 cd "$ROOT" || exit 1
 
 BUILD=1

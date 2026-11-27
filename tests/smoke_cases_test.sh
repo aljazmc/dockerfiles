@@ -8,6 +8,8 @@
 #   - the check that runs in every container is valid shell
 #   - the heaps images skip their entrypoint, which needs the network
 #   - a failing check fails the run and names the image
+#   - on a throwaway tree: an image without a smoke case fails without being
+#     built, and one that fails to build fails without being run
 #
 # Usage: tests/smoke_cases_test.sh
 
@@ -89,5 +91,35 @@ reports_failed_check() {
         grep -q "failed: $FAIL_CHECK" "$TMP/output"
 }
 check "a failing check fails the run and names $FAIL_CHECK" reports_failed_check
+
+# A throwaway tree: x11/alpine, whose build fails, and nocase/alpine, which
+# has no smoke case.
+TREE="$TMP/tree"
+mkdir -p "$TREE/tests" "$TREE/x11/alpine" "$TREE/nocase/alpine"
+echo "FROM scratch" | tee "$TREE/x11/alpine/Dockerfile" > "$TREE/nocase/alpine/Dockerfile"
+cat > "$TMP/bin/docker" <<STUB
+#!/bin/bash
+echo "\$*" >> "$TMP/tree-calls"
+[ "\$1" = build ] && exit 1
+exit 0
+STUB
+: > "$TMP/tree-calls"
+status=0
+DOCKERFILES_DIR="$TREE" PATH="$TMP/bin:$PATH" "$ROOT/tests/smoke_test.sh" \
+    > "$TMP/tree-output" 2>&1 || status=$?
+no_case() {
+    grep -q "no smoke test defined for this image" "$TMP/tree-output" &&
+        ! grep -q "aljazmc/nocase-alpine" "$TMP/tree-calls"
+}
+check "an image without a smoke case fails without being built" no_case
+build_fails() {
+    grep -q "FAIL: build failed" "$TMP/tree-output" &&
+        ! grep -q "^run .*aljazmc/x11-alpine" "$TMP/tree-calls"
+}
+check "an image that fails to build fails without being run" build_fails
+both_fail() {
+    [ "$status" -eq 1 ] && grep -q "0 passed, 2 failed" "$TMP/tree-output"
+}
+check "both fail the run" both_fail
 
 finish

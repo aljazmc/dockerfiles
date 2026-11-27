@@ -1,12 +1,13 @@
 #!/bin/bash
 #
 # Test for `project.sh scan`, with docker (and so Trivy) stubbed out. It runs
-# a copy of project.sh in a temporary directory, so sbom/ is written there,
+# project.sh on a temporary directory, with DOCKERFILES_DIR, so sbom/ is written there,
 # and checks that
 #   - every image given gets an SBOM, sbom/<image>.cdx.json, from the pinned
 #     Trivy image
 #   - only the SBOMs that were written are checked for vulnerabilities
 #   - SEVERITY and IGNORE_UNFIXED reach Trivy
+#   - without image names, every image of the directory is scanned
 #   - FAIL_ON lists at SEVERITY but fails only at FAIL_ON, from the same
 #     SBOM, as CI uses it: an image with only a HIGH vulnerability passes
 #   - scan exits 1 and names the images with vulnerabilities and the ones
@@ -49,7 +50,6 @@ elif [[ " \$* " == *" sbom --scanners vuln "* ]]; then
 fi
 STUB
 chmod +x "$TMP/bin/docker"
-cp "$ROOT/project.sh" "$TMP/work/"
 
 # scan <env...> -- <images...>: run scan with a fresh record, set $status
 scan() {
@@ -60,7 +60,7 @@ scan() {
     : > "$TMP/calls"
     status=0
     env PATH="$TMP/bin:$PATH" XDG_CACHE_HOME="$TMP/cache" "${env[@]}" \
-        "$TMP/work/project.sh" scan "$@" > "$TMP/output" 2>&1 || status=$?
+        DOCKERFILES_DIR="$TMP/work" "$ROOT/project.sh" scan "$@" > "$TMP/output" 2>&1 || status=$?
 }
 
 scan -- blender-alpine "$VULNERABLE" "$NO_SBOM"
@@ -76,7 +76,7 @@ if diff -u "$TMP/expected" "$TMP/scans"; then
 else
     fail "scans differ from expected (see diff above)"
 fi
-trivy=$(grep -oE 'aquasec/trivy:[^ ]+' "$TMP/work/project.sh" | head -n1)
+trivy=$(grep -oE 'aquasec/trivy:[^ ]+' "$ROOT/project.sh" | head -n1)
 only_pinned_trivy() {
     [ -n "$trivy" ] && ! grep -vqF " $trivy " "$TMP/calls"
 }
@@ -116,6 +116,15 @@ fails_critical() {
 check "FAIL_ON=CRITICAL fails and names an image with a CRITICAL one" \
     fails_critical
 
+# without images, scan scans every image of the directory
+mkdir -p "$TMP/work/one/alpine" "$TMP/work/two/debian"
+echo "FROM scratch" | tee "$TMP/work/one/alpine/Dockerfile" > "$TMP/work/two/debian/Dockerfile"
+scan --
+scans_all() {
+    [ "$(grep '^sbom ' "$TMP/scans" | sort | paste -sd' ')" = "sbom one-alpine sbom two-debian" ]
+}
+check "without images, scans every image of the directory" scans_all
+
 # lint: record the config call; fail when $LINT_FAILS is set
 cat > "$TMP/bin/docker" <<STUB
 #!/bin/bash
@@ -128,7 +137,7 @@ lint() {
     : > "$TMP/calls"
     status=0
     env PATH="$TMP/bin:$PATH" XDG_CACHE_HOME="$TMP/cache" "$@" \
-        "$TMP/work/project.sh" lint > "$TMP/output" 2>&1 || status=$?
+        DOCKERFILES_DIR="$TMP/work" "$ROOT/project.sh" lint > "$TMP/output" 2>&1 || status=$?
 }
 
 lint

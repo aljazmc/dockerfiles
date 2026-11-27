@@ -10,12 +10,23 @@
 # Needs kcov; `./project.sh coverage` runs it in the pinned kcov image, so
 # nothing has to be installed. Exits 1 if a test fails.
 #
-# Usage: tests/coverage.sh [output directory, default coverage]
+# Usage: tests/coverage.sh [--in-container] [output directory, default coverage]
+#   --in-container  as ./project.sh coverage runs it in the kcov image: first
+#                   install git and shellcheck, which the tests need, and in
+#                   the end give the report to OWNER, the caller's uid:gid
 
 set -uo pipefail
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
+CONTAINER=no
+[ "${1:-}" = --in-container ] && { CONTAINER=yes; shift; }
 OUT=${1:-$ROOT/coverage}
+
+if [ "$CONTAINER" = yes ]; then
+    apt-get update -qq > /dev/null &&
+        apt-get install -y -qq --no-install-recommends git shellcheck > /dev/null 2>&1
+    git config --global --add safe.directory "$ROOT"
+fi
 INCLUDE="$ROOT/project.sh,$ROOT/tests/smoke_test.sh"
 
 command -v kcov > /dev/null || { echo "kcov is not installed; run ./project.sh coverage" >&2; exit 1; }
@@ -71,4 +82,5 @@ if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
     { echo "### Coverage of the core scripts"; echo; table; } >> "$GITHUB_STEP_SUMMARY"
 fi
 
+[ "$CONTAINER" = yes ] && [ -n "${OWNER:-}" ] && chown -R "$OWNER" "$OUT"
 exit "$status"

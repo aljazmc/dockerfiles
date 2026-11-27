@@ -9,6 +9,9 @@ fi
 
 if [ ! -f aports/README.md ]; then
     TMP_DIR="$(mktemp -d /tmp/temp.XXXXXX)"
+    # mktemp makes it 700, and rsync -a gives that to aports/: open it, so a
+    # host user other than uid 1000 can read the tree in their own directory
+    chmod 755 "$TMP_DIR"
     git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git "$TMP_DIR"
     rsync -avuq "$TMP_DIR"/ aports/
     rm -rf "$TMP_DIR"

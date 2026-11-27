@@ -1,13 +1,11 @@
 #!/bin/bash
 
-cd "$(dirname "$0")" || exit 1
+## the repository: the directory of this script, or DOCKERFILES_DIR, which
+## the tests set to run it on a throwaway directory
+cd "${DOCKERFILES_DIR:-$(dirname "$0")}" || exit 1
 
 ## every directory containing a Dockerfile, e.g. "godot/buildforlinux"
-DIRS=$(
-    find . -name Dockerfile -not -path './.git/*' -exec dirname {} \; |
-    sed 's/^\.\///' |
-    sort
-)
+DIRS=$(find . -name Dockerfile -not -path './.git/*' -exec dirname {} \; | sed 's/^\.\///' | sort)
 
 ## the Trivy image of scan and lint, pinned
 TRIVY=aquasec/trivy:0.76.2
@@ -244,7 +242,7 @@ docker run --rm \
 ##   ./project.sh notes "" v2026.11.28         what CI writes for that tag
 notes() {
 
-local base=${1:-} head=${2:-HEAD} range line type scope breaking subject
+local base=${1:-} head=${2:-HEAD} range line type scope breaking subject summary
 local -A sections=()
 
 if [ -z "$base" ]; then
@@ -255,8 +253,8 @@ range=$head
 
 ## the summary written into an annotated tag
 if [ "$(git cat-file -t "$head" 2> /dev/null)" = tag ]; then
-    printf '%s\n\n' "$(git tag -l --format='%(contents)' "$head" |
-        sed -e '/^-----BEGIN PGP/,$d')"
+    summary=$(git tag -l --format='%(contents)' "$head" | sed -e '/^-----BEGIN PGP/,$d')
+    printf '%s\n\n' "$summary"
 fi
 
 echo "## Images"
@@ -313,18 +311,11 @@ docker run --rm \
     -v "$PWD:/src:ro" \
     -v "$PWD/coverage:/coverage" \
     -e REPORT=coverage/index.html \
+    -e OWNER="$(id -u):$(id -g)" \
     "${summary[@]}" \
     -w /src \
     --entrypoint bash \
-    "$KCOV" -c '
-        apt-get update -qq > /dev/null &&
-            apt-get install -y -qq --no-install-recommends git shellcheck > /dev/null 2>&1
-        git config --global --add safe.directory /src
-        tests/coverage.sh /coverage
-        status=$?
-        chown -R "$0" /coverage
-        exit "$status"
-    ' "$(id -u):$(id -g)"
+    "$KCOV" tests/coverage.sh --in-container /coverage
 
 }
 

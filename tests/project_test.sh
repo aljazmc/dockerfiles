@@ -12,6 +12,10 @@
 #     or latest and <date> when its version can't be read
 #   - publish exits non-zero when an image was not pushed
 #   - publish with image names publishes only those, and fails an unknown one
+#   - an image whose build can't be loaded isn't smoke-tested or pushed, and
+#     a failed push fails publish, both naming the image
+#   - on a throwaway tree, an image that project.sh has no version for is
+#     tagged latest and the date, without asking the image
 #
 # Usage: tests/project_test.sh
 
@@ -38,6 +42,9 @@ mkdir -p "$TMP/bin"
 cat > "$TMP/bin/docker" <<STUB
 #!/bin/bash
 if [ "\$1 \$2" = "buildx build" ]; then
+    # the images whose load or push the last run makes fail
+    [[ " \$* " == *" --load -t aljazmc/\${STUB_FAIL_LOAD:-none} "* ]] && exit 1
+    [[ " \$* " == *" --push "* && " \$* " == *" aljazmc/\${STUB_FAIL_PUSH:-none}:"* ]] && exit 1
     if [[ " \$* " != *" --push "* ]]; then
         echo "\${PWD#$ROOT/} \$*" >> "$TMP/builds"
         echo "\$*" >> "$TMP/events"
@@ -188,6 +195,41 @@ if [ "$(sort -u "$TMP/pushes")" = "aljazmc/node-alpine" ] &&
 else
     echo "FAIL: publish node-alpine no-such-image: exit $status, pushes $(paste -sd' ' "$TMP/pushes")"
     tail -n 5 "$TMP/output"
+    failures=$((failures + 1))
+fi
+
+# a load and a push that fail
+: > "$TMP/smoked"
+status=0
+STUB_FAIL_LOAD=node-alpine STUB_FAIL_PUSH=node-debian PATH="$TMP/bin:$PATH" \
+    ./project.sh publish node-alpine node-debian > "$TMP/output" 2>&1 || status=$?
+if grep -qx "aljazmc/node-alpine: loading the build failed, not pushing" "$TMP/output" &&
+    ! grep -qx "node-alpine" "$TMP/smoked" &&
+    grep -qx "aljazmc/node-debian: push failed" "$TMP/output" &&
+    [ "$status" -ne 0 ] && grep -qx "not pushed: node-alpine node-debian" "$TMP/output"; then
+    echo "PASS: a failed load stops the smoke test and the push, a failed push fails publish"
+else
+    echo "FAIL: publish with a failing load and push: exit $status"
+    tail -n 5 "$TMP/output"
+    failures=$((failures + 1))
+fi
+
+# an image without a version rule, on a throwaway tree whose smoke test passes
+TREE="$TMP/tree"
+mkdir -p "$TREE/tests" "$TREE/other/alpine"
+echo "FROM scratch" > "$TREE/other/alpine/Dockerfile"
+printf '#!/bin/sh\nexit 0\n' > "$TREE/tests/smoke_test.sh"
+chmod +x "$TREE/tests/smoke_test.sh"
+: > "$TMP/tags"
+: > "$TMP/versions"
+status=0
+DOCKERFILES_DIR="$TREE" PATH="$TMP/bin:$PATH" "$ROOT/project.sh" publish other-alpine \
+    > "$TMP/output" 2>&1 || status=$?
+if [ "$status" -eq 0 ] && [ ! -s "$TMP/versions" ] &&
+    [ "$(sort "$TMP/tags" | paste -sd' ')" = "aljazmc/other-alpine:$DATE aljazmc/other-alpine:latest" ]; then
+    echo "PASS: tags an image without a version rule latest and $DATE, without asking it"
+else
+    echo "FAIL: an image without a version rule: exit $status, tags $(paste -sd' ' "$TMP/tags")"
     failures=$((failures + 1))
 fi
 

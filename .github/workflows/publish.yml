@@ -3,8 +3,10 @@ name: publish
 # Builds, smoke-tests and pushes images to Docker Hub with ./project.sh
 # publish, one job per image, and updates each image's Docker Hub page from
 # its README.md:
-#   - on a push to main: the images whose directory the push changed; when
-#     only the README changed, just the Docker Hub page
+#   - on a push to main: the images whose directory changed since the last
+#     successful publish of a push, so a run that GitHub cancelled, because a
+#     newer push was waiting, or that failed is made up for; when only the
+#     README changed, just the Docker Hub page
 #   - every Monday: every image, so each gets the latest security updates of
 #     its base distribution
 #   - by hand, Actions → publish → Run workflow: the images given, or all
@@ -27,6 +29,8 @@ on:
 
 permissions:
   contents: read
+  # to find the last successful publish of a push
+  actions: read
 
 # one publish at a time; a newer run waits rather than cancel a push midway
 concurrency:
@@ -51,12 +55,18 @@ jobs:
           EVENT: ${{ github.event_name }}
           BEFORE: ${{ github.event.before }}
           INPUT: ${{ inputs.images }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           base=""
           case "$EVENT" in
             push)
-              base=$BEFORE
+              # the commit of the last successful publish of a push; the commit
+              # before this push only when there is none
+              base=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/publish.yml/runs?branch=main&event=push&status=success&per_page=1" \
+                --jq '.workflow_runs[0].head_sha // empty' || true)
+              [ -n "$base" ] || base=$BEFORE
               git rev-parse -q --verify "$base^{commit}" > /dev/null || base=HEAD^
+              echo "Changes since $base"
               images=$(./project.sh changed "$base" HEAD) ;;
             workflow_dispatch)
               images=$(tr -s ' ' '\n' <<< "$INPUT" | grep . || true) ;;
