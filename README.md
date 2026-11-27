@@ -116,9 +116,10 @@ tests/arguments_test.sh         # test that bad input is rejected, and clean
 tests/scan_test.sh              # test scan with docker and Trivy stubbed out
 tests/smoke_cases_test.sh       # test that every image has a smoke case
 tests/repo_test.sh              # check pinned bases, READMEs and entrypoints
+tests/regression_test.sh        # check that no fixed bug has come back
 ```
 
-`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh`, which builds the real images, on every push to `main` and every pull request. The tests need only bash and git.
+`publish` only pushes an image after it has been built and has passed its smoke test. It tags the image `latest`, with the version reported by the software in the image and with that version plus the build date (UTC). Every image is built for `linux/amd64` and `linux/arm64`. CI runs `shellcheck` on every shell script and every test except `tests/smoke_test.sh`, which builds the real images, on every push to `main` and every pull request. The tests need only bash and git, and `shellcheck` for `tests/regression_test.sh`.
 
 ### SBOM and vulnerability scanning
 

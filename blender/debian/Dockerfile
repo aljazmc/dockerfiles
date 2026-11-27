@@ -36,7 +36,7 @@ blenderDeps=(
 )
 apt-get update
 apt-get full-upgrade -y
-apt-get install -y --no-install-recommends ${runDeps[@]} ${blenderDeps[@]} "blender=$BLENDER_VERSION*"
+apt-get install -y --no-install-recommends "${runDeps[@]}" "${blenderDeps[@]}" "blender=$BLENDER_VERSION*"
 python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check "ruff==$RUFF_VERSION"
 python3 -m pip install --no-cache-dir --root-user-action=ignore --break-system-packages --disable-pip-version-check --target=/usr/share/blender/scripts/modules "DracoPy==$DRACO_VERSION"
 

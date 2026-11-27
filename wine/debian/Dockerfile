@@ -68,7 +68,7 @@ apt-get install --no-install-recommends "${runtimeDeps[@]}" "${buildDeps[@]}" -y
 dpkg --add-architecture i386
 wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources
 
-mkdir -pm755 /etc/apt/keyrings
+install -d -m 755 /etc/apt/keyrings
 wget -O - https://dl.winehq.org/wine-builds/winehq.key | gpg --dearmor -o /etc/apt/keyrings/winehq-archive.key -
 
 apt-get update

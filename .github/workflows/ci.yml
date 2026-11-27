@@ -30,7 +30,8 @@ jobs:
       - uses: actions/checkout@v7
 
       # every test with docker stubbed out; smoke_test.sh builds the real
-      # images, so it runs before publishing instead
+      # images, so it runs before publishing instead. shellcheck comes with
+      # the runner, for tests/regression_test.sh
       - name: Run tests
         run: |
           status=0
